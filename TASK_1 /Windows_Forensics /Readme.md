@@ -58,4 +58,5 @@ Registry hoạt động dựa trên cơ chế giao dịch để đảm bảo to�
 Cơ chế: Là các thay đổi nằm trong bộ nhớ(Memory) được đẩy xuống các tệp `.LOG` hoặc (`.LOG1`, `.LOG2` trên hệ thống mới) trước khi hợp nhất với hive chính.
 
 Dirty hive: Một hive được coi là 'bẩn' (dirty) khi có các thay đổi trong registry nhưng nó chưa được ghi vào hive chính, nó sẽ được đánh dấu là "dirty" và cần sử dụng một công cụ của Eric-Zic là công cụ RECmd(https://download.ericzimmermanstools.com/net9/RECmd.zip)
-
+#### Registry Backup
+Ngược lại với Transaction log, thì đây là những bản sao lưu của registry hive nằm trong thư mục `C:\Windows\System32\Config`. Những hive này được sao chép vào thư mục `C:\Windows\System32\Config\RegBack` cứ 10 ngày 1 lần, nó sẽ là những thông tin rất quan trọng trong quá trình phân tích các thay đổi dữ liệu gần đây trong registry key.
