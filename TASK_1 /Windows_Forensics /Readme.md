@@ -60,3 +60,18 @@ Cơ chế: Là các thay đổi nằm trong bộ nhớ(Memory) được đẩy x
 Dirty hive: Một hive được coi là 'bẩn' (dirty) khi có các thay đổi trong registry nhưng nó chưa được ghi vào hive chính, nó sẽ được đánh dấu là "dirty" và cần sử dụng một công cụ của Eric-Zic là công cụ RECmd(https://download.ericzimmermanstools.com/net9/RECmd.zip)
 #### Registry Backup
 Ngược lại với Transaction log, thì đây là những bản sao lưu của registry hive nằm trong thư mục `C:\Windows\System32\Config`. Những hive này được sao chép vào thư mục `C:\Windows\System32\Config\RegBack` cứ 10 ngày 1 lần, nó sẽ là những thông tin rất quan trọng trong quá trình phân tích các thay đổi dữ liệu gần đây trong registry key.
+
+---
+
+# Commond Artifact in Windows Forensics
+
+## WindowsForensics1 - Tryhackme
+
+### System information and system account 
+#### 1. OS version
+Là một giá trị registry chứa những thông tin cấu hình chi tiết về hệ điều hành hiện tại và phần mềm tải xuống. OS version nằm ở `SOFTWARE\Microsoft\Windows NT\CurrentVersion`
+
+<img width="1041" height="539" alt="image" src="https://github.com/user-attachments/assets/0404f210-c563-4ff8-9f16-8a0ea2b81be4" />
+
+#### 2. Current Control Set
+**Current Control set** không phải là một nơi lưu trữ dữ liệu vật lý, mà nó là một dyna
