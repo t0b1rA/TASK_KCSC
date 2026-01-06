@@ -74,4 +74,19 @@ Là một giá trị registry chứa những thông tin cấu hình chi tiết v
 <img width="1041" height="539" alt="image" src="https://github.com/user-attachments/assets/0404f210-c563-4ff8-9f16-8a0ea2b81be4" />
 
 #### 2. Current Control Set
-**Current Control set** không phải là một nơi lưu trữ dữ liệu vật lý, mà nó là một dyna
+**Current Control set** không phải là một nơi lưu trữ dữ liệu vật lý, mà nó là một Symbolic link (liên kết tượng trưng) hoặc cũng có thể coi là một con trỏ, nó sẽ trỏ hệ thống hoặc ứng dụng đến các khóa Control Set.
+
+**Control Sets** nó là một hives chứa những dữ liệu cấu hình của một máy được sử dụng để điều khiển hệ thống trong quá trình khởi động. Phổ biến, ta có hai Control Sets là ControlSet001 thường được trỏ đến từ con trỏ Current Control Set khi một máy được khởi động thành công, và ControlSet002 sẽ được trỏ đến khi lần khởi động đầu tiên gặp sự cố trục trặc thì ControlSet002 thường sẽ giữ Cấu hình `Last Know good` - một bản sao lưu cài đặt khởi động thành công gần đây nhất, nếu cài đặt hiện tại không thành công.
+Vị trí lưu trữ của hai ControlSet:
+
+`SYSTEM\ControlSet001`
+
+`SYSTEM\ControlSet002`
+
+Và chúng ta cũng có thể tìm thấy được ControlSet nào đang được sử dụng hiện tại, và cấu hình `Last Know Good` bằng cách theo giá trị registry sau:
+
+`SYSTEM\Select\Current`
+
+`SYSTEM\Select\LastKnowGood`
+
+<img width="805" height="237" alt="image" src="https://github.com/user-attachments/assets/3b3ccf5d-ad71-4126-aa14-de329d621bf5" />
