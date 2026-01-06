@@ -36,6 +36,15 @@ Một số registry value chính là:
 
 #### Sự khác biệt của Registry_hive và Registry_key nằm ở khái niệm của nó Registry_hive là thư mục đầu tiên của registry và nó có chứa registry_key, còn registry_key nó nằm bên trong registry_hive, chứa các registry_subkey và các giá trị registry.
 
+Hầu hết các têp hỗ trợ cho hives đều nằm trong thư mục `%SYSTEMROOT%\System32\Config`. Những files này được cập nhật mỗi lần người dùng đăng nhập vào. Phần mở rộng tên tệp của các tệp trong các thư mục này hoặc trong một số trường hợp bị thiếu phần mở rộng, cho biết loại dữ liệu mà chúng chứa. Dưới đây là một bảng các phần mở rộng và dữ liệu mà chúng chứa:
+
+|Phần mở rộng | Mô tả |
+|--- | ---|
+|none | Một bản sao chép dữ liệu của hive |
+|.alt | file `.alt` (alternative) là một bản sao lưu quan trọng dùng để khôi phục dự phòng khi có lỗi hoặc cập nhật hệ thống, giúp bảo vệ toàn vẹn các dữ liệu trong registry, nằm trong hive `HKEY_LOCAL_MACHINE\System`|
+|.log | là file transaction log lưu lại các thay đổi trong key và value trước khi đưa vào hive chính|
+|.sav | là một bản sao lưu cho hive như SAM, SYSTEM, SECURITY, SOFTWARE được tạo tự động bởi windows để phòng ngừa lỗi, đảm bảo có thể khôi phục cấu hình khi có sự cố xảy ra|
+
 
 ### 3. Accessing registry hives offilne
 Vị trí của các keys trong một máy Windows:
@@ -47,7 +56,7 @@ Vị trí của các keys trong một máy Windows:
 
 #### Hive chứa đựng thông tin của người dùng
 Mỗi khi một người dùng khởi động máy tính hoặc đăng nhập vào nó sẽ tạo ra một hive user mới, 2 loại hive người dùng phổ biến là:
-- NTUSER.DAT: Nằm tại thư mục gốc của người dùng (C:\Users\<User>). Chứa các cấu hình `desktop`, `RunMRU`, `RecentDocs`. Chứa các thông tin hồ sơ cho từng người dùng cụ thể
+- NTUSER.DAT: Nằm tại thư mục gốc của người dùng (C:\Users\<User>). Chứa các cấu hình `desktop`, `RunMRU`, `RecentDocs`. Chứa các thông tin cấu hình cho từng người dùng cụ thể, như màn hình desktop, cài đặt về các chương trình được tải về, và những thông tin hồ sơ người dùng khác.
 - USRCLASS.DAT: Nằm tại C:\Users\<User>\AppData\Local\Microsoft\Windows\. Chứa `ShellBags`, `MUICache`. Hive này thường chứa những thông tin về lớp ứng dụng và phần mở rộng tệp.
 
 #### Ampache hive
@@ -60,6 +69,18 @@ Cơ chế: Là các thay đổi nằm trong bộ nhớ(Memory) được đẩy x
 Dirty hive: Một hive được coi là 'bẩn' (dirty) khi có các thay đổi trong registry nhưng nó chưa được ghi vào hive chính, nó sẽ được đánh dấu là "dirty" và cần sử dụng một công cụ của Eric-Zic là công cụ RECmd(https://download.ericzimmermanstools.com/net9/RECmd.zip)
 #### Registry Backup
 Ngược lại với Transaction log, thì đây là những bản sao lưu của registry hive nằm trong thư mục `C:\Windows\System32\Config`. Những hive này được sao chép vào thư mục `C:\Windows\System32\Config\RegBack` cứ 10 ngày 1 lần, nó sẽ là những thông tin rất quan trọng trong quá trình phân tích các thay đổi dữ liệu gần đây trong registry key.
+
+Dưới đây là một bảng danh sách các hives và các file hỗ trợ:
+|Registry hive | File hỗ trợ |
+| --- | --- |
+|HKEY_CURRENT_CONFIG | System, System.alt, System.log, System.sav|
+|HKEY_CURRENT_USER | Ntuser.dat, Ntuser.dat.log |
+|HKEY_LOCAL_MACHINE\SAM | Sam, Sam.log, Sam.sav |
+|HKEY_LOCAL_MACHINE\Security | Security, Security.log, Security.sav |
+|HKEY_LOCAL_MACHIN\Software | Software, Software.log, Software.sav |
+|HKEY_LOCAL_MACHINE\System | System, System.alt, System.log, System.sav |
+|HKEY_USERS\.DEFAULT | 	Default, Default.log, Default.sav |
+
 
 ---
 
