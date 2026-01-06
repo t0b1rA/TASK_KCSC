@@ -89,10 +89,14 @@ Dưới đây là một bảng danh sách các hives và các file hỗ trợ:
 ## WindowsForensics1 - Tryhackme
 
 ### System information and system account 
-#### 1. OS version
+#### 1. OS version, Hostname
 Là một giá trị registry chứa những thông tin cấu hình chi tiết về hệ điều hành hiện tại và phần mềm tải xuống. OS version nằm ở `SOFTWARE\Microsoft\Windows NT\CurrentVersion`
 
 <img width="1041" height="539" alt="image" src="https://github.com/user-attachments/assets/0404f210-c563-4ff8-9f16-8a0ea2b81be4" />
+
+**Computer Name** : `SYSTEM\CurrentControlSet\Control\ComputerName\ComputerName `
+
+<img width="1025" height="127" alt="image" src="https://github.com/user-attachments/assets/2fce7ebd-20b9-4191-9d5e-4268beb7234f" />
 
 #### 2. Current Control Set
 **Current Control set** không phải là một nơi lưu trữ dữ liệu vật lý, mà nó là một Symbolic link (liên kết tượng trưng) hoặc cũng có thể coi là một con trỏ, nó sẽ trỏ hệ thống hoặc ứng dụng đến các khóa Control Set.
@@ -111,3 +115,33 @@ Và chúng ta cũng có thể tìm thấy được ControlSet nào đang đượ
 `SYSTEM\Select\LastKnowGood`
 
 <img width="805" height="237" alt="image" src="https://github.com/user-attachments/assets/3b3ccf5d-ad71-4126-aa14-de329d621bf5" />
+
+#### 3. Timezone information
+Việc nắm được các khung thời gian trong máy sẽ giúp cho chúng ta hiểu được trình tự các sự kiện xảy ra. Timezone có thể được tìm thấy tại: `SYSTEM\CurrentControlSet\Control\TimeZoneInformation`
+
+<img width="1181" height="287" alt="image" src="https://github.com/user-attachments/assets/206afe8d-d88a-4b9c-a4f0-6a48fc5aa801" />
+
+#### 4. Network Interface and Past Network
+**Network Interface**: Mỗi giao diện sẽ đại diện cho một subkey định danh(GUID) duy nhất, chứa các giá trị liên quan đến cấu hình TCP/IP của giao diện, khóa này cung cấp các key information chính cho network interface artifact:
+
+- IP cấu hình cho từng giao diện.
+- Địa chỉ MAC cho từng giao diện.
+- Liệt kê ra tất cả những giao diện đã tải xuống trên hệ thống.
+
+**IP cấu hình cho từng giao diện**
+
+<img width="1091" height="597" alt="image" src="https://github.com/user-attachments/assets/9705c11f-790d-4260-81f4-c5a7810a1010" />
+
+`HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\Tcpip\Parameters\Interfaces\`
+
+Mỗi một khóa con thì nó sẽ đại diện cho một IP cấu hình dữ liệu cho từng interface. Mỗi cái tên cho các khóa con đại diện cho một GUID được sử dụng để nhận dạng duy nhất cho giao diện đó, và có thể được sử dụng để tương quan với những thông tin của những artifact khác.
+
+**Key data mà mỗi giao diện có thể chứa**:
+|Info | Notes |
+| --- | --- |
+| Cách mà IP được gán tĩnh hay động | "EnableDHCP" với giá trị là 1 có nghĩa là DHCP đã được bật |
+| Đia chỉ IP | Địa chỉ ip có thể được thu thập bên trong "IPAddress" hoặc "DHCPIPAddress" dựa vào nó được gán tĩnh hay động |
+| Subnet mask | Subnet mask có thể được thu thập bên trong "SubnetMask" hoặc là "DHCPSubnetMask" dựa vào nó được gán tĩnh hay động |
+| DNS server | DNS server ip có thể được thu thập trong "NameServer" hoặc là "DHCPNameServer" dựa vào nó được gán tĩnh hay động |
+
+**Địa chỉ MAC cho mỗi giao diện**
