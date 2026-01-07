@@ -116,6 +116,15 @@ Và chúng ta cũng có thể tìm thấy được ControlSet nào đang đượ
 
 <img width="805" height="237" alt="image" src="https://github.com/user-attachments/assets/3b3ccf5d-ad71-4126-aa14-de329d621bf5" />
 
+Subkey `Select` ở đây chứa thông tin của ConTrolSet nào đang được hoạt động (Current), ControlSet nào được dùng mặc định (Default), Control Set nào được dự phòng (last know good) nếu có lỗi boot máy mà nó không hoạt động, và Control Set nào bị lỗi sẽ được lưu bên trong (Failed)
+
+Các giá trị registry chính:
+
+- `Current`: Chứa giá trị DWORD 32 bit thứ tự  ControlSet đang được sử dụng làm CurrentControlSet trong lần khởi động hiện tại.
+- `Default`: Chứa giá trị DWORD 32 bit thứ tư ControlSet mà hệ thống sử dụng làm CurrentControlSet cho lần hoạt động tiếp theo.
+- `Failed`: Giá trị DWORD cho biết ControlSet nào đã thất bại trong lần khởi động gần nhất, để Windows có thể quay trở lại cái cấu hình khởi động thành công gần nhất.
+- `Last Know Good`: Giá trị DWORD cho biết số thứ tự của Control Set tốt nhất được biết đến (thường là cấu hình thành công cuối cùng).
+
 #### 3. Timezone information
 Việc nắm được các khung thời gian trong máy sẽ giúp cho chúng ta hiểu được trình tự các sự kiện xảy ra. Timezone có thể được tìm thấy tại: `SYSTEM\CurrentControlSet\Control\TimeZoneInformation`
 
@@ -126,7 +135,7 @@ Việc nắm được các khung thời gian trong máy sẽ giúp cho chúng ta
 
 - IP cấu hình cho từng giao diện.
 - Địa chỉ MAC cho từng giao diện.
-- Liệt kê ra tất cả những giao diện đã tải xuống trên hệ thống.
+- Danh sách tất cả những giao diện đã tải xuống trên hệ thống.
 
 **IP cấu hình cho từng giao diện**
 
@@ -145,3 +154,63 @@ Mỗi một khóa con thì nó sẽ đại diện cho một IP cấu hình dữ 
 | DNS server | DNS server ip có thể được thu thập trong "NameServer" hoặc là "DHCPNameServer" dựa vào nó được gán tĩnh hay động |
 
 **Địa chỉ MAC cho mỗi giao diện**
+Mỗi giao diện trong đó nó sẽ chứa một địa chỉ MAC được lưu trong subkey kernel bên trong các GUID của giao diện đó, mỗi giao diện đều sinh ra địa chỉ MAC riêng biệt vì nó định danh cho phần cứng duy nhất cho mỗi card mạng, và được lưu trữ lại:
+
+`HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Control\NetworkSetup2\Interfaces\{INTERFACE_GUID}\Kernel`
+
+<img width="1082" height="703" alt="image" src="https://github.com/user-attachments/assets/556f11ef-be97-49c8-8939-c5eb2638c4b7" />
+
+**Danh sách tất cả các giao diện đã tải xuống trên hệ thống**
+Là nơi lưu trữ danh sách của toàn bộ những card mạng từng được cài đặt cho máy tính, cung cấp các thông tin chi tiết về card mạng hiện tại
+
+<img width="1092" height="646" alt="image" src="https://github.com/user-attachments/assets/e02ac741-1584-4d28-9a9f-8e92697bbd86" />
+
+`HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Control\Class\{4d36e972-e325-11ce-bfc1-08002be10318}\xxxx`
+
+- Mỗi subkey đều theo một khuôn là XXXX với mỗi số X là các con số biểu thi cho 1 giao diện.
+- Nó có rất nhiều những thông tin kỹ thuật chi tiết cho giao diện như (Driver version, driver install date, install timestamp, interface enable,...)
+
+**Connected Networks (các mạng từng được kết nối)**, một số những artifact em tìm hiểu được từ những mạng từng được kết nối:
+
+- Tên của những mạng đã từng được kết nối.
+- Lần đầu và lần cuối những mạng này được kết nối.
+- Cổng địa chỉ Mac 
+- DNS suffix: là phần đuôi tên miền được máy chủ DHCP cấp phát tự động cho máy tính khi nó kết nối vào mạng đó.(airport.wifi: mạng kết nối tại sân bay, localdomain or none: thường là mạng gia đình cấu hình mặc định)
+
+Có 2 vị trí mà chúng ta có thể tìm thấy các artifact này:
+
+**Locate1** : `HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\NetworkList\Profiles\`
+
+<img width="1091" height="624" alt="image" src="https://github.com/user-attachments/assets/d1e31fd3-07eb-4167-82b6-22a6c987584d" />
+
+Mỗi subkey nó sẽ đại diện cho những metadata liên quan đến mạng mà hệ thống đã kết nối tại thời điểm đó, các name subkey là các GUID duy nhất để định danh cho các hồ sơ mạng (Network Profile ID) mà máy tính này đã từng kết nối thành công.
+Các giá trị registry trong mỗi GUID này mang các ý nghĩa sau:
+
+|Info | Notes |
+| --- | --- |
+| ProfileName | Các tên mạng được nhận dạng bởi Windows. Trong các trường hợp mạng không dây thì đây là các SSID|
+| Description | Là những tên quen thuộc của người dùng, thông thường thì nó giống với ProfileName |
+| DateCreated | Là ngày hệ thống lần đầu kết nối vào mạng |
+| DateLastConnected | Ngày cuối mà hệ thống kết nối vào mạng |
+| Category | Hồ sơ kết nối mạng được dùng khi tham gia vào 1 mạng (0 = public, 1 = private, 2 = domain) |
+
+**Located2** : `HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\NetworkList\Profiles\Signatures\*\`
+
+Mỗi subkey bên dưới Managed và Unmanaged sẽ đại diện cho các metadata thêm vào khi tham gia vào một mạng.
+
+`SOFTWARE\Microsoft\Windows NT\CurrentVersion\NetworkList\Signatures\Unmanaged`
+
+`\Unmanaged` là những mạng không thuộc sự kiểm soát của các miền cục bộ như mạng wifi gia đình, mạng công cộng.
+
+`SOFTWARE\Microsoft\Windows NT\CurrentVersion\NetworkList\Signatures\Managed`
+
+`\Managed` chứa thông tin các mạng doanh nghiệp được xác định trong Domain Controller (Active Directory)
+
+<img width="1195" height="231" alt="image" src="https://github.com/user-attachments/assets/bac8c27d-8cbc-47ea-836c-bdccd359df01" />
+
+Các registry key này chứa các mạng trước đây, cùng với lần gần nhất mà chúng được kết nối. Thời gian ghi cuối cùng của registry key nó sẽ trỏ đến cái lần cuối cùng mà những mạng này nó được kết nối.
+
+Các giá trị registry quan trọng trong các subkey:
+- ProfileGUID: Được sử dụng để liên kết dữ liệu trong khóa này với khóa Cấu hình được đề cập trước đó.
+- DNS suffix liên quan đến mạng đang kết nối.
+- Cổng mặc định của địa chỉ MAC.
