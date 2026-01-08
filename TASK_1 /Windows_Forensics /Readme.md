@@ -227,6 +227,7 @@ Trước khi đi sâu vào các khóa registry startup thì em đã tìm hiểu 
 
 **2. Winlogon Initialization (khởi tạo)**
 
+Là quá trình mà nó dựng nên một môi trường đăng nhập bền vững và an toàn cho người dùng bằng cách thiết lập một đăng kí tới với SAS - (Secure Attention Sequence), việc nó thực hiện đăng kí SAS là để độc quyền lắng nghe tổ hợp phím (CTRL + ALT + Delete) - 
 
 Ở đây em sẽ tìm hiểu kĩ về một số các registry startup key bên trong một máy ở trong registry:
 
