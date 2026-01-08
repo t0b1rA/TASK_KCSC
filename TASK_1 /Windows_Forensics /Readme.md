@@ -211,25 +211,76 @@ Mỗi subkey bên dưới Managed và Unmanaged sẽ đại diện cho các meta
 Các registry key này chứa các mạng trước đây, cùng với lần gần nhất mà chúng được kết nối. Thời gian ghi cuối cùng của registry key nó sẽ trỏ đến cái lần cuối cùng mà những mạng này nó được kết nối.
 
 Các giá trị registry quan trọng trong các subkey:
-- ProfileGUID: Được sử dụng để liên kết dữ liệu trong khóa này với khóa Cấu hình được đề cập trước đó.
-- DNS suffix liên quan đến mạng đang kết nối.
+- **ProfileGUID**: Được sử dụng để liên kết dữ liệu trong khóa này với khóa Cấu hình được đề cập trước đó.
+- **DNS suffix** liên quan đến mạng đang kết nối.
 - Cổng mặc định của địa chỉ MAC.
 
 
 #### 4. AutoStart Programs
 
-Autostart là thuật ngữ đề cập tới những phần mềm có khả năng tự động chạy mà không cần người dùng phải chạy nó. Phần mềm nà bao gồm các drivers và các dịch vụ bắt đầu khi một máy được khởi động lên. Các ứng dụng, tiện ích, hoặc thậm chí là các lệnh shell được khởi chạy khi người dùng đăng nhập vào, các browser extention tự động tải khi người dùng mở một ứng dụng trình duyệt chẳng hạn như thế.
+**Autostart** là thuật ngữ đề cập tới những phần mềm có khả năng tự động chạy mà không cần người dùng phải chạy nó. Phần mềm nà bao gồm các drivers và các dịch vụ bắt đầu khi một máy được khởi động lên. Các ứng dụng, tiện ích, hoặc thậm chí là các lệnh shell được khởi chạy khi người dùng đăng nhập vào, các browser extention tự động tải khi người dùng mở một ứng dụng trình duyệt chẳng hạn như thế.
 
 Trước khi đi sâu vào các khóa registry startup thì em đã tìm hiểu một chút về quá trình một máy windows boot lên sau đó các key registry startup của registry hoạt động:
-**1. System boot**
 
-Đây là quá trình diễn ra sau khi Kernel được nạp vào và quản lí tiến trình hoạt động, lúc này nó sẽ sinh ra một tiến trình (smss.exe - Session Manager Subsystem) được tạo ra để quản lí các Session, khi đó một registry key sẽ được khởi tạo bên trong registry là `bootExecute` sẽ thực thi các mục bên trong nó để hoàn tất quá trình khởi động hệ thống.
+**System boot**
 
-**2. Winlogon Initialization (khởi tạo)**
+- Đây là quá trình diễn ra sau khi Kernel được nạp vào và quản lí tiến trình hoạt động, lúc này nó sẽ sinh ra một tiến trình (smss.exe - Session Manager Subsystem) được tạo ra để quản lí các Session, khi đó một registry key sẽ được khởi tạo bên trong registry là `bootExecute` sẽ thực thi các mục bên trong nó để hoàn tất quá trình khởi động hệ thống.
 
-Là quá trình mà nó dựng nên một môi trường đăng nhập bền vững và an toàn cho người dùng bằng cách thiết lập một đăng kí tới với SAS - (Secure Attention Sequence), việc nó thực hiện đăng kí SAS là để độc quyền lắng nghe tổ hợp phím (CTRL + ALT + Delete) - 
+**Winlogon Initialization (khởi tạo)**
+
+- Là quá trình mà nó dựng nên một môi trường đăng nhập bền vững và an toàn cho người dùng bằng cách thiết lập một đăng kí tới với SAS - (Secure Attention Sequence), việc nó thực hiện đăng kí SAS là để độc quyền lắng nghe tổ hợp phím (CTRL + ALT + Delete). Vậy thì SAS nó sẽ hoạt động nó như nào? SAS nó là một ngắt cứng được Windows Kernel lập trình để ngăn chặn một ứng dụng thứ 3 có thể chiếm quyền hoặc thay đổi hành vi, liên quan đến quá trình khởi tạo winlogon thì nó sẽ ngăn chặn việc một phần mềm độc hại có khả năng chiếm quyền hoặc tạo ra một giao diện fake để lấy mật khẩu người dùng. Sau đó tiến trình `winlogon.exe` sẽ xử lí các phiên đăng nhập tương tác với người dùng.
+
+**User logon**
+
+- Sau khi người dùng xác thực xong. Explorer.exe sẽ tiến hành đọc và xử lí các khóa Autostart như (Run - RunOnce), mà nó đã được thiết lập từ trước đó trong khóa Startup, và cuối cùng là bắt đầu thực thi.
+
 
 Ở đây em sẽ tìm hiểu kĩ về một số các registry startup key bên trong một máy ở trong registry:
 
-`NTUSER.DAT\Software\Microsoft\Windows\CurrentVersion\Run`
-Đây là một key khá phổ biến trong các mối nguy persistence, thì key Run này chạy bên trong Hive NTUSER.DAT nó sẽ tự động chạy các chương trình được lưu bên trong key Run này mỗi khi mà người dùng đăng nhập vào.
+<img width="2553" height="891" alt="image" src="https://github.com/user-attachments/assets/63df2954-f949-4aeb-a9bd-0584120364fd" />
+
+`NTUSER.DAT\Software\Microsoft\Windows\CurrentVersion\Run`:   Key Run này chạy bên trong Hive NTUSER.DAT nó sẽ tự động chạy các chương trình được lưu bên trong key Run này mỗi khi mà người dùng đăng nhập vào.
+
+<img width="2517" height="930" alt="image" src="https://github.com/user-attachments/assets/20fcd323-9b50-45fe-941b-fb28c46f05c7" />
+
+`NTUSER.DAT\Software\Microsoft\Windows\CurrentVersion\RunOnce`:  khóa này cho phép thực thi các chương trình 1 lần khi người dùng đăng nhập vào, và sau đó nó sẽ bị xóa đi trong registry để tránh quá trình thực thi lại lệnh như vòng lặp.
+
+<img width="1985" height="1131" alt="image" src="https://github.com/user-attachments/assets/a58485c0-292e-4899-b9a1-44d5f78785e9" />
+
+`SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce`: Khóa này nó sẽ bao gồm một tập lệnh hoặc chương trình được Windows thực thi sau khi máy được khởi động, hoặc sau khi hoàn thành một tác vụ nào đó. Sau đó nó sẽ bị tự động xóa đi trong registry để tránh việc thực thi lại.
+
+`SOFTWARE\Microsoft\Windows\CurrentVersion\policies\Explorer\Run`: Khóa này sẽ thực thi các chính sách (policies) để buộc các ứng dụng phải chạy, thường được sử dụng bởi administrator để triển khai các phần mềm hoặc kiểm soát ứng dụng đảm bảo dịch vụ quan trọng luôn hoạt động. Khóa này sẽ thực hiện với tất cả các users đã đăng nhập vào máy, khi khởi động máy lên.
+
+<img width="1504" height="1110" alt="image" src="https://github.com/user-attachments/assets/99c41874-b3c1-4170-af17-a2d78e668c87" />
+
+`SOFTWARE\Microsoft\Windows\CurrentVersion\Run` : Khóa này sẽ giống như khóa trong Hive NTUSER.DAT nó sẽ thực thi chương trình hoặc tập lệnh mỗi khi máy được đăng nhập hoặc khởi động nhưng nó sẽ áp dụng với tất cả các user đăng nhập vào máy chứ không phải mỗi user như hive NTUSER.DAT. 
+
+
+#### 5. SAM hive and user Infomation
+
+SAM hive trong Windows registry là một phần cơ sở dữ liệu quan trọng nó lưu trữ những thông tin tài khoản của người dùng và mật khẩu (mã băm), nó cần thiết cho quá trình xác thực.
+
+Những thông tin này nằm ở: `SAM\Domains\Account\Users`
+
+<img width="1179" height="445" alt="image" src="https://github.com/user-attachments/assets/d06a876d-d662-45f4-ac11-feda94ac7f98" />
+
+Những thông tin trong hình bao gồm mã định danh (RID) của người dùng, số lần mà user đăng nhập, lần đăng nhập gần nhất, lần đăng nhập thất bại gần nhất, lần cuối thay đổi mật khẩu, chính sách mật khẩu, passwd hint và bất cứ group nào mà người dùng là một phần.
+
+Có 1 điểm quan trọng khác là hive này khi chúng ta thử sử dụng regedit.exe trên máy để mở thì sẽ không thấy gì cả.
+
+<img width="1179" height="445" alt="image" src="https://github.com/user-attachments/assets/e60b7861-e0aa-47cf-b33d-5aa48f409093" />
+
+Lý do nằm ở hive này chứa những thông tin rất quan trọng là tải khoản và mật khẩu của người dùng, nên quyền administrator cũng không thể xem được, nó chỉ được thiết lập cho những user có quyền SYSTEM tương đương với root. Nhưng trong windows thì lại không có option đưa quyền lên mức SYSTEM.
+
+Nhưng ở đây có 1 tricks em đọc được từ blogs: https://cylab.be/blog/310/install-sysinternals
+
+- Đầu tiên chúng ta cần tải nó xuống thông qua blogs kia.
+
+- Sau đó thực hiện mở cmd bằng administrator.
+
+- Trong cmd, dùng lệnh `psexec -sid Regedit.exe` psexec - là từ công cụ vừa được tải về **Sysinternals**
+
+- Lần này nó sẽ hiện ra tất cả những thông tin bên trong hive.
+
+<img width="952" height="709" alt="image" src="https://github.com/user-attachments/assets/cd4ee655-e46c-4071-97ab-43fbec7dddfe" />
+
