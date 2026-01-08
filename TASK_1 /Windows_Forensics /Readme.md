@@ -214,3 +214,21 @@ Các giá trị registry quan trọng trong các subkey:
 - ProfileGUID: Được sử dụng để liên kết dữ liệu trong khóa này với khóa Cấu hình được đề cập trước đó.
 - DNS suffix liên quan đến mạng đang kết nối.
 - Cổng mặc định của địa chỉ MAC.
+
+
+#### 4. AutoStart Programs
+
+Autostart là thuật ngữ đề cập tới những phần mềm có khả năng tự động chạy mà không cần người dùng phải chạy nó. Phần mềm nà bao gồm các drivers và các dịch vụ bắt đầu khi một máy được khởi động lên. Các ứng dụng, tiện ích, hoặc thậm chí là các lệnh shell được khởi chạy khi người dùng đăng nhập vào, các browser extention tự động tải khi người dùng mở một ứng dụng trình duyệt chẳng hạn như thế.
+
+Trước khi đi sâu vào các khóa registry startup thì em đã tìm hiểu một chút về quá trình một máy windows boot lên sau đó các key registry startup của registry hoạt động:
+**1. System boot**
+
+Đây là quá trình diễn ra sau khi Kernel được nạp vào và quản lí tiến trình hoạt động, lúc này nó sẽ sinh ra một tiến trình (smss.exe - Session Manager Subsystem) được tạo ra để quản lí các Session, khi đó một registry key sẽ được khởi tạo bên trong registry là `bootExecute` sẽ thực thi các mục bên trong nó để hoàn tất quá trình khởi động hệ thống.
+
+**2. Winlogon Initialization (khởi tạo)**
+
+
+Ở đây em sẽ tìm hiểu kĩ về một số các registry startup key bên trong một máy ở trong registry:
+
+`NTUSER.DAT\Software\Microsoft\Windows\CurrentVersion\Run`
+Đây là một key khá phổ biến trong các mối nguy persistence, thì key Run này chạy bên trong Hive NTUSER.DAT nó sẽ tự động chạy các chương trình được lưu bên trong key Run này mỗi khi mà người dùng đăng nhập vào.
