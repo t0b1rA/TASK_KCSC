@@ -149,7 +149,7 @@ Mỗi một khóa con thì nó sẽ đại diện cho một IP cấu hình dữ 
 |Info | Notes |
 | --- | --- |
 | Cách mà IP được gán tĩnh hay động | "EnableDHCP" với giá trị là 1 có nghĩa là DHCP đã được bật |
-| Đia chỉ IP | Địa chỉ ip có thể được thu thập bên trong "IPAddress" hoặc "DHCPIPAddress" dựa vào nó được gán tĩnh hay động |
+| Địa chỉ IP | Địa chỉ ip có thể được thu thập bên trong "IPAddress" hoặc "DHCPIPAddress" dựa vào nó được gán tĩnh hay động |
 | Subnet mask | Subnet mask có thể được thu thập bên trong "SubnetMask" hoặc là "DHCPSubnetMask" dựa vào nó được gán tĩnh hay động |
 | DNS server | DNS server ip có thể được thu thập trong "NameServer" hoặc là "DHCPNameServer" dựa vào nó được gán tĩnh hay động |
 
