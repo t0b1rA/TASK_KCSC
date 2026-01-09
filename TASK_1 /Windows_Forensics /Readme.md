@@ -121,7 +121,7 @@ Subkey `Select` ở đây chứa thông tin của ConTrolSet nào đang được
 Các giá trị registry chính:
 
 - `Current`: Chứa giá trị DWORD 32 bit thứ tự  ControlSet đang được sử dụng làm CurrentControlSet trong lần khởi động hiện tại.
-- `Default`: Chứa giá trị DWORD 32 bit thứ tư ControlSet mà hệ thống sử dụng làm CurrentControlSet cho lần hoạt động tiếp theo.
+- `Default`: Chứa giá trị DWORD 32 bit thứ tự ControlSet mà hệ thống sử dụng làm CurrentControlSet cho lần hoạt động tiếp theo.
 - `Failed`: Giá trị DWORD cho biết ControlSet nào đã thất bại trong lần khởi động gần nhất, để Windows có thể quay trở lại cái cấu hình khởi động thành công gần nhất.
 - `Last Know Good`: Giá trị DWORD cho biết số thứ tự của Control Set tốt nhất được biết đến (thường là cấu hình thành công cuối cùng).
 
