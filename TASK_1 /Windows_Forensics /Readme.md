@@ -218,7 +218,7 @@ Các giá trị registry quan trọng trong các subkey:
 
 #### 4. AutoStart Programs
 
-**Autostart** là thuật ngữ đề cập tới những phần mềm có khả năng tự động chạy mà không cần người dùng phải chạy nó. Phần mềm nà bao gồm các drivers và các dịch vụ bắt đầu khi một máy được khởi động lên. Các ứng dụng, tiện ích, hoặc thậm chí là các lệnh shell được khởi chạy khi người dùng đăng nhập vào, các browser extention tự động tải khi người dùng mở một ứng dụng trình duyệt chẳng hạn như thế.
+**Autostart** là thuật ngữ đề cập tới những phần mềm có khả năng tự động chạy mà không cần người dùng phải chạy nó. Phần mềm này bao gồm các drivers và các dịch vụ bắt đầu khi một máy được khởi động lên. Các ứng dụng, tiện ích, hoặc thậm chí là các lệnh shell được khởi chạy khi người dùng đăng nhập vào, các browser extention tự động tải khi người dùng mở một ứng dụng trình duyệt chẳng hạn như thế.
 
 Trước khi đi sâu vào các khóa registry startup thì em đã tìm hiểu một chút về quá trình một máy windows boot lên sau đó các key registry startup của registry hoạt động:
 
