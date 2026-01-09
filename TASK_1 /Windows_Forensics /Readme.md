@@ -309,3 +309,80 @@ Registry key `RecentDocs` là một khóa bên trong Windows Registry, nó theo 
  - tương tự thế .....
 
 #### 2. Office Recent files
+
+Tương tự như `Recent Docs` thì `Office Recent Files` cũng sẽ theo dõi các files cụ thể nằm trong Microsoft Office được mở gần đâ từ người dùng. 
+
+`HKCU\Software\Microsoft\Office\<VERSION>\Word`
+
+Với mỗi version thì những file lưu trữ bên trong chương trình của Microsoft Office sẽ khác nhau ví dụ ở đây là file `Word`, bên trong key này `Word` này nó sẽ chứa những sub-keys quan trọng cho quá trình truy cập nhanh chóng:
+
+- File MRU: các files được mở gần đây.
+
+- Place MRU: vị trí mà các files được mở hoặc lưu gần đây.
+
+- User MRU: chứa các tài khoản mà người dùng sử dụng để đăng nhập gần đây.
+
+#### 3. ShellBags
+
+Shellbags được đề cập đến là một tập hợp những registry key và các key dữ liệu của Windows, dùng để duy trì việc ghi nhớ những tùy chọn hiển thị File Explorer và Windows Open/Save dialogs của người dùng. Giúp hệ điều hành Windows ghi nhớ và khôi phục cách hiển thị các thư mục của người dùng theo tùy chọn của họ. Ví dụ như:
+ - Windows location/size.
+ - Hiển thị cột.
+ - Sắp xếp cột.
+ - Icon size.
+
+`ShellBags` có thể chứa đựng rất nhiều những thông tin trong những folders mà người đã truy cập vào. Tuy nhiên, bởi vì những thông tin chi tiết chính xác về cách mà `shellbags` hoạt động không được công bố rộng rãi, nó có thể sẽ khó trong việc hiểu tường tận về dữ liệu. Chúng ta nên sử dụng những cái artifacts khác để xác minh lại những dữ liệu đã tìm được và kiểm tra với những kịch bản cụ thể để đảm bảo mình hiểu được nó và làm sao nó nằm ở đó.
+
+Những keys information từ ShellBags:
+| Info | Notes |
+|--- | --- |
+|Toàn bộ đường dẫn đến thư muc | Kể cả cho những thư mục đã bị xóa |
+| Người dùng nào đã truy cập vào folders | Dựa vào registry hive (SAM hive)
+| Chỉnh sửa, truy cập và tạo ra timestamps cho folders đã được truy cập | Nó được ghi lại cho lần đầu folders được đưa vào Shellbags |
+| Lần đầu và lần cuối người dùng truy cập vào thư mục | Dựa vào lần gần nhất được ghi lại của registry key và có thể được sử dụng trong 1 số trường hợp để suy ra first và last time accesss vào thư mục |
+
+**How ShellBags work?/ More Detailed Breakdown**
+
+**ShellBags** hoạt động dựa trên 2 thành phần là `BagMRU` (Cấu trúc cây) và `Bags`/`Nodeslot` (Dữ liệu cấu hình)
+
+Giờ em sẽ đi sâu vào từng thành phân tương ứng là registry key `BagMRU` và `Bags/Nodeslot`, sau đó sẽ đi vào cách hoạt động
+
+`BagMRU` là một registry key nó lưu trữ cấu trúc phân cấp của các thư mục người dùng đã truy cập theo dạng cây, nó chứa đường dẫn đầy đủ tới thư mục đã được truy cập, cùng với tất cả thông tin timestamp.
+
+<img width="373" height="208" alt="image" src="https://github.com/user-attachments/assets/7a34a5f7-f10a-4cf2-b900-229737a5ce20" />
+
+Mỗi khóa/khóa con được đánh số dưới `BagMRU` chứa các giá trị sau:
+
+- Mỗi thư mục đại diện bởi 1 thư mục con được đánh số (0, 1, 2,...)
+ 
+- `MRUListEx` MRU list hiển thị thứ tự của các thư mục được truy cập.
+ 
+- `Nodeslot` là một giá trị số được liên kết với các mục của thư mục trong `BagMRU`, đến với các cài đặt hiển thị cụ thể (như độ lớn nhỏ của icon, sắp xếp cột, xóa cột trong các Open/Save dialog - File Explorer).
+
+<img width="686" height="176" alt="image" src="https://github.com/user-attachments/assets/0089c696-6ba2-4c5a-8c36-437f6aabd2c0" />
+
+`Bags` cũng là một registry key nó lưu trữ những cài đặt cấu hình hiển thị cho từng thư mục cụ thể.
+
+<img width="1030" height="372" alt="image" src="https://github.com/user-attachments/assets/b34c9284-7e20-48a6-99d2-6acca4d9c3e3" />
+
+Mỗi keys được đánh số bên dưới `Bags` có thể chứa những dữ liệu sau:
+
+- Tên của khóa con (subkey name) được đánh số (1, 2, 3,..) tương ứng với giá trị `NodeSlot` từ `BagMRU` subkeys.
+ 
+- Keys bên dưới các subkeys được đánh số đại diện cho nơi mà các tùy chọn được áp dụng.
+ 
+ - Chúng ta sẽ có 2 giá trị. Giá trị "Shell" đại diện cho tùy chọn được áp dụng cho File Explorer, còn giá trị "comdlg" đại diện cho tùy chọn áp dụng vào Windows Open/Save dialog.
+ 
+- Các khóa con bên dưới `Shell` hoặc là `comdlg` chứa các tùy chọn cụ thể.
+
+**How Shellbags Work**
+
+Như đã nói thì `Shellbags` hoạt động dựa trên 2 thành phần `BagMRU` và `Bags`. Lấy ví dụ về khi mở 1 thư mục `C:\Users\LOQ\Goals`:
+
+- Lúc này `BagMRU` sẽ đóng vai trò là duyệt qua từng thu mục, để tìm ra thư mục đại diện có `NodeSlot` là `Goals`
+
+- Sau đó thì tại `NodeSlot` bên trong thư mục "Goals" đó nó sẽ đọc giá trị DWORD được lưu trữ.
+
+- Nó sẽ đi duyệt qua các keys của `Bags` và tìm đến keys có cùng giá trị với `NodeSlot` được đặt ở tên subkeys.
+
+- Cuối cùng là nó sẽ dùng những tùy chọn đã được set từ trước sử dụng cho thư mục `Goals` được mở
+
