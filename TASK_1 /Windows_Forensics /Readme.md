@@ -1,4 +1,4 @@
-# Windows Registry 
+<img width="330" height="317" alt="image" src="https://github.com/user-attachments/assets/6cfc4caf-73d5-45bf-8194-66653e212410" /># Windows Registry 
 Windows Registry là một cơ sở dữ liệu phân tầng lưu trữ những cài đặt cấp thấp của hệ điều hành Microsoft Windows và các ứng dụng chọn sử dụng registry, được sử dụng từ phiên bản Windows 95 cho tới hiện nay.Trước phiên bản Windows 95, thì Windows sẽ lưu trữ các thông tin cấu hình bên trong các file (`.ini`).The registry hỗ trợ truy xuất tốc độ cao cho nhân hệ điều hành(Kernel), các thiết bị drivers, dịch vụ, Security Account Manager (SAM), và ứng dụng người dùng. Windows Registry hay là The registry chứa những thông tin, cài đặt, tùy chọn và các giá trị khác của chương trình và phần cứng được tải xuống của tất cả các phiên bản của Microsoft Windows. Ví dụ: một chương trình được tải xuống thì nó sẽ tạo ra một key mới và cái khóa này sẽ chứa các thông tin về vị trí lưu trữ của chương trình này, phiên bản của chương trình, cách mà chương trình hoạt động,.. tất cả sẽ nằm trong Windows Registry.
 
 ### 1. Structure of the Registry 
@@ -284,3 +284,28 @@ Nhưng ở đây có 1 tricks em đọc được từ blogs: https://cylab.be/bl
 
 <img width="952" height="709" alt="image" src="https://github.com/user-attachments/assets/cd4ee655-e46c-4071-97ab-43fbec7dddfe" />
 
+
+
+### Usage or knowledge of files/folders
+
+#### 1. Recent files
+
+Recent files (các file gần đây) là một tính năng của hệ điều hành windows, nó lưu trữ những file hoặc folder được sử dụng gần đây cho mỗi người dùng. Chẳng hạn như khi ta sử dụng File Explorer ở thư mục home nó sẽ list ra cho ta một danh sách những file gần đây mà chúng ta đã mở hoặc truy cập. Mỗi khi mở một files thì Windows sẽ tạo ra một file `.lnk` tương ứng và đưa nó vào mục `Recent files`.
+
+Registry key `RecentDocs` là một khóa bên trong Windows Registry, nó theo dõi những hoạt động mở files và folders gần đây của người dùng, `RecentDocs` chứa những nhiều những subkeys gắn với những file extention, trong mỗi subkeys này nó sẽ chứa nhiều giá trị bên trong, được đánh số làm tên giá trị, và mỗi giá trị chứa những dữ liệu nhị phân, giá trị tên **MRUListEX (Most Recently Used list Extended** để quản lí thứ tự các files được mở gần đây.
+
+<img width="1183" height="429" alt="image" src="https://github.com/user-attachments/assets/b2cfffe8-62c8-432b-b140-5bf6fb157354" />
+
+
+ **MRUListEx** trong khóa registry `RecentDocs` là những giá trị nhị phân mà nó theo dõi thứ tự gần đây nhất của những file hoặc folder được người dùng mở. Nó đóng vai trò là **Index (bảng chỉ mục)** để xác định thứ tự thời gian truy cập của các mục dữ liệu trong một khóa MRU. **MRUListEx** này nó sẽ chứa những con số (IDs), các con số này thường được bắt đầu bằng tên của các Value nằm trong keys `RecentDocs`.
+
+ **MRUListEx** nó sẽ lưu các chuỗi hex này thành một cụm 4 byte một, và byte đầu của nó sẽ là tên của Value, cách nó sắp xếp thứ tự là sẽ dùng byte đầu của 4 byte đầu để xác định tên giá trị và cũng là files được mở gần đây nhất, và cứ nối tiếp như vậy 4 byte tiếp theo.
+
+ `07 00 00 00 06 00 00 00 05 00 00 00 04 00 00 00 03 00 00 00 01 00 00 00 00 00 00 00 02 00 00 00 FF FF FF FF`
+
+- Lấy ví dụ trong ảnh trên thì ta sẽ có:
+ - 4 byte đầu là:  `07 00 00 00`, ID = 7 (đây là file mới nhất)
+ - 4 byte tiếp theo: `06 00 00 00` ID = 6 (đây là file mới nhì)
+ - tương tự thế .....
+
+#### 2. Office Recent files
