@@ -26,7 +26,7 @@ Một số registry value chính là:
 |REG_SZ(chuỗi đơn)| Giá trị văn bản đơn giản, có một dòng|
 |REG_EXPAND_SZ (chuỗi mở rộng)| Giá trị chuỗi "có thể mở rộng" có thể chứa các biến môi trường, thường được lưu trữ và hiển thị trong `UTF-16LE`, thường được kết thúc bằng ký tự NUL|
 |REG_MULTI_SZ (chuỗi nhiều dòng)| Giá trị nhiều chuỗi, là danh sách có thứ tự các chuỗi không trống, thường được lưu trữ và hiển thị bằng Unicode, mỗi chuỗi được kết thúc bằng ký tự null, danh sách thường được kết thúc bằng ký tự null thứ hai|
-|REG_DWORD (số nguyên 32 bit)| Thường dùng cho các giá trị boolean (0 cho false - 1 cho true)|
+|REG_DWORD (số nguyên 32 bit)| là kiểu số nguyên 32 bit - 4 byte có thể hiễn thị ở dạng Decimal, Hexadecimal hoặc binary|
 |REG_QWORD (số nguyên 64 bit)| Một số nguyên 64 bit (có thể là endian lớn hoặc endian nhỏ hoặc không xác định|
 |REG_BINARY (dữ liệu nhị phân)| các giá trị 0 hoặc 1, dùng cho cài đặt không phải văn bản hoặc số như màu sắc, biểu tượng|
 
