@@ -386,3 +386,22 @@ Như đã nói thì `Shellbags` hoạt động dựa trên 2 thành phần `BagM
 
 - Cuối cùng là nó sẽ dùng những tùy chọn đã được set từ trước sử dụng cho thư mục `Goals` được mở
 
+
+#### 4. Open/Save and LastVisited Dialog MRU:
+
+Khi mà chúng ta thực hiện tải một file hoặc một thư mục về máy, thì lúc này trên màn hình sẽ hiện ra dialog box và sẽ hỏi chúng ta muốn lưu file hoặc folder đó ở đâu. Khi chúng ta thực hiện tải về thư mục ở vị trí cụ thể đã chọn trong máy tính, thì Windows sẽ ghi nhớ lại điều này để lần sau khi tải về 1 file nó sẽ giúp chúng ta thực hiện thao tác lưu tiện hơn.
+
+Điều này tương đương với việc chúng ta có thể tìm ra được một files được người dùng mở gần đây nhất thông qua cái cơ chế `LastVisited` này. Vị trí chúng ta có thể tìm được keys này bên trong Registry Explorer là
+
+`NTUSER.DAT\Software\Microsoft\Windows\CurrentVersion\Explorer\ComDlg32\LastVisitedPidlMRU`
+
+<img width="1181" height="131" alt="image" src="https://github.com/user-attachments/assets/e43a8e0e-bcf4-401f-bbb8-dc98d9b05916" />
+
+#### 5. Windows Explorer Address/Search Bars:
+
+**Windows Explorer Address/Search Bars** có thể cho chúng ta biết được files hoặc folder mà người dùng sử dụng gần đây bằng cách hiển thị nó bên trong **Quick Access** và lưu trữ lịch sử tìm kiếm bên trong Windows Registry, chúng ta có thể tìm được thông tin đó ở vị trí:
+
+ - `NTUSER.DAT\Software\Microsoft\Windows\CurrentVersion\Explorer\TypedPaths`  : Để theo dõi trực được trực tiếp các đường dẫn mà người dùng đã nhập vào trong thanh tìm kiếm của File Explorer.
+
+
+ - `NTUSER.DAT\Software\Microsoft\Windows\CurrentVersion\Explorer\WordWheelQuery`  : Dùng để lưu trữ những thuật ngữ mà người dùng đã tìm kiếm trong File Explorer, chứa những dữ liệu nhị phân cho từng truy vấn và sủ dược 1 giá trị `MRUListEx` để theo dõi thứ tự của từng thuật ngữ người dùng tìm. 
