@@ -401,6 +401,8 @@ Khi mà chúng ta thực hiện tải một file hoặc một thư mục về m�
 
 **Windows Explorer Address/Search Bars** có thể cho chúng ta biết được files hoặc folder mà người dùng sử dụng gần đây bằng cách hiển thị nó bên trong **Quick Access** và lưu trữ lịch sử tìm kiếm bên trong Windows Registry, chúng ta có thể tìm được thông tin đó ở vị trí:
 
+<img width="1195" height="149" alt="image" src="https://github.com/user-attachments/assets/eba549db-3a08-4758-96b5-dbe3a1b000d4" />
+
  - `NTUSER.DAT\Software\Microsoft\Windows\CurrentVersion\Explorer\TypedPaths`  : Để theo dõi trực được trực tiếp các đường dẫn mà người dùng đã nhập vào trong thanh tìm kiếm của File Explorer.
 
 
