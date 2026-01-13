@@ -461,3 +461,52 @@ Mỗi mục bên trong UserAssist được mã hóa theo thuật toán [ROT13](h
  - Khi `Focus time = 0`: Nhưng hệ thống không ghi nhận bất cứ khoảng thời gian nào file đó được "chạy thành công"
 
  - Nguyên nhân có thể nằm ở việc: file bị **crash ngay sau khi mở**, **bị chặn bởi Antivirus** hoặc là **bị chặn từ UAC** khi không cho phép quyền.
+
+
+#### 2. ShimCache (Application Compatibility Cache)
+
+**ShimCache** là một tính năng của Windows nó được thiết kế để có thể cung cấp những tương thích ngược đối với các ứng dụng hoặc phần mềm đã cũ có thể chạy trong phiên bản mới của hệ điều hành Microsoft Windows. Các thông tin mà ShimCache thu thập được, lưu trữ bên trong memory và được ghi vào disk khi mà hệ thống được khởi động lai hoặc tắt nguồn. Các mục thông thường đều sẽ được thêm vào Cache nếu nó đã được thực thi hoặc đã hiển thị bên trong File Explorer.
+
+**Location of SimCahce**
+
+ShimCache được lưu trữ bên trong SYSTEM hive:
+
+`SYSTEM\CurrentControlSet\Control\Session Manager\AppCompatCache`
+
+**Những dữ liệu được ShimCache thu thập**
+
+<img width="1570" height="608" alt="image" src="https://github.com/user-attachments/assets/ad2521e1-6066-4a42-8358-28b9d62764ca" />
+
+- **Toàn bộ đường dẫn đến với file được thực thi:** Chỉ đến nơi mà file nó nằm trên ổ đĩa.
+
+- **Last modified timestamp**: Lần chỉnh sửa timestamp của file. Nó có thể được sử dung để tạo một timeline các hoạt động khi mà file còn tồn tại trên hệ thống.
+
+- **Số các mục của Cache**:  Vị trí của Cache. Thông thường thì trong mục **AppCompatCaChe** các đường dẫn đến các file thực thi sẽ được nằm ở bên trong tab `AppCompatCache`, ở đây thì số thứ tự các số càng nhỏ thì tương đương với các file này càng gần đây được sử dụng hơn. Nó có thể giúp xác định được các files mà mình quan tâm.
+
+**ShimCache Artifacts Forensics**
+
+<img width="1858" height="956" alt="image" src="https://github.com/user-attachments/assets/0d3717b3-e488-4fbf-9a5f-16f4224ace4a" />
+
+Ở đây các mục trong artifacts này sẽ được chia theo các mức độ tùy theo vào màu của các ticks bên trái.
+
+ - **Màu xanh** tương đương với các kiến thức phổ biến của ShimCache mà nhiều người được biết.
+
+ - **Màu vàng** là những artifacts có thể dễ gây nhầm lẫn.
+
+ - **Màu đỏ** là các artifacts hầu như bị hiểu sai nhiều nhất
+
+- **1. Cung cấp sự tương thích ngược với các phần mềm cũ hơn được chạy trong phiên bản mới hơn của Windows**. Nó thực hiện việc thêm các thuộc tính cụ thể để có thể thực thi cụ thể các phần mềm hay ứng dụng trên hệ điều hành Windows.
+
+- **2. ShimCache lưu trữ các tên file, đường dẫn và timestamp của các file đã được thực thi sẽ được ghi lại**. **TimeStamp** ở đây tức là thời gian mà files đó **được chỉnh sửa gần đây nhất**, chứ không phải là thời gian mà file được attacker thêm vào hệ thống, hay là thời gian mà chương trình đó được thực thi trong hệ thống. Nó không ghi lại những thông tin trong lịch sử như số lần chạy, người dùng hoặc tham số.
+
+- **3. Windows 7/8/8.1 có một giá trị đó là *execution flag* mà có thể chỉ định nếu một chương trình đã được chạy**. Đó là trong các phiên bản cũ hơn, còn trong Windows 10 chúng ta không thể dùng **ShimCache** để có thể chứng minh rằng là một file hoặc một chương trình nó đã được thực thi trên hệ thống.
+
+- **4. Files được hiển thị trong Windows Explorer có thể quyết định được cái được thêm vào ShimCache**. Giả sử khi bạn tạo ra 10 files `.exe` được đánh số từ file `1.exe` tới `10.exe`. Bạn đặt nó vào hệ thống và điều hướng nó đến 1 thư mục. Lúc này Windows Registry chỉnh sửa kích thước thư mục tối đa là 5 files, thì lúc này ShimCache chỉ có thể chứa 5 files, nhưng nếu bạn chỉnh tối đa là 7 files, thi se có thêm 2 files được thêm vào **ShimCache**, đó gọi là cơ chế **Khoảng cách gần ở vị trí bộ đệm có thể được sử dụng để tìm các tệp khác có thể được đặt cùng vào 1 thời điểm**.
+
+- **5.  Thay đổi tên hoặc điều hướng 1 file di có thể dẫn đến no bị `re-shimmed (tái tạo lại bộ nhớ đệm)`**. Khi chúng ta thực hiện thay đổi tên của 1 file, thì chúng ta không đang chỉnh sửa vào nội dung của nó mà đang chỉnh sửa metadata của file, nên lúc này ShimCache sẽ không ghi nhận sự thay đổi, trong 1 số trường hợp file `text.txt` bị đổi tên thành `text2.txt` nếu nó có cùng 1 timestamp và chính xác thì có thể đó là cùng 1 file.
+
+- **6. ShimCache chỉ ghi nhận tối đa là 1024 entries**. Và có một sự thật ShimCache lưu trữ hoàn toàn 64 bit timestamp, tức là nếu có 2 files có cùng timestamp chính xác với mức độ chi tiết 64 bit giống nhau, thì chắc chắn đó là cùng 1 file với nhau.
+
+- **7. Hầu hết các công cụ thu thập dữ liệu từ ShimCache như [AppCompatCacheParser ](https://github.com/EricZimmerman/AppCompatCacheParser.git) sẽ output ra các dữ liệu được thêm gần đây nhất từ trên top xuống**.
+
+- **8. ShimCache chỉ được ghi vào disk khi reboot hoặc là shutdown**. 
