@@ -489,11 +489,11 @@ ShimCache được lưu trữ bên trong SYSTEM hive:
 
 Ở đây các mục trong artifacts này sẽ được chia theo các mức độ tùy theo vào màu của các ticks bên trái.
 
-   `**Màu xanh** tương đương với các kiến thức phổ biến của ShimCache mà nhiều người được biết.`
+   `Màu xanh tương đương với các kiến thức phổ biến của ShimCache mà nhiều người được biết.`
 
-   `**Màu vàng** là những artifacts có thể dễ gây nhầm lẫn.`
+   `Màu vàng là những artifacts có thể dễ gây nhầm lẫn.`
 
-   `**Màu đỏ** là các artifacts hầu như bị hiểu sai nhiều nhất`
+   `Màu đỏ là các artifacts hầu như bị hiểu sai nhiều nhất`
 
 - **1. Cung cấp sự tương thích ngược với các phần mềm cũ hơn được chạy trong phiên bản mới hơn của Windows**. Nó thực hiện việc thêm các thuộc tính cụ thể để có thể thực thi cụ thể các phần mềm hay ứng dụng trên hệ điều hành Windows.
 
