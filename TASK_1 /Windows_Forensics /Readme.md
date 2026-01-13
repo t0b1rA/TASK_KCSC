@@ -292,7 +292,7 @@ Nhưng ở đây có 1 tricks em đọc được từ blogs: https://cylab.be/bl
 
 Recent files (các file gần đây) là một tính năng của hệ điều hành windows, nó lưu trữ những file hoặc folder được sử dụng gần đây cho mỗi người dùng. Chẳng hạn như khi ta sử dụng File Explorer ở thư mục home nó sẽ list ra cho ta một danh sách những file gần đây mà chúng ta đã mở hoặc truy cập. Mỗi khi mở một files thì Windows sẽ tạo ra một file `.lnk` tương ứng và đưa nó vào mục `Recent files`.
 
-Registry key `RecentDocs` là một khóa bên trong Windows Registry, nó theo dõi những hoạt động mở files và folders gần đây của người dùng, `RecentDocs` chứa những nhiều những subkeys gắn với những file extention, trong mỗi subkeys này nó sẽ chứa nhiều giá trị bên trong, được đánh số làm tên giá trị, và mỗi giá trị chứa những dữ liệu nhị phân, giá trị tên **MRUListEX (Most Recently Used list Extended** để quản lí thứ tự các files được mở gần đây.
+Registry key `RecentDocs` là một khóa bên trong Windows Registry, nó theo dõi những hoạt động mở files và folders gần đây của người dùng, `RecentDocs` chứa những nhiều những subkeys gắn với những file extention, trong mỗi subkeys này nó sẽ chứa nhiều giá trị bên trong, được đánh số làm tên giá trị, và mỗi giá trị chứa những dữ liệu nhị phân, giá trị tên **MRUListEX (Most Recently Used list Extended)** để quản lí thứ tự các files được mở gần đây.
 
 <img width="1183" height="429" alt="image" src="https://github.com/user-attachments/assets/b2cfffe8-62c8-432b-b140-5bf6fb157354" />
 
