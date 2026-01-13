@@ -407,3 +407,57 @@ Khi mà chúng ta thực hiện tải một file hoặc một thư mục về m�
 
 
  - `NTUSER.DAT\Software\Microsoft\Windows\CurrentVersion\Explorer\WordWheelQuery`  : Dùng để lưu trữ những thuật ngữ mà người dùng đã tìm kiếm trong File Explorer, chứa những dữ liệu nhị phân cho từng truy vấn và sủ dược 1 giá trị `MRUListEx` để theo dõi thứ tự của từng thuật ngữ người dùng tìm. 
+
+
+
+### Evidence of Execution
+
+#### 1. UserAssits
+
+UserAssist nó là một đặc trưng bên trong Windows cho phép theo dõi việc sử của những file được thực thi và những chương trình hoặc ứng dụng được khởi chạy bởi người dùng. Những dữ liệu được lưu trữ bên trong Windows Registry và có thể đóng 1 vai trò quan trọng trong việc tái cấu trúc timeline hoạt động của người dùng. 
+
+Chúng ta có thể tìm được các dữ liệu được lưu bên trong 1 hive UserAssist ở vị trí:
+
+`Software\Microsoft\Windows\CurrentVersion\Explorer\UserAssist`
+
+Mỗi mục bên trong UserAssist được mã hóa theo thuật toán [ROT13](https://vi.wikipedia.org/wiki/ROT13), và [Magnet Axiom automatically](https://www.magnetforensics.com/products/magnet-axiom/) decodes những thông tin này để có thể dễ nhìn hơn. Những dữ liệu đã được giải mã bao gồm:
+
+ - Đường dẫn của Ứng dụng.
+ - Run count (Số lần chạy)
+ - Last execution timestamp.
+ - Focus time.
+ - Focus count.
+
+**Trong các phiên bản Microsoft Windows 10/11:** đã thực hiện thêm vào 1 cơ chế theo dõi chi tiết các ứng dụng **Universal Windows Platform - UWP** (là các ứng dụng chạy được nhiều nền tảng của Microsoft Store). Các nhà phân tích hiện nay không chỉ có thể xác định những ứng dụng nào được chạy, mà còn có thể xem được các hoạt động của người dùng bên trong các ứng dụng **UWP**
+
+**Có một lưu ý rất quan trọng**: 
+
+- Chúng ta đôi khi sẽ nhầm lẫn một file đã được người dùng chạy thông qua shortcut file `.lnk`. Trong thực tế **Windows** có thể tạo hoặc cập nhật thông tin của file `.lnk` ngay cả khi người dùng không chạy nó. Có thể khiến những người phân tích có thể xác định nhầm những file đã được người dùng thực thi, và mốc thời gian của các file không được thực thi trong thực tế đó dẫn đến tạo ra một timeline các hoạt động người dùng không chính xác.
+
+ - **Nguyên nhân**: là khi chúng ta mở một folder có chứa các file `lnk` hoặc nhấp chuột phải vào nó thì hệ thống của Windows cũng sẽ ghi nhận lại là người dùng có `interaction` với nó.
+
+ - **Giải pháp** trong UserAssist có một registry value là **Focus time**, giá trị này nó sẽ tính toán và ghi lại khoảng thời gian mà chương trình được user thật sự bật lên, hiện trên màn hình của người dùng , thao tác trong bao lâu.
+
+- Trong các thông tin hoạt động của người dùng được lưu bên trong **Focus time** cũng có các lưu ý khác:
+
+ - Nếu người dùng mở một ứng dụng nào đó lên và đi khỏi đó, thì lúc đó ứng dụng bị treo (AFK) vẫn được ghi nhận trong **Focus time**. Nên khi phân tích, người dùng có thể mở một ứng dụng khá lâu nhưng không có nghĩa là họ tương tác lên đó liên tục.
+
+ - Nếu người dùng click vào một file shortcut, nó sẽ vẫn được ghi lại trong registry mặc dù là có thể file bị crash hoặc bị Windows Antivirus chặn.
+
+ - Hoặc đôi khi là các tiến trình tự động của Windows, như là shell preloading hoặc khi Windows làm mới các shortcut, có thể tạo ra các bản ghi UserAssist mà không cần hoạt động người dùng.
+
+**Forensic interpretation guidance:**
+- Khi giá trị của `focus time` khác 0 thì nó là một bằng chứng cho thấy rằng chương trình đã thực sự chạy và cửa sổ chương trình đã hiện trên màn hình người dùng. Và chúng ta có thể kết hợp nó với các artifact khác để có thể xác định chính xác nhất.
+  
+ - `Amcache`: xác nhận file thực thi (.exe) có tồn tại và đã được hệ thống ghi nhận.
+
+ - `Prefetch`: xác nhận thời gian lần cuối và tần suất mà chương trình được chạy.
+    
+ - `SRUM`: cung cấp chính giá trị `focus time` và lượng dữ liệu mạng cùng với/CPU đã tiêu thụ.
+- Khi `Focus time` = 0 và `Run count` != 0 có thể là 1 trường hợp khá nhạy cảm và dễ gây hiểu lầm.
+  
+ - Khi `Run count > 0` cho thấy rằng người dùng đã cố gắng mở nó file này lên, hoặc đã có những double click mở nó lên khiến cho số lần chạy trong `UserAssist` hoặc `Prefetch` tăng lên.
+
+ - Khi `Focus time = 0`: Nhưng hệ thống không ghi nhận bất cứ khoảng thời gian nào file đó được "chạy thành công"
+
+ - Nguyên nhân có thể nằm ở việc: file bị **crash ngay sau khi mở**, **bị chặn bởi Antivirus** hoặc là **bị chặn từ UAC** khi không cho phép quyền.
