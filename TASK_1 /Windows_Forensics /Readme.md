@@ -541,7 +541,7 @@ ShimCache được lưu trữ bên trong SYSTEM hive:
 
 Một trong những tính năng mạnh mẽ và cực kì quan trọng trong quá trình thu thập dữ liệu đó là khả năng ghi lại các mã băm SHA-1 của `AmCache` của các tệp thực thi (executables) và thư viện liên kết động (DLLs). Mã băm là một chuỗi duy nhất, từ việc dùng các thuật toán để băm ra các giá trị từ nội dung của một file, thuật toán SHA-1 tạo ra 1 chuỗi giá trị băm dài 160-bit được dùng để xác minh tính toàn vẹn của file đó. Mã hash SHA-1 được thu thập bởi AmCache có thể được dùng:
 
- - **Xác minh tính toàn vẹn của tệp**: Mã băm SHA-1 cho phép các nhà phân tích thực hiện so sánh mã băm được trong AmCache và mã băm của chính file nằm trên disk, để xác minh tính toàn vẹn của file đó.
+ - **Xác minh tính toàn vẹn của tệp**: Mã băm SHA-1 cho phép các nhà phân tích thực hiện so sánh **mã băm được thu thập trong AmCache** và **mã băm của chính file nằm trên disk**, để xác minh tính toàn vẹn của file đó.
 
  - **Nhận diện các biến thể mã độc**: Các author của 1 con malware họ thường tạo ra các phiên bản hơi khác nhau của nó, để tránh sự phát hiện của chương trình AntiVirus của Windows:
    
