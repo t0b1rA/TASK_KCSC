@@ -513,3 +513,12 @@ ShimCache được lưu trữ bên trong SYSTEM hive:
 
 
 #### 3. AmCache (Application Activity Cache)
+
+`Amcache` là một phần của Windows **Application Compatibility Framework (AppCompat)** giúp đảm bảo rằng các chương trình được chạy mượt mà hơn trên hệ thống bởi ghi lại các thông tin về chương trình thực thi .` AmCache` là một artifact chứa và theo dõi các metadata liên quan đến các chương trình được thực thi và được tải xuống trên Windows, đường dẫn tới tệp thực thi, tên tệp, và mã hash của file execution, last modification time. Thực tế thì `ShimCache` và `AmCache` nó có thể được xem là khá tương đồng với nhau về mặt dữ liệu nó lưu trữ: **Các tệp đã được thực thi và tải xuống trên hệ thống**, nhưng đối với `AmCache` thì nó sẽ chứa những dữ liệu chi tiết hơn, về siêu dữ liệu thời gian tệp thực thi, thời gian tệp được tải xuống,...
+
+**Location of AmCache**
+
+
+
+
+
