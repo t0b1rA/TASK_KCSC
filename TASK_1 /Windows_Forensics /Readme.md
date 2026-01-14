@@ -518,6 +518,38 @@ ShimCache được lưu trữ bên trong SYSTEM hive:
 
 **Location of AmCache**
 
+`C:\Windows\AppCompat\Programs\Amcache.hve`
+
+**The Amcahce artifacts**:
+
+- AmCache là một trong những tính năng vô cùng hữu ích của Windows và chứa chi tiết các artifact có sẳn cho các nhà điều tra trên hệ thống Windows hiện nay. Bên trong nó chứa rất nhiều thông tin về các tệp thực thi và các file Dlls đã tương tác với hệ thống, cùng với việc ghi lại những keys siêu dữ liệu có thể giúp cho các nhà phân tích tạo ra được **timeline** truy xuất ra hoạt động của người dùng. Khác với ShimCache chỉ thu thập các metadata khi một hệ thống đã tắt nguồn, đối với AmCache thu thập dữ liệu trực tiếp khi một file đã được thực thi trên hệ thống, giúp cho AmCache trở nên đáng tin cậy hơn. Các artifact quan trọng:
+
+ - Lưu trữ siêu dữ liệu toàn diện cho `PE - Portable Excecution là một chuẩn format cho thực thi như DLLs, drivers, ".exe" và một số các chương trình khác` files như là file size, SHA1, và header PE info như CompanyName, FileVersion,...
+  
+ - SHA1 hash của file đó, để đảm bảo tính duy nhất của file, khi ta nghi ngờ nó là một file độc hại, ta có thể kiểm tra những file khác có cùng hash với nó không, nếu có nó có thể được đổi tên để che dấu đi sự chú ý của người điều tra. Hoặc có thể kiểm tra 1 file ngay cả khi nó đã bị xóa.
+
+ - Thời gian lần đầu tiên mà file được thực thi có thể xác định thông qua registry value sau `The Last Write time` được lưu trữ bên trong `AmCache.hve\Root\File{Volume GUID}\key`
+
+ - Bằng cách duyệt qua các `Amcache.hve\Root\File{Volume GUID}\key` trong các công cụ như Registry Explorer, chúng ta có thể xác định được ổ đĩa nơi mà file được thực thi từ việc sử dụng Volume GUID được tìm thấy bên dưới `System\MountedDevices`
+
+**Ý nghĩa của các mã hash SHA-1 trong Forensics**
+
+Một trong những tính năng mạnh mẽ và cực kì quan trọng trong quá trình thu thập dữ liệu đó là khả năng ghi lại các mã băm SHA-1 của `AmCache` của các tệp thực thi (executables) và thư viện liên kết động (DLLs). Mã băm là một chuỗi duy nhất, từ việc dùng các thuật toán để băm ra các giá trị từ nôi dung của một file, thuật toán SHA-1 tạo ra 1 chuỗi giá trị băm dài 160-bit được dùng để xác minh tính toàn vẹn của file đó. Mã hash SHA-1 được thu thập bởi AmCache có thể được dùng:
+
+ - **Xác minh tính toàn vẹn của tệp**: Mã băm SHA-1 cho phép các nhà phân tích thực hiện so sánh mã băm được trong AmCache và mã băm của chính file nằm trên disk, để xác minh tính toàn vẹn của file đó.
+
+ - **Nhận diện các biến thể mã độc**: Các author của 1 con malware họ thường tạo ra các phiên bản hơi khác nhau của nó, để tránh sự phát hiện của chương trình AntiVirus của Windows:
+   
+  - Các phiên bản của những con malware có thể khác nhau, kích thước khác nhau, tên khác nhau, thậm chí nội dung trong mã nguồn có thể sửa đổi nhỏ trong mã nguồn, nhưng khi tạo một mã hash thì chúng chỉ có 1 giá trị duy nhất từ nội dung bên trong, có thể xác định rằng chúng là 1.
+
+  - Chúng ta có thể lấy mã hash SHA-1 từ AmCache và tìm kiếm trên các nguồn hoặc cơ sở dữ liệu như (VirusTotal) để xác định chính xác biến thể mã độc và mức độ nghiêm trọng.
+
+ - **Đối chiếu chéo giữa các hệ thống**: 1 cuộc tấn công có thể xảy ra trong nhiều hệ thống, việc sử dụng mã hash SHA-1 từ AmCache, giúp những người điều tra có thể tìm kiếm cho các hệ thống khác mà có thể đã gặp phải cùng 1 tệp, mặc dù tên đã được thay đổi hoặc nằm trong 1 thư mục khác. Tệp hash cho phép đội điều tra có thể theo dõi các luồng của 1 malware hoặc phần mềm trái phép trong hệ thống.
+
+ - **Corroborating evidence**: Là phần quan trọng nhất chính là sự liên kết các artifact với nhau tạo ra một bằng chứng xác thực hoàn toàn. Lấy ví dụ nếu tìm được 1 tệp bên trong Prefetch biết được thời gian thực thi của file trong đây, Event logs hoặc trong network traffic và mã hash được tìm thấy cũng match với với cái được ghi lại trong AmCache, điều đó chứng minh rằng file đã được thực thi tại cùng thời điểm nó được ghi lại trong cùng các artifact khác. The multi-artifact corroboration tạo nên 1 **timeline** và cung cấp bức tranh toàn cảnh cho người điều tra
+   
+
+
 
 
 
