@@ -481,7 +481,7 @@ ShimCache được lưu trữ bên trong SYSTEM hive:
 
 - **Last modified timestamp**: Lần chỉnh sửa timestamp của file. Nó có thể được sử dung để tạo một timeline các hoạt động khi mà file còn tồn tại trên hệ thống.
 
-- **Số các mục của Cache**:  Vị trí của Cache. Thông thường thì trong mục **AppCompatCaChe** các đường dẫn đến các file thực thi sẽ được nằm ở bên trong tab `AppCompatCache`, ở đây thì số thứ tự các số càng nhỏ thì tương đương với các file này càng gần đây được sử dụng hơn. Nó có thể giúp xác định được các files mà mình quan tâm.
+- **Số các mục của Cache**:  Vị trí của Cache. Thông thường thì trong mục **AppCompatCache** các đường dẫn đến các file thực thi sẽ được nằm ở bên trong tab `AppCompatCache`, ở đây thì số thứ tự các số càng nhỏ thì tương đương với các file này càng gần đây được sử dụng hơn. Nó có thể giúp xác định được các files mà mình quan tâm.
 
 **ShimCache Artifacts Forensics**
 
@@ -527,7 +527,7 @@ ShimCache được lưu trữ bên trong SYSTEM hive:
 
 <img width="1600" height="358" alt="image" src="https://github.com/user-attachments/assets/a3800afe-7635-42bc-b0a9-0372b0587524" />
 
-- AmCache là một trong những tính năng vô cùng hữu ích của Windows và chứa chi tiết các artifact có sẳn cho các nhà điều tra trên hệ thống Windows hiện nay. Bên trong nó chứa rất nhiều thông tin về các tệp thực thi và các file Dlls đã tương tác với hệ thống, cùng với việc ghi lại những keys siêu dữ liệu có thể giúp cho các nhà phân tích tạo ra được **timeline** truy xuất ra hoạt động của người dùng. Khác với ShimCache chỉ thu thập các metadata khi một hệ thống đã tắt nguồn, đối với AmCache thu thập dữ liệu trực tiếp khi một file đã được thực thi trên hệ thống, giúp cho AmCache trở nên đáng tin cậy hơn. Các artifact quan trọng:
+- AmCache là một trong những tính năng vô cùng hữu ích của Windows và chứa chi tiết các artifact có sẳn cho các nhà điều tra trên hệ thống Windows hiện nay. Bên trong nó chứa rất nhiều thông tin siêu dữ liệu về các tệp thực thi và các file Dlls đã tương tác với hệ thống, cùng với việc ghi lại những keys siêu dữ liệu có thể giúp cho các nhà phân tích tạo ra được **timeline** truy xuất ra hoạt động của người dùng. Khác với ShimCache chỉ thu thập các metadata khi một hệ thống đã tắt nguồn, đối với AmCache thu thập dữ liệu trực tiếp khi một file đã được thực thi trên hệ thống, giúp cho AmCache trở nên đáng tin cậy hơn. Các artifact quan trọng:
 
  - Lưu trữ siêu dữ liệu toàn diện cho `PE - Portable Excecution là một chuẩn format cho thực thi như DLLs, drivers, ".exe" và một số các chương trình khác` files như là file size, SHA1, và header PE info như CompanyName, FileVersion,...
   
