@@ -510,3 +510,6 @@ ShimCache được lưu trữ bên trong SYSTEM hive:
 - **7. Hầu hết các công cụ thu thập dữ liệu từ ShimCache như [AppCompatCacheParser ](https://github.com/EricZimmerman/AppCompatCacheParser.git) sẽ output ra các dữ liệu được thêm gần đây nhất từ trên top xuống**.
 
 - **8. ShimCache chỉ được ghi vào disk khi reboot hoặc là shutdown**. 
+
+
+#### 3. AmCache (Application Activity Cache)
