@@ -456,9 +456,9 @@ Mỗi mục bên trong UserAssist được mã hóa theo thuật toán [ROT13](h
  - `SRUM`: cung cấp chính giá trị `focus time` và lượng dữ liệu mạng cùng với/CPU đã tiêu thụ.
 - Khi `Focus time` = 0 và `Run count` != 0 có thể là 1 trường hợp khá nhạy cảm và dễ gây hiểu lầm.
   
- - Khi `Run count > 0` cho thấy rằng người dùng đã cố gắng mở nó file này lên, hoặc đã có những double click mở nó lên khiến cho số lần chạy trong `UserAssist` hoặc `Prefetch` tăng lên.
+  - Khi `Run count > 0` cho thấy rằng người dùng đã cố gắng mở nó file này lên, hoặc đã có những double click mở nó lên khiến cho số lần chạy trong `UserAssist` hoặc `Prefetch` tăng lên.
 
- - Khi `Focus time = 0`: Nhưng hệ thống không ghi nhận bất cứ khoảng thời gian nào file đó được "chạy thành công"
+  - Khi `Focus time = 0`: Nhưng hệ thống không ghi nhận bất cứ khoảng thời gian nào file đó được "chạy thành công"
 
  - Nguyên nhân có thể nằm ở việc: file bị **crash ngay sau khi mở**, **bị chặn bởi Antivirus** hoặc là **bị chặn từ UAC** khi không cho phép quyền.
 
