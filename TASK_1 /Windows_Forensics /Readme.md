@@ -541,17 +541,16 @@ ShimCache được lưu trữ bên trong SYSTEM hive:
 
 Một trong những tính năng mạnh mẽ và cực kì quan trọng trong quá trình thu thập dữ liệu đó là khả năng ghi lại các mã băm SHA-1 của `AmCache` của các tệp thực thi (executables) và thư viện liên kết động (DLLs). Mã băm là một chuỗi duy nhất, từ việc dùng các thuật toán để băm ra các giá trị từ nội dung của một file, thuật toán SHA-1 tạo ra 1 chuỗi giá trị băm dài 160-bit được dùng để xác minh tính toàn vẹn của file đó. Mã hash SHA-1 được thu thập bởi AmCache có thể được dùng:
 
- - **Xác minh tính toàn vẹn của tệp**: Mã băm SHA-1 cho phép các nhà phân tích thực hiện so sánh **mã băm được thu thập trong AmCache** và **mã băm của chính file nằm trên disk**, để xác minh tính toàn vẹn của file đó.
+- **Xác minh tính toàn vẹn của tệp**: Mã băm SHA-1 cho phép các nhà phân tích thực hiện so sánh **mã băm được thu thập trong AmCache** và **mã băm của chính file nằm trên disk**, để xác minh tính toàn vẹn của file đó.
 
- - **Nhận diện các biến thể mã độc**: Các author của 1 con malware họ thường tạo ra các phiên bản hơi khác nhau của nó, để tránh sự phát hiện của chương trình AntiVirus của Windows:
-   
+- **Nhận diện các biến thể mã độc**: Các author của 1 con malware họ thường tạo ra các phiên bản hơi khác nhau của nó, để tránh sự phát hiện của chương trình AntiVirus của Windows:
+  
   - Các phiên bản của những con malware có thể khác nhau, kích thước khác nhau, tên khác nhau, thậm chí nội dung trong mã nguồn có thể sửa đổi nhỏ trong mã nguồn, nhưng khi tạo một mã hash thì chúng chỉ có 1 giá trị duy nhất từ nội dung bên trong, có thể xác định rằng chúng là 1.
-
   - Chúng ta có thể lấy mã hash SHA-1 từ AmCache và tìm kiếm trên các nguồn hoặc cơ sở dữ liệu như (VirusTotal) để xác định chính xác biến thể mã độc và mức độ nghiêm trọng.
 
- - **Đối chiếu chéo giữa các hệ thống**: 1 cuộc tấn công có thể xảy ra trong nhiều hệ thống, việc sử dụng mã hash SHA-1 từ AmCache, giúp những người điều tra có thể tìm kiếm cho các hệ thống khác mà có thể đã gặp phải cùng 1 tệp, mặc dù tên đã được thay đổi hoặc nằm trong 1 thư mục khác. Tệp hash cho phép đội điều tra có thể theo dõi các luồng của 1 malware hoặc phần mềm trái phép trong hệ thống.
+- **Đối chiếu chéo giữa các hệ thống**: 1 cuộc tấn công có thể xảy ra trong nhiều hệ thống, việc sử dụng mã hash SHA-1 từ AmCache, giúp những người điều tra có thể tìm kiếm cho các hệ thống khác mà có thể đã gặp phải cùng 1 tệp, mặc dù tên đã được thay đổi hoặc nằm trong 1 thư mục khác. Tệp hash cho phép đội điều tra có thể theo dõi các luồng của 1 malware hoặc phần mềm trái phép trong hệ thống.
 
- - **Corroborating evidence**: Là phần quan trọng nhất chính là sự liên kết các artifact với nhau tạo ra một bằng chứng xác thực hoàn toàn. Lấy ví dụ nếu tìm được 1 tệp bên trong Prefetch biết được thời gian thực thi của file trong đây, Event logs hoặc trong network traffic và mã hash được tìm thấy cũng match với với cái được ghi lại trong AmCache, điều đó chứng minh rằng file đã được thực thi tại cùng thời điểm nó được ghi lại trong cùng các artifact khác. The multi-artifact corroboration tạo nên 1 **timeline** và cung cấp bức tranh toàn cảnh cho người điều tra
+- **Corroborating evidence**: Là phần quan trọng nhất chính là sự liên kết các artifact với nhau tạo ra một bằng chứng xác thực hoàn toàn. Lấy ví dụ nếu tìm được 1 tệp bên trong Prefetch biết được thời gian thực thi của file trong đây, Event logs hoặc trong network traffic và mã hash được tìm thấy cũng match với với cái được ghi lại trong AmCache, điều đó chứng minh rằng file đã được thực thi tại cùng thời điểm nó được ghi lại trong cùng các artifact khác. The multi-artifact corroboration tạo nên 1 **timeline** và cung cấp bức tranh toàn cảnh cho người điều tra
    
 
 
