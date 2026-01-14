@@ -520,9 +520,12 @@ ShimCache được lưu trữ bên trong SYSTEM hive:
 
 `C:\Windows\AppCompat\Programs\Amcache.hve`
 
-<img width="1600" height="358" alt="image" src="https://github.com/user-attachments/assets/a3800afe-7635-42bc-b0a9-0372b0587524" />
+<img width="2164" height="1036" alt="image" src="https://github.com/user-attachments/assets/59c63770-31b0-4fce-8dca-67ca87dc1f91" />
+
 
 **The Amcahce artifacts**:
+
+<img width="1600" height="358" alt="image" src="https://github.com/user-attachments/assets/a3800afe-7635-42bc-b0a9-0372b0587524" />
 
 - AmCache là một trong những tính năng vô cùng hữu ích của Windows và chứa chi tiết các artifact có sẳn cho các nhà điều tra trên hệ thống Windows hiện nay. Bên trong nó chứa rất nhiều thông tin về các tệp thực thi và các file Dlls đã tương tác với hệ thống, cùng với việc ghi lại những keys siêu dữ liệu có thể giúp cho các nhà phân tích tạo ra được **timeline** truy xuất ra hoạt động của người dùng. Khác với ShimCache chỉ thu thập các metadata khi một hệ thống đã tắt nguồn, đối với AmCache thu thập dữ liệu trực tiếp khi một file đã được thực thi trên hệ thống, giúp cho AmCache trở nên đáng tin cậy hơn. Các artifact quan trọng:
 
