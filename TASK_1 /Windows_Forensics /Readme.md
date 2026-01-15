@@ -623,3 +623,87 @@ Mỗi BAM/DAM đều chứa:
   - **Timestamp có thể hơi khác** - thời gian thực thi trong `BAM` có thể sẽ hơi khác vài phút với thực tế trong chương trình khởi chạy.
  
   The **BAM & DAM** registry key cung cấp một cách nhanh chóng để theo dõi các ứng dụng đã được thực thi gần đây trên hệ thống Windows. Mặc dù mỗi mục chỉ tồn tại 7 ngày trước khi nó bị xóa vì file không hoạt động, nhưng nó vẫn sẽ cung cấp một cái nhìn sâu sắc và một dấu vết về các hoạt động người dùng, malware infections(nhiễm) và Forensics Investigation.
+
+
+
+### External Devices / USB device forensics
+
+Khi thực hiện phân tích pháp y một hệ thống hoặc 1 máy, log các thiết bị USB là một nguồn chứng cứ rất có giá trị. Khi thực hiện giám định, chúng ta cũng cần xác định xem nếu có thiết bị rời nào kết nối vào hệ thống thì USB artifact cung cấp dấu vết cho nhiều hoạt động.
+
+**USB artifact** sẽ cung cấp cho chúng ta:
+
+- Thiết bị nào đã được kết nối vào máy.
+
+- Số serial của thiết bị đó, tên thiết bị và nhà sản xuất của nó
+
+- Timestamp mà nó được kết nối và ngắt kết nổi vào máy tính, tần suất và số lần usb đó được sử dụng trong hệ thống.
+
+- Cung cấp GUID của thiết bị để thực hiện dùng trong so sánh với các artifact khác.
+
+-  Đặc biệt nó còn cung cấp cho chúng ta loại thiệt bị external được kết nối vào máy tính là gì (HID usb, storage usb,..)
+
+  Giả sử, nếu như những thông tin nhạy cảm của một công ty đã bị tuồng ra ngoài từ 1 hệ thống, USB device logs có thể tiết lộ sự hiện diện của 1 thiết bị external storage có thể đã sao chép toàn bộ dữ liệu đó. Hoặc như một con malware đã được nhận biết thông qua một thiết bị USB, thì log của thiết bị kết nối vào hệ thống đó có thể giúp truy vết ra cái nguồn sự lây nhiễm.
+
+  **Location of USB**
+
+- `HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Enum\USB` keys lưu trữ tất cả các thông tin về các thiết bị được kết nối qua cổng usb bao gồm: chuột, bàn phím, dây sạc.
+   - Quản lí drivers và thông tin nhận dạng phần cứng cấp thấp.
+     
+   - `VID_xxxx&PID_xxxx`(Vendor ID và Product ID)
+     
+   - Một số các nội dung:
+     - `Device Paramaters`: Chứa các thông tin cấu hình drivers cơ bản
+    
+     - `Service`: Tên dịch vụ drivers. (ví dụ `usbccgp`: cho thiết bị tổng hợp, `hidusb`: cho bàn phím, chuột,.., `usbtor` cho thiết bị lưu trữ)
+    
+     - `ClassGUID`: Định danh loại thiết bị (GUID của Human Interface Device - HID,...)
+    
+     - `ContainerID`: ID duy nhất để nhóm các chức năng của cùng một thiết bị vật lý lại với nhau.
+    
+- `SYSTEM\CurrentControlSet\Enum\USBSTOR` keys này chứa các thông tin cho các thiết bị thuộc [Mass Storage Device (MSC](https://thietbinas.com/mass-storage-la-gi). Chứa các thông tin chi tiết hơ để hệ điều hành nhận biết thiết bị đó là một ổ đĩa.
+  - Quản lý các thiết bị lưu trữ (USB Flash, ổ cứng ngoài).
+ 
+  - `Disk&Ven_xxxx&Prod_xxxx`
+ 
+  - Một số nội dung bên trong:
+    - `FriendlyName`: tên dễ đọc cho thiết bị đó.
+   
+    - `SerialNumber`: số sê ri duy nhất của thiết bị.
+   
+    - `ParentIdPrefix`: Một chuỗi ID được dùng để liên kết với các artifact khác trong registry.
+   
+**First/Last time connect/disconnect**
+
+`SYSTEM\CurrentControlSet\Enum\USBSTOR\Ven_Prod_Version\USBSerial#\Properties\{83da6326-97a6-4088-9453-a19231573b29}\####` với mỗi thiết bị usb sẽ chứa subkey `xxxx` chứa thời gian khác nhau
+
+|Value | information |
+| --- | --- |
+| 0064 | first connected |
+| 0066 | last connected |
+| 0067 | last time removed |
+
+<img width="915" height="119" alt="image" src="https://github.com/user-attachments/assets/44ead5bb-b5ad-4fe3-a7ef-bd6c8711ec2c" />
+
+Lần đầu tiên kết nối: 2022-06-15 05:44:05
+
+<img width="909" height="111" alt="image" src="https://github.com/user-attachments/assets/af8873bd-8246-488f-a979-ba02d4fb7d5a" />
+
+Lần cuối cùng kết nối:  2022-06-16 05:44:05
+
+<img width="818" height="127" alt="image" src="https://github.com/user-attachments/assets/4755fbb7-5952-4275-9513-44f6f6080a20" />
+
+Lần cuối cùng bị rút ra:  2022-06-16 05-49-02
+
+**USB device Volume Name**
+
+Bên trong keys `MountDevices`, bạn có thể lấy được tên ổ đĩa đó:
+
+`HKLM\SYSTEM\MountedDevices`:
+
+<img width="1389" height="275" alt="image" src="https://github.com/user-attachments/assets/fffe323a-315b-4ea0-b52b-3067b430ff05" />
+
+Chúng ta có thể dựa vào đây để biết được thiết bị usb đó liên kết với ổ đĩa nào, và tìm được serial number, (ví dụ: thiết bị `usb`: USB key JetFlash Transcend 16GDB&Rev_100 & `số seri`:"37DXYQWK7W33HB5M")
+
+`HKLM\SOFTWARE\Microsoft\Windows Portable Devices\Devices` Vào keys này để xác định chắc chắn lại thiết bị và ổ đĩa.
+
+<img width="1604" height="621" alt="image" src="https://github.com/user-attachments/assets/e5f814b5-cd73-47f2-b7dc-6c30e78fd980" />
