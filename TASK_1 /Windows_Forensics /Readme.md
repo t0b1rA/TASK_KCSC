@@ -706,3 +706,36 @@ Chúng ta có thể dựa vào đây để biết được thiết bị usb đó
 `HKLM\SOFTWARE\Microsoft\Windows Portable Devices\Devices` Vào keys này để xác định chắc chắn lại thiết bị và ổ đĩa.
 
 <img width="1604" height="621" alt="image" src="https://github.com/user-attachments/assets/e5f814b5-cd73-47f2-b7dc-6c30e78fd980" />
+
+
+# Common Artifact in Windows 
+
+## Event logs
+
+Trong hệ điều hành Windows, the event log lưu trữ rất nhiều những thông tin hữu ích về system, users, activity và application. Mục đích chính của event logs đó chính là cung cấp các thông tin cho người dùng quản trị và người dùng về thông báo các lỗi hệ thống, các đăng nhập thành công, thất bại, thiết bị nào được kết nối, users nào đã đăng nhập,...  Cấu trúc của event logs gồm 5 cấp độ (infomation, warning, error, critical and success/failure audit). Trong phân tích pháp y, thì các nguồn thông tin này có giá trị vô cùng lớn, trong bối cảnh của một cuộc tấn công.
+
+### Location/Type of event logs
+
+`C:\Windows\​System32\​winevt\​Logs` . Các file `evtx` là các file chứa các logs. Trong Windows thì có các logs chính là:
+  1. **System logs**: theo dõi và ghi lại các sự kiện liên quan đến các phân đoạn của hệ điều hành. Nó bao gồm các thông tin về thay đổi phần cứng, device drivers, thay đổi hệ thống và các hoạt động khác liên quan đến hệ thống và thiết bị.
+
+  2. **Security logs**: Ghi lại các sự kiện kết nối tới việc đăng nhập và đăng xuất trên thiết bị. Chính sách kiểm toán của hệ thống cho sự kiện cụ thể. Logs security là 1 nguồn rất có giá trị cho những người phân tích điều tra về các hoạt động trái phép trong hệ thống.
+
+  3. **Application logs**: Ghi lại các sự kiện liên quan đến các ứng dụng được tải xuống trên hệ thống, các thông tin về các ứng dụng bị lỗi, các lỗi trước được ghi nhận trước khi sập hệ thống.
+
+  4. **Directory Service Events**: Các thay đổi trong Active Directory và các hoạt động được ghi lại trong logs, chủ yếu nằm trên Domain controller.
+
+  5. **DNS Event Logs**: DNS servers sử dụng logs này để ghi lại các sự kiện trong miền.
+
+Thêm vào đó trong một số logs sẽ có thêm mức độ của từng sự kiện, đi sâu vào đó:
+
+|Event type | Level ID  | Description |
+| --- | --- | --- |
+| Error | 40 |  Sự kiện chỉ ra có vấn đề như là mất dữ liệu hoặc mất đi các chức năng. Ví dụ: Một dịch vụ thất bại để loads sau khi khởi động xong |
+| Warning | 50 | Sự kiện cung cấp các vấn đề có thể xảy ra, mặc dù nó không response là 1 lỗi thực tế, warning chỉ ra có 1 thành phần hoặc ứng dụng không ở trạng thái lý tưởng và có thể sẽ xảy ra lỗi nghiêm trọng ở hành động tiếp theo |
+| Infomation | 80 | Sự kiện được mô tả là đã hoạt động thành công của một ứng dụng, drivers hoặc dịch vụ. |
+| Critical | 30 | Sự kiện đòi hỏi cần tập chung vào nó ngay lập tức của quản trị viên hệ thống. Chúng thường ảnh hưởng đến toàn bộ hệ thống hoặc ứng dụng. Cũng có thể là chỉ ra một ứng dụng hoặc hệ thống đã không còn phản hồi.
+| Success Audit | not | Sự kiện ghi lại các kiểm tra bảo mật được truy cập đã thành công. Ví dụ như khi một người dùng đăng nhập thành công.|
+| Failure Audit | not | Sự kiện ghi lại các kiểm tra bảo mật được truy cập đã không thành công.|
+
+### Event id
