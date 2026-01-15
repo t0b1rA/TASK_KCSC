@@ -559,6 +559,67 @@ Một trong những tính năng mạnh mẽ và cực kì quan trọng trong qu�
 
 #### 4. BAM/DAM
 
+**Background Activity Monitor (BAM)** sẽ giữ chức năng là theo dõi các hoạt động trong nền của ứng dụng người dùng đang sử dụng hoặc của máy và **Desktop Activity Monitor (DAM)** là một phần của Microsoft Windows giúp tối ưu hóa năng lượng tiêu thụ cho thiết bị.
+
+ - **Background Activity Monitor (BAM)**:
+   - lưu trữ đường dẫn đầy đủ đến file được thực thi và thời gian lần gần nhất mà nó được thực thi.
+   - Được thiết kế để chạy các hoạt động nền giúp cải thiện tuổi thọ pin và giúp hệ thống hoạt động hiệu quả hơn.
+   - Các mục được lưu trong **BAM** sẽ bị xóa sau 7 ngày mà chương trinh đó không hoạt động
 
 
+ - **Desktop Activity Monitor (DAM)**:
+   - Có các chức năng tương tự như BAM nhưng tập chung vào ứng dụng desktop/
+   - Chủ yếu được tìm thấy ở các thiết bị sử dụng `Modern Standby`, một tính năng cho phép quản lí năng lượng giúp hạn chế các hoạt động của các ứng dụng trên desktop khi màn hình tắt.
+   - Ít xuất hiện trên các PC desktop nhưng vẫn xuất hiện ở vài hệ thống.
 
+
+**Location of BAM/DAM**
+
+BAM/DAM được lưu trữ bên trong mỗi user:
+
+`SYSTEM\CurrentControlSet\Services\bam\UserSettings\{SID}`
+
+`SYSTEM\CurrentControlSet\Services\dam\UserSettings\{SID}`
+
+<img width="1295" height="350" alt="image" src="https://github.com/user-attachments/assets/853cfc0b-64a1-4a8f-be6a-fa1b88a3b480" />
+
+Mỗi dữ liệu của người dùng được lưu trữ bên trong một **Security Identifer (SID)** duy nhất, nên chúng ta cần phải xác định đúng người dùng cần điều tra, có thể sử dụng lệnh `whoami /user` để xác định SID của người dùng hiện tại đang sử dụng máy và `wmic useraccount get name,sid` để liệt kê tất cả người dùng gồm tên, quyền, sid:
+
+<img width="1200" height="600" alt="image" src="https://github.com/user-attachments/assets/31f18cdf-24d5-435f-8554-4d5616515fa5" />
+
+
+<img width="1200" height="600" alt="image" src="https://github.com/user-attachments/assets/552c64ff-050e-4656-bb1f-483ea16d89a5" />
+
+
+**BAM/DAM lưu trữ***
+
+Mỗi BAM/DAM đều chứa:
+
+- **Đường dân đầy đủ của tệp thực thi** - nơi chính xác mà chương trình đã được chạy.
+
+- **Thời gian cuối cùng mà tệp thực thi** - A 64-bit Windows FILETIME timestamp, hiển thị khi mà chương trình chạy lần cuối.
+
+- **Dữ liệu cụ thể - người dùng** - Mỗi mục trong BAM/DAM đều được gắn với người dùng cá nhân, xác định bởi SID của họ
+
+**BAM/DAM aritfact in forensics**
+
+- Mỗi khi người dùng xóa một ứng dụng, BAM có thể vẫn chứa bản ghi của ứng dụng được thực thi trong khoảng 7 ngày.
+
+- Nếu malware đã được chạy trên hệ thống, **BAM/DAM** có thể cung cấp các bằng chứng về **khi nào** nó được thực thi và thực thi **ở đâu**.
+
+- Những người phân tích có thể xác định được chương trình nào mà người dùng nào tương tác với, khi họ sử dụng và liệu có ứng dụng nào trái phép được đã thực thi.
+
+- BAM timestamp có thể thay đổi trong vài phút, dùng dữ liệu BAM tham chiếu chéo `(cross-reference)` BAM với:
+  - `Prefetch`: khi nào file được thực thi và số lần nó được thực thi.
+  - `UserAssist`: Nó được chạy trong bao lâu, và số lần nó được mở.
+  - `ShimCache & AmCache`: mã hash SHA-1 của file thực thi, thời gian lần đầu file được thực thi, lần gần nhất mà file được thi được liệt kê trong Registry Explorer.
+ 
+  **Các hạn chế của BAM/DAM**
+
+  - **Các mục trong BAM/DAM không lưu trữ vĩnh viễn** - nó sẽ bị xóa sau 7 ngày kể từ lần gần nhất nó hoạt động.
+
+  - Nó **không ghi lại các thực thi của USB/Network** - Các chương trình được thực thi từ các `removable drivers` hoặc `network share` sẽ không được logged trong BAM.
+ 
+  - **Timestamp có thể hơi khác** - thời gian thực thi trong `BAM` có thể sẽ hơi khác vài phút với thực tế trong chương trình khởi chạy.
+ 
+  The **BAM & DAM** registry key cung cấp một cách nhanh chóng để theo dõi các ứng dụng đã được thực thi gần đây trên hệ thống Windows. Mặc dù mỗi mục chỉ tồn tại 7 ngày trước khi nó bị xóa vì file không hoạt động, nhưng nó vẫn sẽ cung cấp một cái nhìn sâu sắc và một dấu vết về các hoạt động người dùng, malware infections(nhiễm) và Forensics Investigation.
