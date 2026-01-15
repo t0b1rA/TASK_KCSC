@@ -36,7 +36,7 @@ Một số registry value chính là:
 
 #### Sự khác biệt của Registry_hive và Registry_key nằm ở khái niệm của nó Registry_hive là thư mục đầu tiên của registry và nó có chứa registry_key, còn registry_key nó nằm bên trong registry_hive, chứa các registry_subkey và các giá trị registry.
 
-Hầu hết các têp hỗ trợ cho hives đều nằm trong thư mục `%SYSTEMROOT%\System32\Config`. Những files này được cập nhật mỗi lần người dùng đăng nhập vào. Phần mở rộng tên tệp của các tệp trong các thư mục này hoặc trong một số trường hợp bị thiếu phần mở rộng, cho biết loại dữ liệu mà chúng chứa. Dưới đây là một bảng các phần mở rộng và dữ liệu mà chúng chứa:
+Hầu hết các tệp hỗ trợ cho hives đều nằm trong thư mục `%SYSTEMROOT%\System32\Config`. Những files này được cập nhật mỗi lần người dùng đăng nhập vào. Phần mở rộng tên tệp của các tệp trong các thư mục này hoặc trong một số trường hợp bị thiếu phần mở rộng, cho biết loại dữ liệu mà chúng chứa. Dưới đây là một bảng các phần mở rộng và dữ liệu mà chúng chứa:
 
 |Phần mở rộng | Mô tả |
 |--- | ---|
