@@ -47,6 +47,10 @@ Hầu hết các tệp hỗ trợ cho hives đều nằm trong thư mục `%SYST
 
 
 ### 3. Accessing registry hives offilne
+
+<img width="838" height="484" alt="image" src="https://github.com/user-attachments/assets/3f9ca032-a160-4952-90c5-623daa8eb3b5" />
+
+
 Vị trí của các keys trong một máy Windows:
 - **DEFAULT** (mounted on `HKEY_USERS\DEFAULT`)
 - **SAM** (mounted on `HKEY_LOCAL_MACHINE\SAM`)
@@ -533,7 +537,7 @@ ShimCache được lưu trữ bên trong SYSTEM hive:
   
  - SHA1 hash của file đó, để đảm bảo tính duy nhất của file, khi ta nghi ngờ nó là một file độc hại, ta có thể kiểm tra những file khác có cùng hash với nó không, nếu có nó có thể được đổi tên để che dấu đi sự chú ý của người điều tra. Hoặc có thể kiểm tra 1 file ngay cả khi nó đã bị xóa.
 
- - Thời gian lần đầu tiên mà file được thực thi có thể xác định thông qua registry value sau `The Last Write time` được lưu trữ bên trong `AmCache.hve\Root\File{Volume GUID}\key`
+ - Thời gian lần đầu tiên mà file được thực thi có thể xác định thông qua registry value sau `The Last Write time` được lưu trữ bên trong `AmCache.hve\Root\File{Volume GUID}\key`, đồng thời cũng lưu trữ một giá trị `File Creation Time`, "thời gian tạo file" trên ổ cứng trong một số trường hợp cũng có thể coi là thời gian file dược tải xuống hoàn tất. Còn thực tế thì AmCache không lưu dữ liệu trực tiếp về thời gian file được tải xuống và thực thi, nó chỉ lưu trữ gián tiếp qua 2 giá trị `The last write time` và `File Creation Time`
 
  - Bằng cách duyệt qua các `Amcache.hve\Root\File{Volume GUID}\key` trong các công cụ như Registry Explorer, chúng ta có thể xác định được ổ đĩa nơi mà file được thực thi từ việc sử dụng Volume GUID được tìm thấy bên dưới `System\MountedDevices`
 
@@ -553,7 +557,7 @@ Một trong những tính năng mạnh mẽ và cực kì quan trọng trong qu�
 - **Corroborating evidence**: Là phần quan trọng nhất chính là sự liên kết các artifact với nhau tạo ra một bằng chứng xác thực hoàn toàn. Lấy ví dụ nếu tìm được 1 tệp bên trong Prefetch biết được thời gian thực thi của file trong đây, Event logs hoặc trong network traffic và mã hash được tìm thấy cũng match với với cái được ghi lại trong AmCache, điều đó chứng minh rằng file đã được thực thi tại cùng thời điểm nó được ghi lại trong cùng các artifact khác. The multi-artifact corroboration tạo nên 1 **timeline** và cung cấp bức tranh toàn cảnh cho người điều tra
    
 
-
+#### 4. BAM/DAM
 
 
 
