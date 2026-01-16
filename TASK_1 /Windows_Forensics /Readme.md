@@ -756,3 +756,88 @@ Trong phân tích các log trong event log, nó sẽ có các event id dùng đ�
 | 4722 | Một tài khoảng đươc bật thành công |
 | 4723 | Một nổ lực để thay đổi mật khẩu 1 tài khoảng |
 | 4724 | Một nổ lực để reset mật khẩu |
+
+### Prefetch
+
+Prefetch là 1 file được tạo ra từ Windows mỗi khi một ứng dụng được chạy từ 1 vị trị cụ thể trong máy lần đầu tiên, nó giúp Windows có thể tối ưu hiệu năng khi startup và hiệu suất của hệ thống. Prefetch là một artifact rất giá trị cho quá trình phân tích ứng dụng, nó cung cấp các dữ liệu về lịch sử những ứng dụng đã được chạy trên hệ thống.
+
+**Location of Prefetch**
+
+`C:\Windows\Prefetch\*.pf`
+
+<img width="1344" height="812" alt="image" src="https://github.com/user-attachments/assets/068e6cdd-6252-4ece-8eef-f2669f4fb273" />
+
+**Artifacts of Prefetch file**
+
+Prefetch chứa những dữ liệu như:
+ - **File name**: tên của file đã thực thi.
+
+ - **Timestamp**: Các thông tin về thời gian mà file được thực thi.
+
+ - **Run count**: Số lần mà tệp thực thi đã được chạy.
+
+ - **File and Directory path**: Chứa các chi tiết về file và đường dẫn đã được truy cập tới tệp thực thi.
+
+Khi một chương trình đã bị xóa,`prefetch file` có thể vẫn sẽ tồn tại trên hệ thống để cung cấp các chứng cứ về sự thực thi đó.
+
+`Prefetch file` chứa các chi tiết về số lần mà file được chạy được chạy, chi tiết về ổ đĩa, cả về các thông tin chi tiết của timestamp khi mà lần đầu và lần cuối nó được chạy. Trong phiên bản Windows 8+, thì trong prefetch chứa tối đa 8 timestamp khi ứng dụng được chạy lần đầu tiên.
+
+Vị trí của nơi một file được thực thi cũng rất quan trọng. Khi 1 tiến trình của hệ thống Windows hợp lệ nó sẽ chạy trong các nơi như `%SYSTEM32%` hoặc là `C:\Program File`. Trong quá trình tấn công malware, kẻ tấn công nếu không leo quyền thì sẽ không thể đặt nó trong các thư mục hệ thống đó được, nên sẽ đặt ở các file `temp` tạm, đây là manh mối rất quan trọng để nhận biết 1 file đáng nghi đặt tên giả dạng thành file chương trình hệ thống. Trong `Prefetch` nó có lưu đường dẫn của mỗi nơi file được thực thi.
+
+
+<img width="1006" height="493" alt="image" src="https://github.com/user-attachments/assets/c5903883-0a24-4b8a-9f2e-a6be9fc9212c" />
+
+**Tools for Prefetch**
+
+Eric Zicmerman có phát triển 1 công cụ `Prefetch Parse` [PECmd.exe](https://download.ericzimmermanstools.com/net9/PECmd.zip) để có thể phân tích các `Prefetch` file và trích xuất dữ liệu.
+```
+t0b1ra@tobiraNduy:/mnt/d/Eric-Zic_tools/PECmd$ ./PECmd.exe -h
+Description:
+  PECmd version 1.5.1.0
+
+  Author: Eric Zimmerman (saericzimmerman@gmail.com)
+  https://github.com/EricZimmerman/PECmd
+
+  Examples: PECmd.exe -f "C:\Temp\CALC.EXE-3FBEF7FD.pf"
+            PECmd.exe -f "C:\Temp\CALC.EXE-3FBEF7FD.pf" --json "D:\jsonOutput"
+            PECmd.exe -d "C:\Temp" -k "system32, fonts"
+            PECmd.exe -d "C:\Temp" --csv "c:\temp" --csvf foo.csv --json c:\temp\json
+            PECmd.exe -d "C:\Windows\Prefetch"
+
+            Short options (single letter) are prefixed with a single dash. Long commands are prefixed with two dashes
+
+Usage:
+  PECmd [options]
+
+Options:
+  -f <f>           File to process. Either this or -d is required
+  -d <d>           Directory to recursively process. Either this or -f is required
+  -k <k>           Comma separated list of keywords to highlight in output. By default, 'temp' and 'tmp' are
+                   highlighted. Any additional keywords will be added to these
+  -o <o>           When specified, save prefetch file bytes to the given path. Useful to look at decompressed Win10
+                   files
+  -q               Do not dump full details about each file processed. Speeds up processing when using --json or --csv
+                   [default: False]
+  --json <json>    Directory to save JSON formatted results to. Be sure to include the full path in double quotes
+  --jsonf <jsonf>  File name to save JSON formatted results to. When present, overrides default name
+  --csv <csv>      Directory to save CSV formatted results to. Be sure to include the full path in double quotes
+  --csvf <csvf>    File name to save CSV formatted results to. When present, overrides default name
+  --html <html>    Directory to save xhtml formatted results to. Be sure to include the full path in double quotes
+  --dt <dt>        The custom date/time format to use when displaying time stamps. See https://goo.gl/CNVq0k for
+                   options [default: yyyy-MM-dd HH:mm:ss]
+  --mp             When true, display higher precision for timestamps [default: False]
+  --vss            Process all Volume Shadow Copies that exist on drive specified by -f or -d [default: False]
+  --dedupe         Deduplicate -f or -d & VSCs based on SHA-1. First file found wins [default: False]
+  --debug          Show debug information during processing [default: False]
+  --trace          Show trace information during processing [default: False]
+  --version        Show version information
+  -?, -h, --help   Show help and usage information
+
+```
+Để phân tích 1 file `.pf` và nó vào 1 file `.csv` ta dùng lệnh:
+
+`PECmd.exe -f <path-to-Prefetch-files> --csv <path-to-save-csv>`
+
+Để phân tích cả 1 folder chứa các file `.pf` thì ta dùng lệnh:
+
+`PECmd.exe -d <path-to-Prefetch-directory> --csv <path-to-save-csv>`
