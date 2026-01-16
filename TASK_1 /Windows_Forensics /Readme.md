@@ -739,3 +739,22 @@ Thêm vào đó trong một số logs sẽ có thêm mức độ của từng s�
 | Failure Audit | not | Sự kiện ghi lại các kiểm tra bảo mật được truy cập đã không thành công.|
 
 ### Event id
+Trong phân tích các log trong event log, nó sẽ có các event id dùng để mô tả rằng sự kiện đó biểu thị cho hành động như thế nào trong hệ thống. Nó giúp cho chúng ta xác định và lọc ra các sự kiện đơn giản hơn.
+
+| Event ID | Event Description |
+| --- | --- |
+| 1006 | Antimalware engine tìm thấy malware hoặc có thêm [Pottentially Unwanted Program (PUP)](https://www.kaspersky.com/resource-center/definitions/what-is-pup-pua)||
+| 1007 | Nền tảng antimalware thực hiện hành động bảo vệ hệ thống từ malware hoặc potentially unwanted program (PUP) |
+| 1015 | Nền tảng antimalware đã phát hiện ra các hành vi đáng nghi |
+| 1016 | Nền tảng antimalware xác định được malware hoặc **PUP** |
+| 1017 | Nền tảng antimalware thực hiện hành động bảo vệ hệ thống từ malware hoặc **PUP**|
+| 1100 | Dịch vụ ghi nhật kí sự kiện đã ngừng hoạt động | 
+| 1102 | Nhật kí kiểm tra đã bị xóa |
+| 4624 | Một tài khoảng vừa được đăng nhập thành công |
+| 4625 | Một tài khoảng đã đăng nhập thất bại |
+| 4634 | Một tài khoảng vừa đăng xuất |
+| 4648 | Một người dùng đang cố gắng chạy 1 ứng dụng chương trình với đặc quyền "RUNAS" |
+| 4620 | Một tài khoảng người dùng vừa được tạo thành công |
+| 4722 | Một tài khoảng đươc bật thành công |
+| 4723 | Một nổ lực để thay đổi mật khẩu 1 tài khoảng |
+| 4724 | Một nổ lực để reset mật khẩu |
