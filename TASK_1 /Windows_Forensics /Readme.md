@@ -1,3 +1,5 @@
+<img width="838" height="484" alt="image" src="https://github.com/user-attachments/assets/3f9ca032-a160-4952-90c5-623daa8eb3b5" />
+
 # Windows Registry 
 Windows Registry là một cơ sở dữ liệu phân tầng lưu trữ những cài đặt cấp thấp của hệ điều hành Microsoft Windows và các ứng dụng chọn sử dụng registry, được sử dụng từ phiên bản Windows 95 cho tới hiện nay.Trước phiên bản Windows 95, thì Windows sẽ lưu trữ các thông tin cấu hình bên trong các file (`.ini`).The registry hỗ trợ truy xuất tốc độ cao cho nhân hệ điều hành(Kernel), các thiết bị drivers, dịch vụ, Security Account Manager (SAM), và ứng dụng người dùng. Windows Registry hay là The registry chứa những thông tin, cài đặt, tùy chọn và các giá trị khác của chương trình và phần cứng được tải xuống của tất cả các phiên bản của Microsoft Windows. Ví dụ: một chương trình được tải xuống thì nó sẽ tạo ra một key mới và cái khóa này sẽ chứa các thông tin về vị trí lưu trữ của chương trình này, phiên bản của chương trình, cách mà chương trình hoạt động,.. tất cả sẽ nằm trong Windows Registry.
 
@@ -47,8 +49,6 @@ Hầu hết các tệp hỗ trợ cho hives đều nằm trong thư mục `%SYST
 
 
 ### 3. Accessing registry hives offilne
-
-<img width="838" height="484" alt="image" src="https://github.com/user-attachments/assets/3f9ca032-a160-4952-90c5-623daa8eb3b5" />
 
 
 Vị trí của các keys trong một máy Windows:
