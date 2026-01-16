@@ -1,5 +1,3 @@
-<img width="838" height="484" alt="image" src="https://github.com/user-attachments/assets/3f9ca032-a160-4952-90c5-623daa8eb3b5" />
-
 # Windows Registry 
 Windows Registry là một cơ sở dữ liệu phân tầng lưu trữ những cài đặt cấp thấp của hệ điều hành Microsoft Windows và các ứng dụng chọn sử dụng registry, được sử dụng từ phiên bản Windows 95 cho tới hiện nay.Trước phiên bản Windows 95, thì Windows sẽ lưu trữ các thông tin cấu hình bên trong các file (`.ini`).The registry hỗ trợ truy xuất tốc độ cao cho nhân hệ điều hành(Kernel), các thiết bị drivers, dịch vụ, Security Account Manager (SAM), và ứng dụng người dùng. Windows Registry hay là The registry chứa những thông tin, cài đặt, tùy chọn và các giá trị khác của chương trình và phần cứng được tải xuống của tất cả các phiên bản của Microsoft Windows. Ví dụ: một chương trình được tải xuống thì nó sẽ tạo ra một key mới và cái khóa này sẽ chứa các thông tin về vị trí lưu trữ của chương trình này, phiên bản của chương trình, cách mà chương trình hoạt động,.. tất cả sẽ nằm trong Windows Registry.
 
@@ -85,15 +83,12 @@ Dưới đây là một bảng danh sách các hives và các file hỗ trợ:
 |HKEY_LOCAL_MACHINE\System | System, System.alt, System.log, System.sav |
 |HKEY_USERS\.DEFAULT | 	Default, Default.log, Default.sav |
 
-
 ---
 
-# Commond Artifact in Windows Forensics
+# Common Artifact in Windows Registry
 
-## WindowsForensics1 - Tryhackme
-
-### System information and system account 
-#### 1. OS version, Hostname
+## System information and system account 
+### 1. OS version, Hostname
 Là một giá trị registry chứa những thông tin cấu hình chi tiết về hệ điều hành hiện tại và phần mềm tải xuống. OS version nằm ở `SOFTWARE\Microsoft\Windows NT\CurrentVersion`
 
 <img width="1041" height="539" alt="image" src="https://github.com/user-attachments/assets/0404f210-c563-4ff8-9f16-8a0ea2b81be4" />
@@ -102,7 +97,7 @@ Là một giá trị registry chứa những thông tin cấu hình chi tiết v
 
 <img width="1025" height="127" alt="image" src="https://github.com/user-attachments/assets/2fce7ebd-20b9-4191-9d5e-4268beb7234f" />
 
-#### 2. Current Control Set
+### 2. Current Control Set
 **Current Control set** không phải là một nơi lưu trữ dữ liệu vật lý, mà nó là một Symbolic link (liên kết tượng trưng) hoặc cũng có thể coi là một con trỏ, nó sẽ trỏ hệ thống hoặc ứng dụng đến các khóa Control Set.
 
 **Control Sets** nó là một hives chứa những dữ liệu cấu hình của một máy được sử dụng để điều khiển hệ thống trong quá trình khởi động. Phổ biến, ta có hai Control Sets là ControlSet001 thường được trỏ đến từ con trỏ Current Control Set khi một máy được khởi động thành công, và ControlSet002 sẽ được trỏ đến khi lần khởi động đầu tiên gặp sự cố trục trặc thì ControlSet002 thường sẽ giữ Cấu hình `Last Know good` - một bản sao lưu cài đặt khởi động thành công gần đây nhất, nếu cài đặt hiện tại không thành công.
@@ -129,12 +124,12 @@ Các giá trị registry chính:
 - `Failed`: Giá trị DWORD cho biết ControlSet nào đã thất bại trong lần khởi động gần nhất, để Windows có thể quay trở lại cái cấu hình khởi động thành công gần nhất.
 - `Last Know Good`: Giá trị DWORD cho biết số thứ tự của Control Set tốt nhất được biết đến (thường là cấu hình thành công cuối cùng).
 
-#### 3. Timezone information
+### 3. Timezone information
 Việc nắm được các khung thời gian trong máy sẽ giúp cho chúng ta hiểu được trình tự các sự kiện xảy ra. Timezone có thể được tìm thấy tại: `SYSTEM\CurrentControlSet\Control\TimeZoneInformation`
 
 <img width="1181" height="287" alt="image" src="https://github.com/user-attachments/assets/206afe8d-d88a-4b9c-a4f0-6a48fc5aa801" />
 
-#### 4. Network Interface and Past Network
+### 4. Network Interface and Past Network
 **Network Interface**: Mỗi giao diện sẽ đại diện cho một subkey định danh(GUID) duy nhất, chứa các giá trị liên quan đến cấu hình TCP/IP của giao diện, khóa này cung cấp các key information chính cho network interface artifact:
 
 - IP cấu hình cho từng giao diện.
@@ -220,7 +215,7 @@ Các giá trị registry quan trọng trong các subkey:
 - Cổng mặc định của địa chỉ MAC.
 
 
-#### 4. AutoStart Programs
+### 5. AutoStart Programs
 
 **Autostart** là thuật ngữ đề cập tới những phần mềm có khả năng tự động chạy mà không cần người dùng phải chạy nó. Phần mềm này bao gồm các drivers và các dịch vụ bắt đầu khi một máy được khởi động lên. Các ứng dụng, tiện ích, hoặc thậm chí là các lệnh shell được khởi chạy khi người dùng đăng nhập vào, các browser extention tự động tải khi người dùng mở một ứng dụng trình duyệt chẳng hạn như thế.
 
@@ -260,7 +255,7 @@ Trước khi đi sâu vào các khóa registry startup thì em đã tìm hiểu 
 `SOFTWARE\Microsoft\Windows\CurrentVersion\Run` : Khóa này sẽ giống như khóa trong Hive NTUSER.DAT nó sẽ thực thi chương trình hoặc tập lệnh mỗi khi máy được đăng nhập hoặc khởi động nhưng nó sẽ áp dụng với tất cả các user đăng nhập vào máy chứ không phải mỗi user như hive NTUSER.DAT. 
 
 
-#### 5. SAM hive and user Infomation
+### 6. SAM hive and user Infomation
 
 SAM hive trong Windows registry là một phần cơ sở dữ liệu quan trọng nó lưu trữ những thông tin tài khoản của người dùng và mật khẩu (mã băm), nó cần thiết cho quá trình xác thực.
 
@@ -290,9 +285,9 @@ Nhưng ở đây có 1 tricks em đọc được từ blogs: https://cylab.be/bl
 
 
 
-### Usage or knowledge of files/folders
+## Usage or knowledge of files/folders
 
-#### 1. Recent files
+### 1. Recent files
 
 Recent files (các file gần đây) là một tính năng của hệ điều hành windows, nó lưu trữ những file hoặc folder được sử dụng gần đây cho mỗi người dùng. Chẳng hạn như khi ta sử dụng File Explorer ở thư mục home nó sẽ list ra cho ta một danh sách những file gần đây mà chúng ta đã mở hoặc truy cập. Mỗi khi mở một files thì Windows sẽ tạo ra một file `.lnk` tương ứng và đưa nó vào mục `Recent files`.
 
@@ -312,7 +307,7 @@ Registry key `RecentDocs` là một khóa bên trong Windows Registry, nó theo 
  - 4 byte tiếp theo: `06 00 00 00` ID = 6 (đây là file mới nhì)
  - tương tự thế .....
 
-#### 2. Office Recent files
+### 2. Office Recent files
 
 Tương tự như `Recent Docs` thì `Office Recent Files` cũng sẽ theo dõi các files cụ thể nằm trong Microsoft Office được mở gần đâ từ người dùng. 
 
@@ -326,7 +321,7 @@ Với mỗi version thì những file lưu trữ bên trong chương trình củ
 
 - User MRU: chứa các tài khoản mà người dùng sử dụng để đăng nhập gần đây.
 
-#### 3. ShellBags
+### 3. ShellBags
 
 Shellbags được đề cập đến là một tập hợp những registry key và các key dữ liệu của Windows, dùng để duy trì việc ghi nhớ những tùy chọn hiển thị File Explorer và Windows Open/Save dialogs của người dùng. Giúp hệ điều hành Windows ghi nhớ và khôi phục cách hiển thị các thư mục của người dùng theo tùy chọn của họ. Ví dụ như:
  - Windows location/size.
@@ -391,7 +386,7 @@ Như đã nói thì `Shellbags` hoạt động dựa trên 2 thành phần `BagM
 - Cuối cùng là nó sẽ dùng những tùy chọn đã được set từ trước sử dụng cho thư mục `Goals` được mở
 
 
-#### 4. Open/Save and LastVisited Dialog MRU:
+### 4. Open/Save and LastVisited Dialog MRU:
 
 Khi mà chúng ta thực hiện tải một file hoặc một thư mục về máy, thì lúc này trên màn hình sẽ hiện ra dialog box và sẽ hỏi chúng ta muốn lưu file hoặc folder đó ở đâu. Khi chúng ta thực hiện tải về thư mục ở vị trí cụ thể đã chọn trong máy tính, thì Windows sẽ ghi nhớ lại điều này để lần sau khi tải về 1 file nó sẽ giúp chúng ta thực hiện thao tác lưu tiện hơn.
 
@@ -414,9 +409,9 @@ Khi mà chúng ta thực hiện tải một file hoặc một thư mục về m�
 
 
 
-### Evidence of Execution
+## Evidence of Execution
 
-#### 1. UserAssits
+### 1. UserAssits
 
 UserAssist nó là một đặc trưng bên trong Windows cho phép theo dõi việc sử của những file được thực thi và những chương trình hoặc ứng dụng được khởi chạy bởi người dùng. Những dữ liệu được lưu trữ bên trong Windows Registry và có thể đóng 1 vai trò quan trọng trong việc tái cấu trúc timeline hoạt động của người dùng. 
 
@@ -467,7 +462,7 @@ Mỗi mục bên trong UserAssist được mã hóa theo thuật toán [ROT13](h
  - Nguyên nhân có thể nằm ở việc: file bị **crash ngay sau khi mở**, **bị chặn bởi Antivirus** hoặc là **bị chặn từ UAC** khi không cho phép quyền.
 
 
-#### 2. ShimCache (Application Compatibility Cache)
+### 2. ShimCache (Application Compatibility Cache)
 
 **ShimCache** là một tính năng của Windows nó được thiết kế để có thể cung cấp những tương thích ngược đối với các ứng dụng hoặc phần mềm đã cũ có thể chạy trong phiên bản mới của hệ điều hành Microsoft Windows. Các thông tin mà ShimCache thu thập được, lưu trữ bên trong memory và được ghi vào disk khi mà hệ thống được khởi động lai hoặc tắt nguồn. Các mục thông thường đều sẽ được thêm vào Cache nếu nó đã được thực thi hoặc đã hiển thị bên trong File Explorer.
 
@@ -516,7 +511,7 @@ ShimCache được lưu trữ bên trong SYSTEM hive:
 - **8. ShimCache chỉ được ghi vào disk khi reboot hoặc là shutdown**. 
 
 
-#### 3. AmCache (Application Activity Cache)
+### 3. AmCache (Application Activity Cache)
 
 `Amcache` là một phần của Windows **Application Compatibility Framework (AppCompat)** giúp đảm bảo rằng các chương trình được chạy mượt mà hơn trên hệ thống bởi ghi lại các thông tin về chương trình thực thi .` AmCache` là một artifact chứa và theo dõi các metadata liên quan đến các chương trình được thực thi và được tải xuống trên Windows, đường dẫn tới tệp thực thi, tên tệp, và mã hash của file execution, last modification time. Thực tế thì `ShimCache` và `AmCache` nó có thể được xem là khá tương đồng với nhau về mặt dữ liệu nó lưu trữ: **Các tệp đã được thực thi và tải xuống trên hệ thống**, nhưng đối với `AmCache` thì nó sẽ chứa những dữ liệu chi tiết hơn, về siêu dữ liệu thời gian tệp thực thi, thời gian tệp được tải xuống,...
 
@@ -556,7 +551,7 @@ Một trong những tính năng mạnh mẽ và cực kì quan trọng trong qu�
 - **Corroborating evidence**: Là phần quan trọng nhất chính là sự liên kết các artifact với nhau tạo ra một bằng chứng xác thực hoàn toàn. Lấy ví dụ nếu tìm được 1 tệp bên trong Prefetch biết được thời gian thực thi của file trong đây, Event logs hoặc trong network traffic và mã hash được tìm thấy cũng match với với cái được ghi lại trong AmCache, điều đó chứng minh rằng file đã được thực thi tại cùng thời điểm nó được ghi lại trong cùng các artifact khác. The multi-artifact corroboration tạo nên 1 **timeline** và cung cấp bức tranh toàn cảnh cho người điều tra
    
 
-#### 4. BAM/DAM
+### 4. BAM/DAM
 
 **Background Activity Monitor (BAM)** sẽ giữ chức năng là theo dõi các hoạt động trong nền của ứng dụng người dùng đang sử dụng hoặc của máy và **Desktop Activity Monitor (DAM)** là một phần của Microsoft Windows giúp tối ưu hóa năng lượng tiêu thụ cho thiết bị.
 
@@ -625,7 +620,7 @@ Mỗi BAM/DAM đều chứa:
 
 
 
-### External Devices / USB device forensics
+## External Devices / USB device forensics
 
 Khi thực hiện phân tích pháp y một hệ thống hoặc 1 máy, log các thiết bị USB là một nguồn chứng cứ rất có giá trị. Khi thực hiện giám định, chúng ta cũng cần xác định xem nếu có thiết bị rời nào kết nối vào hệ thống thì USB artifact cung cấp dấu vết cho nhiều hoạt động.
 
@@ -707,8 +702,11 @@ Chúng ta có thể dựa vào đây để biết được thiết bị usb đó
 
 <img width="1604" height="621" alt="image" src="https://github.com/user-attachments/assets/e5f814b5-cd73-47f2-b7dc-6c30e78fd980" />
 
+---
 
 # Common Artifact in Windows 
+
+<img width="838" height="484" alt="image" src="https://github.com/user-attachments/assets/3f9ca032-a160-4952-90c5-623daa8eb3b5" />
 
 ## Event logs
 
