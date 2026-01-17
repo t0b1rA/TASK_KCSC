@@ -7,6 +7,8 @@
 
 **Advanced System Settings** là một bảng điều khiển trong Windows cung cấp các tùy chọn sâu để tinh chỉnh hiệu suất và hoạt động của hệ điều hành, đồng thời cho phép người dùng tùy chỉnh các tính năng phức tạp như quản lý bộ nhớ ảo, hiệu ứng hình ảnh, thiết lập khởi động và quản lý bộ xử lý.
 
+<img width="798" height="918" alt="image" src="https://github.com/user-attachments/assets/cfe8cadd-297c-4e03-9ed2-26e3a216efbb" />
+
 **What is the name of the service that lists Systems Internals as the manufacturer?**
 
 <img width="636" height="432" alt="image" src="https://github.com/user-attachments/assets/42402dc7-a7e3-40c2-97ee-b2c0c3491287" />
