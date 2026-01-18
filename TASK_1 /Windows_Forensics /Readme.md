@@ -841,3 +841,150 @@ Options:
 Để phân tích cả 1 folder chứa các file `.pf` thì ta dùng lệnh:
 
 `PECmd.exe -d <path-to-Prefetch-directory> --csv <path-to-save-csv>`
+
+### File LNK
+
+Files `.lnk` là artifact khá quan trọng trong quá trình giám định pháp y đối với một hệ thống. Shortcut files liên kết với các ứng dụng hoặc các file thông thường được tìm thấy ở mục desktop của user hoặc trên toàn hệ thống, thường là các file có phần extention file là `.lnk`. File `.LNK` có thể được tạo bởi người dùng và cũng có thể được và cũng có thể được tạo tự động từ hệ điều hành Microsoft Windows. Mỗi file có những giá trị riêng và ý nghĩa của nó. Windows tạo ra các file `.lnk` này mục đích là cho sự tiện lợi người dùng có thể truy cập nhanh chóng tới các file mình thường xuyên sử dụng, và cũng là một artifact giá trị trong quá trình phân tích các hoạt động đáng nghi.
+
+**Location of LNK file**
+
+- `C:\Users\%USERNAME%\Recent`
+
+- `C:\Users\%USERNAME%\AppData\Roaming\Microsoft\Windows\Recent`
+
+- `C:\Users\%USERNAME%\Roaming\Office\Recent`
+
+- `C:\Users\%USERNAME%\Desktop`
+
+
+**LNK artifact in Windows Forensics**
+
+LNK file giúp cho các nhà phân tích có thể tìm kiếm các file không còn tồn tại trên hệ thống mà họ đang kiểm tra. Các tệp có thể đã bị xóa, hay được lưu trữ trên USB hoặc mạng chia sẽ , mặc dù tệp có thể không còn tồn tại ở đó nhưng tệp gốc của nó vẫn tồn tại và trỏ đến file `.lnk` đó, và nó thường sẽ được lưu trữ bên trong thư mục `%AppData%\Microsoft\Windows\Recent`, giúp cho nó trở thành 1 bằng chứng cho thấy rằng file này đã từng tồn tại trên hệ thống, mặc dù đã bị xóa, di chuyển đi. 
+
+LNK file thông thường chứa các thông tin:
+
+- Đường dẫn gốc của một file.
+
+- Timestamp của file gốc, không chỉ là khoảng thời gian cho file `.lnk` mà còn là mốc thời gian cho file gốc của nó, như thời gian file được tạo, thời gian sửa đổi, thời gian truy cập cuối cùng nằm trong siêu dữ liệu của chính nó.
+> Ở đây có 1 cách gọi cho 3 mốc thời gian chính thường rất quan trọng là `Created time (C)`, `Modified time (M)`, `Accessed time (A)` có thể nói tắt là `MAC time` 
+
+- Thông tin về ổ đĩa và hệ thống nơi mà file `lnk` đó được lưu trữ. Nó bao gồm tên ổ đĩa, số sê-ri, tên NetBIOS, và địa chỉ MAC của host nơi mà liên kết được lưu trữ.
+
+- Thông tin chi tiết về mạng nếu nó được lưu trữ bên trên `network share` hoặc `remote computer`.
+
+- Kích thước của file được liên kết.
+
+**Analyzed lnk artifact**
+
+Có một công cụ dùng để phân tích các file `lnk` được phát triển bởi **Eric Zimmerman** gọi là [LECmd](https://github.com/EricZimmerman/LECmd). Chúng ta có thể sử dụng công cụ này để trích xuất đường dẫn đầy đủ của file gốc, MAC time, các metadata khác của file lnk gốc và file lnk.
+
+```
+t0b1ra@tobiraNduy:/mnt/d/Eric-Zic_tools/LECmd$ ./LECmd.exe -h
+Description:
+  LECmd version 1.5.1.0
+
+  Author: Eric Zimmerman (saericzimmerman@gmail.com)
+  https://github.com/EricZimmerman/LECmd
+
+  Examples: LECmd.exe -f "C:\Temp\foobar.lnk"
+            LECmd.exe -f "C:\Temp\somelink.lnk" --json "D:\jsonOutput" --pretty
+            LECmd.exe -d "C:\Temp" --csv "c:\temp" --html c:\temp --xml c:\temp\xml -q
+            LECmd.exe -f "C:\Temp\some other link.lnk" --nid --neb
+            LECmd.exe -d "C:\Temp" --all
+
+            Short options (single letter) are prefixed with a single dash. Long commands are prefixed with two dashes
+
+
+Usage:
+  LECmd [options]
+
+Options:
+  -f <f>          File to process. Either this or -d is required
+  -d <d>          Directory to recursively process. Either this or -f is required
+  -r              Only process lnk files pointing to removable drives [default: False]
+  -q              Only show the filename being processed vs all output. Useful to speed up exporting to json and/or csv
+                  [default: False]
+  --all           Process all files in directory vs. only files matching *.lnk [default: False]
+  --csv <csv>     Directory to save CSV formatted results to. Be sure to include the full path in double quotes
+  --csvf <csvf>   File name to save CSV formatted results to. When present, overrides default name
+  --xml <xml>     Directory to save XML formatted results to. Be sure to include the full path in double quotes
+  --html <html>   Directory to save xhtml formatted results to. Be sure to include the full path in double quotes
+  --json <json>   Directory to save json representation to. Use --pretty for a more human readable layout
+  --pretty        When exporting to json, use a more human readable layout [default: False]
+  --nid           Suppress Target ID list details from being displayed [default: False]
+  --neb           Suppress Extra blocks information from being displayed [default: False]
+  --dt <dt>       The custom date/time format to use when displaying time stamps. See https://goo.gl/CNVq0k for options
+                  [default: yyyy-MM-dd HH:mm:ss]
+  --mp            Display higher precision for time stamps [default: False]
+  --debug         Show debug information during processing [default: False]
+  --trace         Show trace information during processing [default: False]
+  --cp <cp>       Code page to parse strings [default: 1252]
+  --version       Show version information
+  -?, -h, --help  Show help and usage information
+
+
+t0b1ra@tobiraNduy:/mnt/d/Eric-Zic_tools/LECmd$
+```
+Để phân tích 1 file `.lnk` và nó vào 1 file `.csv` ta dùng lệnh:
+
+`LECmd.exe -f <path-to-Prefetch-files> --csv <path-to-save-csv>`
+
+Để phân tích cả 1 folder chứa các file `.lnk` thì ta dùng lệnh:
+
+`LECmd.exe -d <path-to-Prefetch-directory> --csv <path-to-save-csv>`
+
+### OST/PST file
+
+Cả 2 đều là định dạng tệp tin cơ sở dữ liệu được Microsoft Outlook sử dụng để lưu trữ email, danh bạ, lịch, tác vụ và các dữ liệu khác cụ bộ trên máy tính. Tuy nhiên , mục đích sử dụng và cơ chế hoạt động nó khác nhau.
+
+|       | OST (.ost) Office Storage Table | PST (.pst) Personal Storage Table |
+| ---   | --- | --- |
+| Chức năng | Được sử dụng cho các tài khoảng `IMAP`, `Microsoft 365`. Nó đóng vai trò là một bản sao lưu bộ đệm (cache) cục bộ của dữ liệu trên server | Được sử dụng chủ yếu cho các tài khoản email POP3( nơi email được tải về máy tính cục bộ và bị xóa hoàn toàn khỏi server) hoặc dùng để lưu trữ và sao lưu dữ liệu thủ công |
+| Đặc điểm | Tệp OST được gắn chặt với cấu hình phần cứng và tài khoản Outlook cụ thể đã tạo ra nó. Không thể sao chép tệp `.ost` từ máy này sang máy khác. | Tệp `.pst` hoạt động độc lập Có thể sao chép từ máy này sang máy khác và mở được bằng Outlook |
+| Vị trí lưu trữ | `C:\Users\[User]\AppData\Local\Microsoft\Outlook` | `C:\Users\[User]\Documents\Outlook Files` - `C:\Users\[User]\AppData\Local\Microsoft\Outlook`|
+
+**Artifact OST/PST file**
+
+- **Email header**
+  - Xác định địa chỉ IP nguồn (Sender IP) để truy vết.
+ 
+  - Phân tích lộ trình email (Received lines) để phát hiện giả mạo (spoofing).
+ 
+  - Thông tin về Message ID và thời gian gửi/nhận thực tế.
+ 
+- **Nội dung Email**: Chứa nội dung của email.
+
+- **Tệp đính kèm**: Có thể là đường dẫn, chứa mã độc cho các cuộc tấn công phishing, các tệp có thể chạy ngay sau khi mở (.docm, .xlsm, .pptm).
+
+- **Metadata**:
+  - `Timestamp`: thời gian được tạo, thời gian sửa đổi, thời gian gửi/nhận.
+ 
+  - `Status`: Trạng thái của file.
+ 
+ Công cụ thường sử dụng để xem các file `.ost` hoặc `.pst`: [Kernel OST Viewer](https://www.nucleustechnologies.com/ost-viewer.html).
+
+ <img width="3623" height="2023" alt="image" src="https://github.com/user-attachments/assets/fe023557-065f-4e5c-9bc1-153e5b72ed0f" />
+
+ ### EML file
+
+ File EML thực chất là một file văn bản thuần túy (Plain Text) tuân theo chuẩn MIME. Các file `.eml` có thể mở bằng bất cứ công cụ nào như là `notepad` hoặc là `Text Editor`.
+
+ #### Artifact in EML file
+
+ - **Header Artifact**:
+   - `Recevied`: Cho biết lộ trình email đi qua các Mail Server. Ip server của kẻ tấn công( hoặc người gửi) nằm ở bên dưới của file.
+  
+   - `Return-Path`: Địa chỉ email thực sự sẽ nhận thông báo lỗi nếu gửi thất bại, giúp xác nhận nếu email được gửi thất bại
+  
+   - `Message-id`: Mã định danh duy nhất của email. 
+  
+   - `X-Mailer / User-Agent`: Cho chúng ta biết ứng dụng gửi mail là gì ví dụ (Outlook, Thunderbird,..)
+  
+ - **Body Artifact**:
+   - `URLs/Links`: Kẻ tấn công thường che giấu link độc hại bằng HTML.
+  
+   - `HTLM Obfustication`: Mã HTLM bị làm rối, chèn các kí tự khó đọc, để có thể che giấu các hành vi đáng nghi.
+  
+ - **Attachment Artifacts**
+   - Trong 1 file `.eml` thì các tệp đính kèm này chính là khối dữ liệu `base64` ở cuối file.
+
