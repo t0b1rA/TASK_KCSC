@@ -109,4 +109,57 @@ Nãy bên trong thư mục tmp thì em có tìm thấy một công cụ để cr
 
 **What was the attackers external control and command servers IP?**
 
-Ban đầu em có hơi rối khi làm câu này, và có đi tìm hiểu nhiều nguồn thì em thấy trong Windows sẽ có 1 nơi có thể được dùng để thêm vào các địa chỉ ip do người dùng đó tự cấu hình và đặt tên `%SYSTEM32%\drivers\etc\hosts` đây là một file `local host` của Windows, tác dụng của nó là khi bạn truy 
+Ban đầu em có hơi rối khi làm câu này, và có đi tìm hiểu nhiều nguồn thì em thấy trong Windows sẽ có 1 nơi có thể được dùng để chuyển hướng các địa chỉ IP tên một tên miền cụ thể, cho phép user đặc quyền cao có thể tự động thay đổi ip được ánh xạ đến tên miền đó.Nó nằm ở `%SYSTEM32%\drivers\etc\hosts` đây là một file `local host` của Windows, cách file này hoạt động là khi bạn dùng một phần mềm và nhập tìm kiếm một tên miền (ví dụ youtube.com), thì trước tiên nó sẽ ánh xạ đến file `HOSTS` trước để tìm xem có tên miền này được ghi bên trong file không, nếu không nó sẽ truy vấn đến cơ sở dữ liệu DNS (dịch vụ tên miền) phân tán.
+
+Qua đó em nghĩ là attacker sẽ thực hiện sửa đổi địa chỉ ip của tên miền hợp pháp nào đó, để khi đó máy attacker có thể ánh xạ địa chỉ ip đó của hắn bằng tên miền hợp pháp. Đây gọi là kỹ thuật **DNS Poisoning**
+
+<img width="1438" height="1497" alt="image" src="https://github.com/user-attachments/assets/92c63ac2-b37e-4427-8d37-9bce73e96098" />
+
+Tại đây chúng ta thấy 2 tên miền `google.com` và `www.google.com` có vẽ khá lạ, em sẽ thử kiểm tra bằng cmd máy chính:
+
+<img width="1211" height="441" alt="image" src="https://github.com/user-attachments/assets/0f5396f6-6279-4319-9e14-ed76f82a2c75" />
+
+Rõ ràng là có sự khác biệt, chắc chắn đây là kĩ thuật `DNS Poisoning` thực hiện ánh xạ tên miền đến địa chỉ ip của attacker để chuyển hướng người dùng đến server độc hại của attacker.
+
+<img width="894" height="129" alt="image" src="https://github.com/user-attachments/assets/d88be2d4-9ddc-4f1a-9425-d9ecd8654a4f" />
+
+**What was the extension name of the shell uploaded via the servers website?**
+
+Có lẽ em thấy không còn khai thác được gì thêm trong thư mục tmp nữa, em để ý ở ổ C, còn có một thư mục cũng được tạo trong khoảng thời gian rất đáng ngờ là thư mục `inetpub` được tạo vào `3/2/2019 4:41 PM` nằm trong khoảng thời gian mà attacker đang thực hiện xâm nhập vào máy nạn nhân, và chuẩn bị nâng quyền.
+
+<img width="944" height="737" alt="image" src="https://github.com/user-attachments/assets/8ae65d28-afda-441f-93c4-4041cdf19c4d" />
+
+Bên trong thư mục có 1 thư muc khác là `wwwroot`, và trong này có 3 file: 2 file `jsp` và 1 file gif. Thông thường thì 1 file gif sẽ không mang lại nguy hiểm hay nghi ngờ gì đến cho máy tính, nhưng còn có 2 file `jsp`. Có thể đây chính là trang web của địa chỉ ip ánh xạ đến.
+
+> Đây là một trang (JavaServer Page), một công nghệ Web có khả năng mở rộng, sử dụng dữ liệu mẫu (template data), các phần tử tùy chỉnh, (scripting languages) và đối tượng Java cho phía máy chủ.dữ Thông thường, liệu mẫu là các phần tử HTML hoặc XML, và trong nhiều trường hợp, máy khách chính là một trình duyệt Web.
+
+<img width="879" height="706" alt="image" src="https://github.com/user-attachments/assets/4240da2b-f062-4acf-b16e-afffc7431d10" />
+
+Và đồng thời nó cũng chính là file extention mà shell upload lên cho server.
+
+<img width="878" height="114" alt="image" src="https://github.com/user-attachments/assets/3b8b2824-3a8c-4c61-9968-ae44738089bd" />
+
+**What was the last port the attacker opened?**
+
+Câu này chúng ta sẽ vào Windows Firewall để kiểm tra. Chúng ta vào phần Inbound Rules để xem xét các quy tắc mà tường lửa cho phép các dữ liêu đi vào (inbound). Cơ chế là do Windows Firewall sẽ block hết tất cả các (inbound data) chỉ cho phép các quy tắc với trạng thái `allow`.
+
+Vào phần **filter by Group** và chọn vào **Rules without Group** tức là những quy tắc mà không thuộc về bất cứ nhóm nào,  attacker thông thường sẽ dùng những cái tên hợp pháp để đánh lừa firewall. Tuy nhiên việc các rules trong hệ thống đều thuộc 1 groups như (Core Network, World Wide Web Service), nên việc có các rules giả mạo sẽ thường được sử dụng trong mục `rules without
+groups` này.
+
+<img width="1911" height="808" alt="image" src="https://github.com/user-attachments/assets/48e0a311-e43d-4563-a042-1ace5c631bf8" />
+
+port ở đây nó sử dụng là `1337` rất đúng khi khả nghi :)).
+
+<img width="869" height="134" alt="image" src="https://github.com/user-attachments/assets/64e628c2-8843-4dfd-8c70-801f9bcd6ae1" />
+
+**Check for DNS poisoning, what site was targeted?**
+Như câu trước đó ta đã phân tích, việc attacker sử dụng tên miền google.com để ánh xạ đến 1 địa chỉ ip giả mạo đến server C2 của hắn, thì ở đây `site was target` là google.com.
+
+<img width="878" height="136" alt="image" src="https://github.com/user-attachments/assets/077d32b1-3db2-41a6-8dab-732d339cb022" />
+
+
+
+
+
+
+
