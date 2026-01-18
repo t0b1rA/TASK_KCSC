@@ -37,3 +37,39 @@ Sau đó ta ấn vào launch của `About Windows` để xem được thêm thô
 <img width="633" height="428" alt="image" src="https://github.com/user-attachments/assets/0a25a4ee-7c67-4e3f-a942-de746d4144eb" />
 
 <img width="877" height="138" alt="image" src="https://github.com/user-attachments/assets/b95adff1-b06e-46cc-a5a3-100508355b2e" />
+
+### TASK 3: Change UAC Settings
+
+Tính năng UAC của Windows có thể bật hoặc tắt bất cứ lúc nào. UAC có 4 level của việc bảo mật, trong đó nó sẽ điều khiển cách mà Windows thông báo khi ứng dụng hoặc người dùng cố gắng để tạo ra các sự thay đổi lên hệ thống.
+
+- **Always notify**: là mức bảo mật cao nhất, sẽ luôn luôn thông báo khi có bất cứ ứng dụng nào cố gắng để thay đổi.
+
+<img width="840" height="618" alt="image" src="https://github.com/user-attachments/assets/9f1dd463-9d0b-4499-9f7b-f3b13b2e8841" />
+
+- **Notify for apps**:  Nó sẽ không thông báo khi chính người dùng thay đổi mà chỉ có ứng dụng thì thông báo.
+
+<img width="841" height="616" alt="image" src="https://github.com/user-attachments/assets/7054f802-8875-4164-bffe-a601619e37e1" />
+
+- **Notify without dimming**: sẽ không thông báo với người dùng chỉ thông báo các thay đổi từ ứng dụng, nhưng không làm tối màn hình (`1 cơ chế cho thấy windows vào trạng thái bảo mật và hiện ra màn hình 1 thông báo cho phép cấp quyền hay khoong`)
+
+<img width="840" height="615" alt="image" src="https://github.com/user-attachments/assets/0c3d93a4-80ec-442c-bdc4-1acd78909b17" />
+
+- **Never notify**: Không bao giờ thông báo khi ứng dụng và người dùng thực hiện thay đổi, mức bảo mật thấp nhất.
+
+<img width="831" height="622" alt="image" src="https://github.com/user-attachments/assets/d1536289-3147-4c7b-8541-ff7dc0f5151f" />
+
+**What is the command to open User Account Control Settings? (The answer is the name of the .exe file, not the full path)**
+
+Chúng ta mở `msconfig` vào tab tools và xem mục `Change UAC Settings`
+
+<img width="944" height="655" alt="image" src="https://github.com/user-attachments/assets/d394c856-17bd-46b0-ad50-9d7f3788cff4" />
+
+<img width="877" height="160" alt="image" src="https://github.com/user-attachments/assets/3c7e897d-241b-405f-8c98-64c80499ed99" />
+
+### TASK 4: Computer Management
+
+TASK này chúng ta sẽ đi qua 1 chút về một công cụ khác của **System Configuration** panel đó là **Computer Management** (`compmgmt`), tính năng của nó bao gồm 3 phần chính là **System tools**, **Storage**, **Service Application**
+
+<img width="940" height="781" alt="image" src="https://github.com/user-attachments/assets/b9631abe-f820-49d4-bd69-9b0b87d1db0f" />
+
+
