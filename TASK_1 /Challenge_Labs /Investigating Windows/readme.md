@@ -36,7 +36,7 @@ File `p.exe` này là là 1 file thực thi mỗi khi người dùng khởi đ�
 
 <img width="1909" height="799" alt="image" src="https://github.com/user-attachments/assets/ef587608-5655-47ce-8bb0-235863796a1a" />
 
-Có tận 2 file `.exe` được chạy tự động ở đây `wwscript.exe` - là tiến trình hợp pháp đùng để chạy cái file `VBS` trong `WWMI` của Windows, còn tiến trình còn lại trình là tiến trình đáng nghi đang kết nối tới địa chỉ ip `10.34.2.3`
+Có tận 2 file `.exe` được chạy tự động ở đây `wwscript.exe` - là tiến trình hợp pháp đùng để chạy các tập lệnh tự động `.vbs, .js` trong Windows, còn tiến trình còn lại trình là tiến trình đáng nghi đang kết nối tới địa chỉ ip `10.34.2.3`
 
 <img width="911" height="126" alt="image" src="https://github.com/user-attachments/assets/39a912c7-d9bc-4ef6-a38e-ecb04689b9b8" />
 
