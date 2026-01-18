@@ -17,6 +17,7 @@
 <img width="899" height="140" alt="image" src="https://github.com/user-attachments/assets/b6f22142-e82e-4e61-bf2e-5179cd1d34ee" />
 
 **When did John log onto the system last?**
+
 Chúng ta có thể sử dụng 1 lệnh trong cmd là `net user <user-name>` để có thể liệt kê ra các lần đăng nhập của user mà chúng ta muốn xem, trong câu này lần đăng nhạp cuối cùng của `john` là "3/2/2019 5:48:32"
 
 <img width="1097" height="535" alt="image" src="https://github.com/user-attachments/assets/f005d415-63f1-4e2e-b2a5-bcc29b70e903" />
