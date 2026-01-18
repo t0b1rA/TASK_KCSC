@@ -7,7 +7,7 @@ Câu này em lên mạng tìm thì em thấy họ ghi là Bitlocker, bởi vì
 
 <img width="1230" height="961" alt="image" src="https://github.com/user-attachments/assets/07e42fce-e8a9-4f03-8d9e-df7f4430e1dd" />
 
-### TASK2
+### TASK 2: The Desktop GUI
 
 **1. Which selection will hide/disable the Search box?**
 
