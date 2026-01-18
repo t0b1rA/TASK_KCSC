@@ -193,7 +193,7 @@ Trong mục Overview tab, `Resmon` hiển thị:
 
 - **CPU**
 
-<img width="1245" height="547" alt="image" src="https://github.com/user-attachments/assets/f8393b38-7bb9-4d36-96e7-73a3228810ff" />\
+<img width="1245" height="547" alt="image" src="https://github.com/user-attachments/assets/f8393b38-7bb9-4d36-96e7-73a3228810ff" />
 
 - **Memory**
 
