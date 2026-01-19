@@ -981,10 +981,159 @@ Cả 2 đều là định dạng tệp tin cơ sở dữ liệu được Microso
    - `X-Mailer / User-Agent`: Cho chúng ta biết ứng dụng gửi mail là gì ví dụ (Outlook, Thunderbird,..)
   
  - **Body Artifact**:
-   - `URLs/Links`: Kẻ tấn công thường che giấu link độc hại bằng HTML.
+   - `URLs/Links`: Kẻ tấn công thường che giấu link độc hại bằg HTML.
   
    - `HTLM Obfustication`: Mã HTLM bị làm rối, chèn các kí tự khó đọc, để có thể che giấu các hành vi đáng nghi.
   
  - **Attachment Artifacts**
    - Trong 1 file `.eml` thì các tệp đính kèm này chính là khối dữ liệu `base64` ở cuối file.
 
+### Web Browser
+
+Browser artifacts bao gồm rất nhiều các loại dữ liệu được lưu trữ bởi web browser, bao gồm: History, bookmarks, và dữ liệu đệm. Những artifact này được lưu trữ bên trong các thư mục cụ thể bên trong hệ điều hành. Mặc dù vị trí và tên chính xác của các thư mục này khác nhau giữa các trình duyệt khác nhau nhưng loại dữ liệu được lưu trữ nhìn chung vẫn nhất quán.
+
+Một số artifacts phổ biến:
+
+- **Navigation History**:  Nhật kí của những trang web mà người dùng đã ghé vào, sẽ rất hữu ích khi điều tra xem người dùng truy cập vào trang web độc hại nào.
+
+- **Autocomplete Data**: cung cấp những gợi ý dựa vào những tìm kiếm gần đây, thường chứa những giá trị quan trọng sâu bên trong khi phân tích về lịch sử hoạt động người dùng.
+
+- **Bookmarks**: Các trang được lưu bởi người dùng cho phép truy cập nhanh chóng.
+
+- **Extention and Add-on**: bao gồm bất cứ extentions của trình duyệt hoặc những `Add-ons` được tải xuống bởi người dùng.
+
+- **Cache**: Lưu trữ các nội dung của trang web như là hình ảnh và file JavaScript để tăng tộc độ loading trang web cho người dùng.
+
+- **Logins**: Chứa các thông tin xác thực đăng nhập cho các website.
+
+- **Favicons (Favorite Icons)**: Chứa một icons nhỏ liên kết với website (ví dụ: Facebook có chữ F, Google có chữ G), cung cấp cho chúng ta những thông tin về trang web và người dùng đã ghé thăm. Thông thường, khi các công cụ xóa lịch sử trình duyệt, nó chỉ xóa phần url trang web, và không xóa đi file `favicons` này, giúp để lại giấu vết bằng chứng.
+
+- **Browser Sessions**: Thong tin liên quan đến phiên trình duyệt được mở.
+
+- **Downloads** Ghi lại những file được tải về từ trình duyệt.
+
+- **Thumbnails**: Xem trước hình ảnh của website.
+
+#### Google Chrome Artifacts:
+
+`Google Chrome` lưu trữ những thông tin người dùng bên trong vị trí cụ thể tùy thuộc vào hệ điều hành:
+
+- **Linux**: `~/.config/google-chrome/`
+
+- **Windows**: `C:\Users\username\AppData\Local\Google\Chrome\User Data`
+
+Bên trong các thư mục, hầu hết các dữ liệu người dùng thường được tìm thấy trong thư mục `Default/` hoặc là `ChromeDefaultData/folder`. Bên trong chứa các dữ liệu như: History: Lưu trữ Urls, downloads, và các kí tự tìm kiếm, Trên windows, có một công cụ để xem lịch sử trình duyệt của trình duyệt Chrome là [ChromeHistoryView](https://chromehistoryview.vi.softonic.com/).
+
+- **Cookies**: lưu trữ các dữ liệu của cookie. Tìm thấy ở:
+ > C:\Users\username\AppData\Local\Google\Chrome\UserData\Default\Cookies
+ > C:\Users\username\AppData\Local\Google\Chrome\UserData\ChromeDefaultData\Cookies
+
+- **Cache**: Chứa những dữ liệu về cache, được lưu ở:
+ > C:\Users\username\AppData\Local\Google\Chrome\User Data\Default\Cache
+ > C:\Users\username\AppData\Local\Google\Chrome\User Data\ChromeDefaultData\Cache
+
+- **Bookmakrs**: chứa dữ liệu bookmarks:
+ > C:\Users\username\AppData\Local\Google\Chrome\User Data\Default\Bookmarks
+ > C:\Users\username\AppData\Local\Google\Chrome\User Data\ChromDefaultData\Bookmarks
+
+- **LoginData**:
+ > C:\User\username\AppData\Local\Google\Chrome\User Data\ChromeDefaultData\Login Data
+
+- **Current Session/Current Tabs** lưu trữ dữ liệu về các phiên trình duyệt hiện tại và các tab được mở.
+ > C:\Users\username\AppData\Local\Google\Chrome\User Data\Default\Current Session
+ > C:\Users\username\AppData\Local\Google\Chrome\User Data\ChromeDefaultData\Current Session
+ > C:\Users\username\AppData\Local\Google\Chrome\User Data\Default\Current Tabs
+ > C:\Users\username\AppData\Local\Googpe\Chrome\User Data\ChromeDefaultData\Current Tabs
+
+- **Last Session/Last tabs**: Chứa thông tin về các trang mà được hoạt động cho tới khi phiên trình duyệt cuối cùng trước khi Chrome tắt.
+ > C:\Users\username\AppData\Local\Google\Chrome\User Data\Default\Last Session
+ > C:\Users\username\AppData\Local\Google\Chrome\User Data\ChromeDefaultData\Last Session
+ > C:\Users\username\AppData\Loacal\Google\Chrome\User Data\Default\Last Tabs
+ > C:\Users\username\AppData\Local\Google\Chrome\User Data\ChromeDefaultData\Last tabs
+
+- **Extentions**:
+ > C:\Users\username\AppData\Google\Chorme\User Data\Default\Extentions\
+ > C:\Users\username\AppData\Google\Chrome\User Data\ChromeDefaultData\Extentions\
+
+#### Firefox arrtifacts:
+
+**Firefox** tổ chức dữ liệu người dùng trong hồ sơ, được lưu trữ ở các vị trí cụ thể dựa trên hệ điều hành:
+
+- **Linux**: `~/.mozilla/firefox/`
+
+- **Windows**: `%userprofile%\AppData\Roaming\Mozilla\Firefox\Profiles\`
+
+Bên trong mỗi thư mục hồ sơ, chứa các file quan trọng có thể tìm thấy như:
+
+- **places.sqlites**: Lưu trữ lịch sử, bookmarks và downloads. Công cụ để xem được files này phổ biến nhất là [sqlitebrowser](https://sqlitebrowser.org/dl/).
+  <img width="1918" height="934" alt="image" src="https://github.com/user-attachments/assets/6b8fad12-6729-427f-9025-495454d06f83" />
+
+**Firefox** lưu trữ các files quan trọng như: cookies, cache, downloads,... Bên trong các file `.sqlite` hoặc `.json`.
+
+- **formhistory.sqlite**: lưu trữ các dữ liệu biểu mẫu của trang web
+
+`C:\Users\XXX\AppData\Roaming\Mozilla\Firefox\Profiles\[profileID].default\bookmarkbackup\`
+
+- **addons.json and extentions.sqlite** lưu trữ thông tin được add-ons và extentions tải về.
+
+`C:\Users\XXX\AppData\Roaming\Mozilla\Firefox\Profiles\[profileID].default\addons.sqlite`
+
+`C:\Users\XXX\AppData\Roaming\Mozilla\Firefox\Profiles\[profileID].default\extensions.sqlite`
+
+- **cookies.json**: Lưu trữ cookies, và có thể sử dụng [MZCookiesView](https://www.nirsoft.net/utils/mzcv.html) trên windows.
+
+`C:\Users\XXX\AppData\Roaming\Mozilla\Firefox\Profiles\[profileID].default\cookies.sqlite`
+
+- **downloads.sqlite:** An older downloads database, now integrated into places.sqlite
+
+`C:\Users\XXX\AppData\Roaming\Mozilla\Firefox\Profiles\[profileID].default\downloads.sqlite`
+
+- **logins.json:** Contains encrypted login information.
+```
+ C:\Users\XXX\AppData\Roaming\Mozilla\Firefox\Profiles\[profileID].default\logins.json`   Passwords: 
+    
+ C:\Users\XXX\AppData\Roaming\Mozilla\Firefox\Profiles\[profileID].default\key4.db
+ C:\Users\XXX\AppData\Roaming\Mozilla\Firefox\Profiles\[profileID].default\key3.db (Older Version)
+```
+Bởi vì firefox mã hóa thông tin đăng nhập bằng cách sử dụng master key được lưu trong file `key4.db`. Để trích xuất ra được username và passwd, chúng ta có thể dùng 1 công cụ có tên là [firefox_decrypt](https://github.com/unode/firefox_decrypt).
+```
+t0b1ra@tobiraNduy:~/firefox_decrypt$ python3 firefox_decrypt.py -h
+usage: firefox_decrypt.py [-h] [-f {human,json,csv,tabular,pass}] [-d CSV_DELIMITER] [-q CSV_QUOTECHAR]
+                          [--no-csv-header] [--pass-username-prefix PASS_USERNAME_PREFIX] [-p PASS_PREFIX]
+                          [-m PASS_CMD] [--pass-always-with-login] [-n] [--non-fatal-decryption] [-c CHOICE] [-l]
+                          [-e ENCODING] [-v] [--version]
+                          [profile]
+
+Access Firefox/Thunderbird profiles and decrypt existing passwords
+
+positional arguments:
+  profile               Path to profile folder (default: ~/.mozilla/firefox)
+
+options:
+  -h, --help            show this help message and exit
+  -f {human,json,csv,tabular,pass}, --format {human,json,csv,tabular,pass}
+                        Format for the output.
+  -d CSV_DELIMITER, --csv-delimiter CSV_DELIMITER
+                        The delimiter for csv output
+  -q CSV_QUOTECHAR, --csv-quotechar CSV_QUOTECHAR
+                        The quote char for csv output
+  --no-csv-header       Do not include a header in CSV output.
+  --pass-username-prefix PASS_USERNAME_PREFIX
+                        Export username as is (default), or with the provided format prefix. For instance 'login: '
+                        for browserpass.
+  -p PASS_PREFIX, --pass-prefix PASS_PREFIX
+                        Folder prefix for export to pass from passwordstore.org (default: web)
+  -m PASS_CMD, --pass-cmd PASS_CMD
+                        Command/path to use when exporting to pass (default: pass)
+  --pass-always-with-login
+                        Always save as /<login> (default: only when multiple accounts per domain)
+  -n, --no-interactive  Disable interactivity.
+  --non-fatal-decryption
+                        If set, corrupted entries will be skipped instead of aborting the process.
+  -c CHOICE, --choice CHOICE
+                        The profile to use (starts with 1). If only one profile, defaults to that.
+  -l, --list            List profiles and exit.
+  -e ENCODING, --encoding ENCODING
+                        Override default encoding (utf-8).
+  -v, --verbose         Verbosity level. Warning on -vv (highest le
+```
