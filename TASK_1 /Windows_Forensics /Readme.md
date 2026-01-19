@@ -1137,3 +1137,51 @@ options:
                         Override default encoding (utf-8).
   -v, --verbose         Verbosity level. Warning on -vv (highest le
 ```
+
+
+### Alternative Data stream (ADS-Luồng dữ liệu thay thế)
+
+**Alternate Data Stream(ADS)**: Một tệp là một luồng dữ liệu được tổ chức trong một hệ thống tệp. Alternate Data Streams (ADS) là một tính năng trong NTFS cho phép các tệp có nhiều luồng dữ liệu được lưu trữ trong một tệp duy nhất. Internet Explorer và các trình duyệt khác sử dụng ADS để nhận dạng các tệp được tải xuống từ internet (sử dụng ADS Zone Identifier). Phần mềm độc hại (Malware) cũng đã được quan sát thấy ẩn mã độc của chúng trong ADS.
+
+Nói dễ hiểu hơn là nó cho phép bạn chạy kèm 1 file ẩn bên trong 1 file với tính năng đa luồng - tức là khi bạn có 1 tệp report.txt (hiển thi 10KB), bạn có thể dùng ADS giấu bên trong (report.txt một file malware.exe hiển thị (100mb) thì họ chỉ thấy tệp .txt và khi mở thì họ vô tình khởi động cả tệp .exe
+Zone Identifier: Khi bạn tải 1 file từ Internet, Windows sẽ gắn một "nhãn" ADS vào file đó để đánh dấu "File này đến từ Internet, hãy cẩn thận".
+
+**ADS artifacts**
+
+- ADS là một tính năng của **NTFS** và có thể bị mất nếu files bi di chuyển tới một hệ thống file không có NTFS.
+
+- 1 file có thể giữ nhiều tên luồng bên trong `filename:stream1`, `filename:stream2`, etc.
+
+- Explorer chỉ hiển thị size luồng `default`; các byte của ADS được lưu trữ bên trong **NTFS**
+
+- Không có công tắc NTFS đơn giản nào để tắt ADS - người bảo vệ phải quét và giám sát chúng.
+
+
+### Powershell 
+
+Powerhell có thể được sử dụng cho các cuộc tấn công nâng cao, bao gồm các kĩ thuật `malware fileless`, `data exfiltration`,... Điều này làm cho `Powershell logs` là một nguồn giá trị cho các thông tin trong quá trình phân tích pháp y, các hành động của malware hoặc attacker thực hiện khi tấn công đều được ghi trong file logs đó.
+
+`%localappdata%\Roaming\Microsoft\Windows\PowerShell\PSReadLine\ConsoleHost_history.txt`
+
+**Powershell logs**
+
+**Powershell logs** ghi lại các hoạt động khác nhau được thực hiện trong Powershell, bao gồm các script được thực thi, command history và các tác vụ administrator. Các artifacts này cho phép người phân tích theo dõi cách mà Powershell được sử dụng cho hệ thống. Những logs có thể giúp cho xác định các hoạt động hợp pháp và các hành động độc hại.
+
+
+Powershell logs được chia thành 1 số các key sau:
+
+- `Script block logging`: sẽ thu thập lại tất cả các code được thực thị trong Powershell, bao gồm cả các tập lệnh được tạo động và các lệnh đã bị làm rối (obfusticated). Attacker thường sử dụng các script obfuscation để che giấu các hoạt động của họ, nhưng khi tính năng `script block logging`, cả các phiên bản tập lệnh đã obfuscated hay đã de-obfuscated đều được ghi lại.
+  - **Event id 4104**: Ghi lại nội dung của Script Block. Nếu khối mã quá dài, nó sẽ được chia thành nhiều log (fragmented).
+
+- `Module logging`: ghi lại các modules được tải và thực thi của Powershell. Modules là một gói của `cmdlet` và chức năng mở rộng các khả năng của Powershell. và attacker thường sử dụng nó cho 1 phần của workflow attack. Bằng cách theo dõi các modules nào được tải và thực thi, người phân tích có thể xác định được các hoạt động bất thường của attacker.
+  - **Event id 4103**: Modules Logging event, phần quan trọng trong log này là `Contextinfo`, hiển thị các tham số được truyền vào lệnh và dữ liệu đầu ra.
+
+- `Powershell Operationnal logs`: chứa các metadata về script và commands, bao gồm thông tin khi nào nó được thực thi, users nào đã thực thi nó, và liệu những script hay command này có thực thi thành công không. Được lưu bên trong: `%SystemRoot%\System32\Winevt\Logs\Microsoft-Windows-PowerShell%4Operational.evtx`
+
+- `Powershell Transcripts`: Hoạt động như máy ghi âm cuộc hội thoại. Nó ghi lại mọi thứ người dùng gõ vào input và mọi thứ hiện thị ra (Output). Không giống như những gì được ghi lại trong file `console_history.txt` thì `PS C:\Users\LOQ> Start-Transcript
+Transcript started, output file is C:\Users\LOQ\OneDrive\Tài liệu\PowerShell_transcript.TOBIRANDUY.D+7zCgbO.20260119174554.txt` Thì file logs trong **Powershell transcript** sẽ chứa toàn bộ cách mà hệ thống output nó ra như ví dụ:
+
+
+<img width="992" height="387" alt="image" src="https://github.com/user-attachments/assets/5e2f962d-fca9-48bf-b78b-c0413093db9d" />
+
+**Lưu ý: là để có được file logs `.txt` này chúng ta cần vào powershell và sử dụng lệnh `Start-Transcript` để tạo ra file logs đó**
