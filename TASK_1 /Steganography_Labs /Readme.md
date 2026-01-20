@@ -87,7 +87,7 @@ Khác với PNG được nhận diện qua 8 magic byte cố định ở phần 
 Tất cả các thành phần trong file JPG đều bắt đầu bằng byte `0xFF` theo sau là một byte định danh (Marker ID)
 
 |Marker name | Byte Code | Ý nghĩa của nó|
-| --- | ---|
+| --- | ---| --- |
 | SOI (Start of image) | `FF D8` | Magic bytes bắt buộc. Báo hiệu bắt đầu file JPG |
 | APPO (JFIF)| `FF E0` | Chứa thông tin định dạng chuẩn JFIF - là một chuẩn định dạng tệp hình ảnh dùng để đóng gói dữ liệu đã nén theo thuật toán JPEG|
 | APP1 (Exif) | `FF E1`| Chứa metadata của file jpg |
