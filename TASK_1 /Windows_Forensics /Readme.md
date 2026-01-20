@@ -1185,3 +1185,108 @@ Transcript started, output file is C:\Users\LOQ\OneDrive\Tài liệu\PowerShel
 <img width="992" height="387" alt="image" src="https://github.com/user-attachments/assets/5e2f962d-fca9-48bf-b78b-c0413093db9d" />
 
 **Lưu ý: là để có được file logs `.txt` này chúng ta cần vào powershell và sử dụng lệnh `Start-Transcript` để tạo ra file logs đó**
+
+
+### MFT (Master File Table)
+
+**$MFT:** The Master File table là một file quan trọng trong NTFS file system. Nó là một database quan trọng, nó lưu trữ những thông tin về tất cả các file và thư mục trên volume, bao gồm tên của nó, quyền, và attributes, metadata của file.  Nó còn chứa thông tin, theo dõi của tất cả những file khác trên ổ cứng khác.
+
+Công cụ để phân tích **MFT**: https://github.com/EricZimmerman/MFTECmd
+```
+t0b1ra@tobiraNduy:/mnt/d/kali-linux/tools/Eric-Zic_tools/MFTECmd$ ./MFTECmd.exe -h
+Description:
+  MFTECmd version 1.3.0.0
+
+  Author: Eric Zimmerman (saericzimmerman@gmail.com)
+  https://github.com/EricZimmerman/MFTECmd
+
+  Examples: MFTECmd.exe -f "C:\Temp\SomeMFT" --csv "c:\temp\out" --csvf MyOutputFile.csv
+            MFTECmd.exe -f "C:\Temp\SomeMFT" --csv "c:\temp\out"
+            MFTECmd.exe -f "C:\Temp\SomeMFT" --json "c:\temp\jsonout"
+            MFTECmd.exe -f "C:\Temp\SomeMFT" --body "c:\temp\bout" --bdl c
+            MFTECmd.exe -f "C:\Temp\SomeMFT" --de 5-5
+            MFTECmd.exe -f "C:\Temp\SomeMFT" --csv "c:\temp\out" --dr --fl
+            MFTECmd.exe -f "c:\temp\SomeJ" --csv "c:\temp\out"
+            MFTECmd.exe -f "c:\temp\SomeJ" -m "C:\Temp\SomeMFT" --csv "c:\temp\out"
+            MFTECmd.exe -f "c:\temp\SomeBoot"
+            MFTECmd.exe -f "c:\temp\SomeSecure_SDS" --csv "c:\temp\out"
+            MFTECmd.exe -f "c:\temp\SomeI30" --csv "c:\temp\out"
+
+            Short options (single letter) are prefixed with a single dash. Long commands are prefixed with two dashes
+
+Usage:
+  MFTECmd [options]
+
+Options:
+  -f <f>           File to process ($MFT | $J | $Boot | $SDS | $I30). Required
+  -m <m>           $MFT file to use when -f points to a $J file (Use this to resolve parent path in $J CSV output)
+  --json <json>    Directory to save JSON formatted results to. This or --csv required unless --de or --body is
+                   specified
+  --jsonf <jsonf>  File name to save JSON formatted results to. When present, overrides default name
+  --csv <csv>      Directory to save CSV formatted results to. This or --json required unless --de or --body is
+                   specified
+  --csvf <csvf>    File name to save CSV formatted results to. When present, overrides default name
+  --body <body>    Directory to save bodyfile formatted results to. --bdl is also required when using this option
+  --bodyf <bodyf>  File name to save body formatted results to. When present, overrides default name
+  --bdl <bdl>      Drive letter (C, D, etc.) to use with bodyfile. Only the drive letter itself should be provided
+  --blf            When true, use LF vs CRLF for newlines [default: False]
+  --dd <dd>        Directory to save exported $MFT FILE record. --do is also required when using this option
+  --do <do>        Offset of the $MFT FILE record to dump as decimal or hex. Ex: 5120 or 0x1400 Use --de or --debug to
+                   see offsets
+  --de <de>        Dump full details for $MFT entry/sequence #. Format is 'Entry' or 'Entry-Seq' as decimal or hex.
+                   Example: 5, 624-5 or 0x270-0x5.
+  --dr             When true, dump $MFT resident files to dir specified by --csv or --json, in 'Resident' subdirectory.
+                   Files will be named '<EntryNumber>-<SequenceNumber>-<AttributeNumber>_<FileName>.bin'
+  --fls            When true, displays contents of directory from $MFT specified by --de. Ignored when --de points to a
+                   file [default: False]
+  --ds <ds>        Dump full details for Security Id from $SDS as decimal or hex. Example: 624 or 0x270
+  --dt <dt>        The custom date/time format to use when displaying time stamps. See https://goo.gl/CNVq0k for
+                   options [default: yyyy-MM-dd HH:mm:ss.fffffff]
+  --sn             Include DOS file name types in $MFT output [default: False]
+  --fl             Generate condensed file listing of parsed $MFT contents. Requires --csv [default: False]
+  --at             When true, include all timestamps from 0x30 attribute vs only when they differ from 0x10 in the $MFT
+                   [default: False]
+  --rs             When true, recover slack space from FILE records when processing $MFT files. This option has no
+                   effect for $I30 files [default: False]
+  --vss            Process all Volume Shadow Copies that exist on drive specified by -f [default: False]
+  --dedupe         Deduplicate -f & VSCs based on SHA-1. First file found wins [default: False]
+  --debug          Show debug information during processing [default: False]
+  --trace          Show trace information during processing [default: False]
+  --version        Show version information
+  -?, -h, --help   Show help and usage information
+
+```
+### RDP cache
+
+RDP (Remote Desktop Protocol) là một giao thức dùng để kết nối các máy tính từ xa, với thuật ngữ (client tức là máy bình thường) còn (server tức là máy bị điều khiển). RDP cache tức là nó sẽ lưu lại các ảnh nhỏ trên máy của server, để tối ưu hóa hiệu suất, giảm thiểu việc tải cả màn hình về, tải nhiều dữ liệu lên máy của client, những phần data ở dạng tĩnh như (icon, thanh taskbar) sẽ được lưu vào cache trên disk.
+
+Các thông tin lưu trữ này sẽ nằm trên máy của client chứ không phải server.
+
+**located of RDP cache**
+`C:\Users\<username>\AppData\Local\Microsoft\Terminal Server Client\Cache`
+
+Bên cache-file được lưu bên trong 1 file `CacheXXXX.bin`: nó chứa các mảnh hình ảnh dạng (bitmap titles). Mỗi mảnh thường có kích thước rất nhỏ khoảng (64x64 pixel). Còn 1 file để lưu các cache này nhưng thường được sử dụng ở các phiên bản cũ hơn là `bcache*.bin`
+
+**Tools for RDP cache**
+Một số các công cụ có thể được sử dụng cho RDP cache như: [BMC-tools](https://github.com/ANSSI-FR/bmc-tools), [RDP Cache Stitcher](https://github.com/BSI-Bund/RdpCacheStitcher), [RDPieces](https://github.com/brimorlabs/rdpieces).
+
+
+### Scheduler Task
+
+Scheduler Task là một tính năng trong Windows , nằm trong phần `compmgmt` cho phép người dùng thiết lập nên những tác vụ có thể tự động thực chi các chương trình hoặc script. Một số cách phổ biến nhất để người dùng có thể tương tác với `Scheduler Task` đó chính là giao diện `Scheduler Task` (GUI) được quản lý bên trong `computer management`.
+
+Ngoài ra chúng ta cũng có thể tạo ra 1 task bằng cmdlets bằng cấu trúc lệnh sau:
+
+`schtasks /create /tn "TaskName" /tr "ExecutablePath" /sc ScheduleType /st StartTime /du Duration`
+
+Scheduler Task có thể được tìm thấy bên trong TaskScheduler\Operational Event Log tại EID 106(task registered), EID 140 (task updated0 và EID (141 task deleted).
+
+Scheduler Task cũng là một nơi cực kì phổ biến cho những attacker có thể tấn công, duy trì `persistence` trong máy của victim thông qua các task giả dạng hợp pháp, hoặc có thể là sử dụng cho các mục đích leo quyền trong hệ thống, thông qua một số kĩ thuật như `Hijacking biến môi trường`, `Scheduler Task bypass UAC`, hoặc khai thác vào cấu hình task XML...
+
+
+**Located Scheduler Task**
+
+`HKLM\Software\Microsoft\Windows NT\CurrentVersion\Schedule\TaskCache\Tasks`
+
+`HKLM\Software\Microsoft\Windows NT\CurrentVersion\Schedule\TaskCache\Tree`
+
