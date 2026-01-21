@@ -49,7 +49,7 @@ Mỗi vòng (trừ vòng cuối) bao gồm 4 phép biến đổi:
 - AddRoundKey
 
 Cuối cùng quan trọng nhất là thuật toán được tính theo mode nào:
-- **ECB** nó bảo toàn cấu trúc acur dữ liệu gốc, làm cho các khối bị lặp lại, và tần suất xuất hiện của các khối trong bản mã là tương đồng với nhau.
+- **ECB** nó bảo toàn cấu trúc của dữ liệu gốc, làm cho các khối bị lặp lại, và tần suất xuất hiện của các khối trong bản mã là tương đồng với nhau.
 - Cơ chế hoạt động của **ECB**:
   - Chia dữ liệu thành các khối độc lập (vd: 16 bytes)
   - Mỗi khối được mã hóa riêng biệt với cùng 1 keys.
