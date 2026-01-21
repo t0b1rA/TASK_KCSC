@@ -305,3 +305,220 @@ $ foremost [-v|-V|-h|-T|-Q|-q|-a|-w-d] [-t <type>] [-s <blocks>] [-k <size>]
 <img width="1709" height="880" alt="image" src="https://github.com/user-attachments/assets/0f1b92ea-97e2-4b1a-81c5-2cdbac49a2a3" />
 
 
+---
+# Exercise
+
+### Challenge 1: Matryoshka doll
+
+<img width="946" height="522" alt="image" src="https://github.com/user-attachments/assets/e1d0d680-51ac-4f55-8d4b-2b8957944bf7" />
+
+Đầu tiên bài này họ cho em một file ảnh `.jpg`, mình thử sử dụng xxd để xem file này có vấn đề gì bên trong làm cho nó không mở được không. Thì em thấy được nó thực chất là file `.png` chứ không phải là file `.jpg`, xem bằng signature ở đầu của nó.
+
+<img width="1094" height="629" alt="image" src="https://github.com/user-attachments/assets/8e592f89-2f3e-46a4-a678-abe7b9ad5d21" />
+
+Em thực hiện đổi tên file nó thành `dolls.png` rồi sử dụng công cụ `zsteg` để xem các nội dung nó ẩn bên trong các dải màu.
+
+<img width="1567" height="600" alt="image" src="https://github.com/user-attachments/assets/c0828037-f003-4818-afcc-dfe845a8c7b9" />
+
+Em thấy nó giấu một file `.zip` bên trong thông qua signature của zip là `PK`, em dùng `binwalk -e dolls.png` để trích xuất file zip bên trong và giải nén nó ra.
+
+<img width="1379" height="445" alt="image" src="https://github.com/user-attachments/assets/3d7828b3-01e7-4eae-8a63-4409c49a9633" />
+
+Em được 1 thư mục khác, và khi vào thì nó lại có, 1 tấm ảnh khác.
+
+```
+                                                                                                                                                                                                
+┌──(nhduydeptrai㉿tobi)-[~/_dolls.png.extracted]
+└─$ cd base_images         
+                                                                                                                                                                                                
+┌──(nhduydeptrai㉿tobi)-[~/_dolls.png.extracted/base_images]
+└─$ ls
+2_c.jpg
+
+```
+Rồi em thử sử dụng, `file` để xem nó có phải là file `jpg` thật không, kết quả nó vẫn là 1 file `.png` em đổi tên và dùng `zsteg` tiếp để xem nội dung tiếp theo bên trong dải màu của ảnh.
+
+<img width="1559" height="416" alt="image" src="https://github.com/user-attachments/assets/7701dbce-5f47-4e12-bb0c-184cd4bcbfb4" />
+
+Ở đây nó lại có 1 file zip khác, em làm tương tự như trên, thì ở trong file thư mục của file zip tiếp tục có 1 tấm ảnh. Em thực hiện việc kiểm tra, đổi tên và dùng zsteg khoảng 2 lần nữa. Thì file cuối cùng nó xuất hiện file `flag.txt`.
+
+<img width="1167" height="376" alt="image" src="https://github.com/user-attachments/assets/a66c6b9d-9d2c-45a7-8e35-b1cdafbea6ee" />
+
+**flag: picoCTF{LL9lb1dR4QbGe4l4iWCvGq9pdtwt7392}**
+
+## Challeneg 2: St3go
+
+<img width="960" height="507" alt="image" src="https://github.com/user-attachments/assets/b377ef6d-cfd6-429a-b8e3-46cebc7288af" />
+
+Câu này thì e `zsteg` phát ra luôn roi, chỉ cần bỏ cái chữ ở cuối ra là xong.
+
+<img width="1845" height="392" alt="image" src="https://github.com/user-attachments/assets/04b01eb4-1420-4203-a4af-27b1497a4fc7" />
+
+**flag: picoCTF{7h3r3_15_n0_5p00n_a9a181eb}**
+
+### Challenge 3: like1000
+
+<img width="960" height="480" alt="image" src="https://github.com/user-attachments/assets/cf244d55-9328-434a-87d3-a1ebbf356be8" />
+
+
+Trong chall này người ta cho mình một file `.tar`, sau khi ban đầu em thực hiện untar nó ra thử, thì nó lại tiếp tục tạo ra file `999.tar`, cùng với 1 file `.txt` =))). Và mình đọc lại hint thì họ kêu hãy viết script để untar nó ra cho nhanh
+
+<img width="466" height="210" alt="image" src="https://github.com/user-attachments/assets/edc28d40-f4db-4777-93d0-e12e0f9b0d4e" />
+
+Script tự động giải nén, cho tới file cuối cùng
+```
+import tarfile
+import os
+
+filename = "1000.tar"
+counter = 0
+
+while True:
+    if not os.path.exists(filename):
+        print(f"File {filename} not found.")
+        break
+
+    if not tarfile.is_tarfile(filename):
+        print(f"File '{filename}' is not a tar file or end of layers.")
+        try:
+            with open(filename, 'r', errors='ignore') as f:
+                print(f"Final content: {f.read(200)}")
+        except:
+            pass
+        break
+
+    print(f"Layer {counter}: Extracting '{filename}'...")
+    
+    try:
+        with tarfile.open(filename) as tar:
+            names = tar.getnames()
+            if not names:
+                break
+            
+            next_filename = names[0]
+            tar.extractall()
+        
+        os.remove(filename)
+        filename = next_filename
+        counter += 1
+        
+    except Exception as e:
+        print(f"Error: {e}")
+        break
+
+print("Done!")
+```
+
+Ở đây nó sẽ thực hiện vòng lặp while cho tới khi mà file `.tar` không thể giải nén được nửa, và trong mỗi lần lặp như vậy nó sẽ tạo ra 1 file rác kèm theo với 1 file `.tar` khác, em viết thêm hàm `os.remove(filename` để xóa đi những file `.tar` nhìn cho đỡ rối và đỡ phải tìm kiếm file flag trong 1000 file. Sau lần cuối cùng giải nén thì nó tạo ra 1 file `flag.png`. em mở file bằng `mimeopen` thì có được flag.
+
+<img width="1098" height="340" alt="image" src="https://github.com/user-attachments/assets/59ebc04c-75d1-4523-bbd3-da9385f895d7" />
+
+**flag: picoCTF{l0t5_0f-TAR5}**
+
+## Challenge 4: c0rrupt
+
+<img width="947" height="459" alt="image" src="https://github.com/user-attachments/assets/1e1bb8d2-d14f-4342-ae14-25547cd667ab" />
+
+Chall này họ cho mình một file data và kêu mình hãy recover flag, có thể đây sẽ là một file ảnh, và mình cần phải phục hồi nó lại để lấy được flag.
+
+Đầu tiên khi em tải về thì em cũng thực hiện mở file ảnh bằng `hexedit` để kiểm tra các byte ban đầu của file data này.
+
+<img width="1383" height="877" alt="image" src="https://github.com/user-attachments/assets/e9648036-eb05-42d7-8fcd-f289c7c5a4e1" />
+
+Ở đây em thấy nó có các byte `sRGB`, `gAMA` - là các byte dành cho  và lướt xuống cuối còn thấy được chunk `IEND` thì chắc chắn được đây là 1 file `.png`. Đầu tiên em dùng `hexed.it` để chỉnh sửa signature byte cho chuẩn của png, xong sau đó cũng thực hiện chỉnh sửa lại magic byte của IHDR và IDAT. Mục đích của em là có thể từ đó sử dụng pngcheck, để check ra từng điểm sai còn lại, và fix nó từ từ cho đến khi mở được file ảnh.
+
+Em sửa theo thứ tự như sau:
+- Đầu tiên là signature byte của png chuẩn sẽ là `89 50 49 47 0A 0A 1D 0A`
+
+- Tiếp theo là magic byte của IHDR `49 48 44 52`
+
+- Cuối cùng là magic byte của IDAT `49 44 41 54`
+
+<img width="1916" height="996" alt="image" src="https://github.com/user-attachments/assets/c7f07b00-501c-4f33-85ea-0ac4027a124a" />
+
+Bây giờ em sử dụng `pngcheck` để có thể tìm được lỗi tiếp theo.
+```
+pngcheck -v mystery2.png 
+File: mystery_solved_v1.png (202940 bytes)
+  chunk IHDR at offset 0x0000c, length 13
+    1642 x 1095 image, 24-bit RGB, non-interlaced
+  chunk sRGB at offset 0x00025, length 1
+    rendering intent = perceptual
+  chunk gAMA at offset 0x00032, length 4: 0.45455
+  chunk pHYs at offset 0x00042, length 9: 2852132389x5669 pixels/meter
+  CRC error in chunk pHYs (computed 38d82c82, expected 495224f0)
+ERRORS DETECTED in mystery2.png
+
+```
+Ở đây nó kêu là tại vị trí CBC, nó cho thấy rằng ở đây byte checksum của file png đã sai cái đúng phải là `38d82c82` nhưng thực tế trong file ảnh hiện tại 4 byte đó lại là `495224f0`
+
+<img width="959" height="805" alt="image" src="https://github.com/user-attachments/assets/5bd6772c-f048-4faa-8be4-7b6e418d0270" />
+
+Đây là sau khi sửa lại, tiếp tục dùng `pngcheck`:
+```
+──(nhduydeptrai㉿tobi)-[~/Pico_CTF/c0rrupt]
+└─$ pngcheck -v mystery2.png 
+File: mystery2.png (202940 bytes)
+  chunk IHDR at offset 0x0000c, length 13
+    1642 x 1095 image, 24-bit RGB, non-interlaced
+  chunk sRGB at offset 0x00025, length 1
+    rendering intent = perceptual
+  chunk gAMA at offset 0x00032, length 4: 0.45455
+  chunk pHYs at offset 0x00042, length 9: 2852132389x5669 pixels/meter
+:  invalid chunk length (too large)
+ERRORS DETECTED in mystery2.png
+
+```
+Ở đây có lỗi là byte lenght trong chunk IHDR quá lớn dẫn đến việc nó tạo ra lỗi mà không thể tạo thành ảnh được. Ở đây sau khi chúng ta đã tạo sửa được chunk IDAT trước đó rồi, chúng ta có thể sử dụng công cụ binwalk để thực hiện dò ra các chunk IDAT tiếp theo nếu có, để chúng ta thực hiện tính toán length hợp lí cho chunk IDAT đầu tiên.
+```
+┌──(nhduydeptrai㉿tobi)-[~/Pico_CTF/c0rrupt]
+└─$ binwalk -R "IDAT" mystery2.png 
+
+DECIMAL       HEXADECIMAL     DESCRIPTION
+--------------------------------------------------------------------------------
+87            0x57            Raw signature (IDAT)
+65544         0x10008         Raw signature (IDAT)
+131080        0x20008         Raw signature (IDAT)
+196616        0x30008         Raw signature (IDAT)
+```
+
+Bây giờ, chúng ta có thể biết được rằng là chunk IDAT đầu tiên tại vị trí 0x57, và chunk IDAT thứ 2 bắt đầu tại chunk 0x10008, vậy thì khoảng length của chunk IDAT đầu phải được trừ cho 4 byte quy định cho length của chunk IDAT tiếp theo, vậy nó sẽ là (0x10008 - 0x4 = 0x10004).
+
+Tiếp theo chúng ta biết được chunk IDAT đầu ngay vị trí 0x57, nhưng dữ liệu trong IDAT nằm sau chính chunk đầu nên ta phải + thêm 4 byte sẽ thành (0x5B).
+
+Cuối cùng là mỗi phần dữ liệu của chunk IDAT đều có 4 byte `CBC` checksm, chúng ta trừ di cho 4 byte đó là 0x4 nửa sẽ có được length đúng của chunk IDAT đầu tiên.
+
+ vậy để có được phần length chuẩn chúng ta phải thực hiện lấy vị trí `0x10004` trừ đi cho 4 byte phần đầu của chunk IDAT đầu `0x5B`, sau đó tiếp tục trừ thêm cho 4 byte của phần đuôi `CBC` check sum sẽ được:
+ 
+`0x10004 - 0x5B - 0x4 = 0xffa5`
+
+Vậy ta có length chuẩn của chunk IDAT đầu sẽ là `0000FFA5`. Có 1 điểm khá quan trọng khác là nếu ta thấy length của chunk IDAT đầu với 2 byte đầu là `AA AA` thì đây là chỉ đích cho một phần lenght rất rất lớn tính theo thập phân 2 byte là 16 bit -> chuyển sang số thập phân sẽ ra 1 length cực kì lớn.
+
+<img width="1904" height="834" alt="image" src="https://github.com/user-attachments/assets/e801f137-0620-4c9c-b6f2-2fbac1a8c6df" />
+
+Bây giờ check xem còn gì lỗi nửa không, nhưng mình nghĩ bây giờ chắc có thể là hết rồi. 
+
+```
+┌──(nhduydeptrai㉿tobi)-[~/Pico_CTF/c0rrupt]
+└─$ pngcheck -v mystery2.png
+File: mystery2.png (202940 bytes)
+  chunk IHDR at offset 0x0000c, length 13
+    1642 x 1095 image, 24-bit RGB, non-interlaced
+  chunk sRGB at offset 0x00025, length 1
+    rendering intent = perceptual
+  chunk gAMA at offset 0x00032, length 4: 0.45455
+  chunk pHYs at offset 0x00042, length 9: 2852132389x5669 pixels/meter
+  chunk IDAT at offset 0x00057, length 65445
+    zlib: deflated, 32K window, fast compression
+  chunk IDAT at offset 0x10008, length 65524
+  chunk IDAT at offset 0x20008, length 65524
+  chunk IDAT at offset 0x30008, length 6304
+  chunk IEND at offset 0x318b4, length 0
+No errors detected in mystery2.png (9 chunks, 96.3% compression).
+
+```
+Bây giờ thì không còn lỗi gì nữa. Em thực hiển mở ảnh thì có được flag.
+
+<img width="1400" height="657" alt="image" src="https://github.com/user-attachments/assets/39d51183-8384-4e4a-bb6c-356a37caa0ab" />
+
+**flag: picoCTF{c0rrupt10n_1847995}**
