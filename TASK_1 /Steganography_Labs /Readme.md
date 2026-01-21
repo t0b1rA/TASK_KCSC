@@ -40,6 +40,7 @@ Giờ chúng ta sẽ đi sâu vào cấu trúc của file PNG này. Ở trên ch
 
 **IHDR**
 ```
+   Type: "49 48 44 52"
    Width:              4 bytes
    Height:             4 bytes
    Bit depth:          1 byte
@@ -72,6 +73,7 @@ Type    Bit Depths
 
 **IDAT**
 Chunk này lưu trữ các pixel thực tế của hình ảnh sau khi lọc và nén bằng zlib. Chúng ta có thể sử dụng thư viện Pillow để tải dữ liệu các pixel màu được lưu trữ trong chunk này thay vì lấy thủ công, có một cách để lấy các dữ liệu màu này là bằng công cụ `zsteg`.
+Magic byte type của IDAT : `49 44 41 54`
 
 **IEND**
 
