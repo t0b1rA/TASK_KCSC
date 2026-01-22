@@ -58,9 +58,6 @@ Câu này ban đầu em cũng thấy hơi lạ, nên em sử dụng hint của b
 
 Mã zip thông thường có thể được lưu trữ trong mục autofill, để người dùng có thể sử dụng nó tiện hơn, hơn là nhớ mã zip cho một bài đăng. Nên em mở `sqlite db` chọn vào tab `Browser database`, ở đây chúng ta có thể tìm thấy ô autofill ở phía dưới tab, và hiện ra mã zip của admin sử dụng cho bài post.
 
-
-<img width="1022" height="691" alt="image" src="https://github.com/user-attachments/assets/95103ea6-4398-40f6-94ce-77c3d9596790" />
-
 <img width="1021" height="393" alt="image" src="https://github.com/user-attachments/assets/7c534a7a-2495-4870-8850-94ef43cb4dc4" />
 
 ### What are the initials of the person who contacted the admin user from TAAUSAI?
