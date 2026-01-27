@@ -222,6 +222,8 @@ Ví dụ, cụ thể:
 └─$ file pico.flag.jpg                                             
 pico.flag.jpg: PNG image data, 585 x 172, 8-bit/color RGBA, non-interlaced                                                                         
 ```
+Rõ là chúng ta có thể thấy được đây là một file `jpg` nhưng khi sử dụng lệnh `file` thì thực tế nó là một file `png` bởi vì lệnh `file` sẽ không đọc extentions hiện tại của file mà sẽ quét qua các byte đầu tiên của file `png`. Lệnh `file` thấy các signature byte của `png` như `89 50 4E 47 0D 0A 1A 0A` và các chunk, nó thực hiện so sánh với dữ liệu được lưu trên cơ sở dữ liệu của lệnh `file` và nhận diện được đây là file `.png`
+
 
 ### Lệnh mv, rm
 
