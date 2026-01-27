@@ -214,7 +214,7 @@ Lệnh này giúp cho người phân tích có thể xác định nhanh rằng �
 
 Cách lệnh `file` nhận dạng được 1 file đó là file gì hoàn toàn không dựa vào extentions của file, mà nó lệnh sẽ tự động quét các byte đầu tiên của file đó, sau đó so sánh với cơ sở dữ liệu của nó, và nhận định file là file gì.
 
-**Syntax: `file <ten_file>`
+**Syntax:** `file <ten_file>`
 
 Ví dụ, cụ thể:
 ```
