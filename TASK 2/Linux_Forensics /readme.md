@@ -122,7 +122,7 @@ Giải thích qua về output của lệnh `ps`:
 
 - Chức năng là nó sẽ hiển thị cho chúng ta file đó dưới dạng HEX, nó giúp cho người phân tích có thể xác định chính xác file đó là gì thông qua những giá trị hex và ASCII trong 2 cột output của `xxd`, vì đôi khi một file có thể bị sửa đổi nhỏ bằng cách thay đổi extention để đánh lừa. Có một cách khác là có thể dùng lệnh `file`. Ngoài ra xxd còn rất nhiều những công dụng khác. Chúng ta có thể tìm hiểu thêm tại [xxd_command](https://www.geeksforgeeks.org/linux-unix/xxd-command-in-linux/).
 
-C**Syntax**: `xxd <optione> <ten_file>`
+**Syntax**: `xxd <optione> <ten_file>`
 
 <img width="1063" height="702" alt="image" src="https://github.com/user-attachments/assets/79a9c965-4696-414f-bdde-be75f2a2d192" />
 
@@ -269,7 +269,7 @@ rm -rf /
 ```
 Đây là một cách thường được sử dụng để debug một mã độc nào đó, thay vì chúng ta thực hiện chạy nó trước, bởi vì lệnh `echo` chỉ thực hiện in chứ không thực thi.
 
-Nhưng có một cách để attacker có thể sử dụng lệnh `echo` để thực thi một lệnh, hắn sẽ chèn lệnh đó vào dấu `$()`, lúc này trình thông dịch sẽ tạm dừng `echo` và nó thực thi lệnh bên trong `$()` trước, ví dụ:
+Nhưng có một cách để có thể sử dụng lệnh `echo` để thực thi một lệnh, hắn sẽ chèn lệnh đó vào dấu `$()`, lúc này trình thông dịch sẽ tạm dừng `echo` và nó thực thi lệnh bên trong `$()` trước, ví dụ:
 
 ```
 ┌──(nhduydeptrai㉿tobi)-[/mnt/…/kali_linux_real_machine/CTF/VSL_ctf_2026/float]
