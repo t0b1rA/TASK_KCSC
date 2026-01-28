@@ -330,3 +330,6 @@ Lệnh này sẽ in ra đường dẫn đầy đủ từ (root) cho đến vị 
 
 ```
 
+# File System in Linux 
+
+## 
