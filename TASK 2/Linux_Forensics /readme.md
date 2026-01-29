@@ -332,4 +332,204 @@ Lệnh này sẽ in ra đường dẫn đầy đủ từ (root) cho đến vị 
 
 # File System in Linux 
 
-## 
+## Every file system in Linux
+
+### 1. Ext4 (Extended file system)
+
+**Ext4** (Fourth Extended Filesystem) là hệ thống tệp tiêu chuẩn cho hầu hết các bản phân phối Linux hiện nay. So với các phiên bản tiền nhiệm, Ext4 không chỉ tăng giới hạn lưu trữu mà còn thay đổi hoàn toàn cách quản lý dữ liệu để tối ưu hóa tốc độ và độ tin cậy
+
+#### A. Structure of Ext4
+
+Thay vì sử dụng phương pháp ánh xạ khối truyền thống của **Ext2/3**, thì **Ext4** sử dụng **Extents**.
+- Cơ chế: Một extent là một dải các khối dữ liệu liên tiếp nhau trên đĩa cứng. Thay vì liệt kê từng khối, Ext4 chỉ ghi lại theo cách: "*Bắt đầu từ khối 1 và kéo dài đến khối 4*".
+
+- **Cấu trúc cây B+**: Một inode đơn lẻ trong Ext4 có thể chauws tối đa 4 extents. Nếu một tệp quá lớn hoặc bị phân mảnh nhiều, các extents còn lại sẽ được tổ chức theo cấu trúc cây B+ để truy xuất nhanh.
+
+> **Cấu trúc cây B+** là một cấu trúc dữ liệu cây tự cân bằng, chuyên tối ưu hóa các thao tác tìm kiếm, chèn, và xóa trong hệ thống cơ sở dữ liệu và tệp tin
+
+- Giảm thiểu đáng kể metadata, giúp việc truy cập tệp lớn nhanh hơn và giảm tải cho CPU.
+
+#### B. Cơ chế Phân Bổ trì hoãn 
+
+Một trong những tính năng quan trọng nhất giúp cho **Ext4** vượt trội về hiệu suất.
+
+- **Cách hoạt động của cơ chế**: Khi 1 ứng dụng ghi dữ liệu, thay vì ghi lập tức vào ổ đĩa, thì ext4 sẽ giữ nó trong RAM. Hệ thống chỉ quyết định vị trí các khối dữ liệu thực tế trên đĩa khi dữ liệu chuẩn bị được flush xuống ổ cứng.
+
+- Bằng cách chờ đợi thế này thì hệ thống tệp biết được tổng kích thước của tệp và có thể tìm một khoảng trống đủ lớn liên tục để ghi toàn bộ tệp đó 1 lần duy nhất, giảm thiểu tình trạng chia nhỏ ổ đĩa.
+
+#### C. Nhật ký dữ liệu (Journaling) và Checksum
+
+Ext4 sử dụng cơ chế ghi nhật ký để bảo vệ dữ liệu trước các sự cố bị crash đột ngột.
+
+- **Journaling**: Mọi thay đổi về siêu dữ liệu (metadata) đều được ghi vào 1 vùng nhật ký trước khi thực hiện thay đổi thực tế. Nếu máy bị crash đột ngột, hệ thống chỉ cần kiểm tra nhật ký để phục hồi trạng thái ổn định thay vì phải quét cả ổ đĩa để fix từng mục.
+
+- **CheckSUms**: Ext4 là hệ thống tệp đầu tiên thêm mã kiểm tra vào nhật ký. Cơ chế này giúp phát hiện nếu dữ liệu nhật ký bị hỏng trong quá trình ghi, tránh việc hệ thống cố gắng phục hồi dữ liệu từ 1 bản nhật ký lỗi, có thể gây hư tổn thêm.
+
+#### D. Giới hạn và khả năng mở rộng tệp
+
+|Thông số | Giới hạn |
+| --- | --- |
+| Kích thước hệ thống tệp tối đa | 1 Exbibyte (EB) cực lớn |
+| Kích thước tối đa của 1 tệp đơn lẻ | 16 TB |
+| Số lượng thư mục con | Không giới hạn |
+
+### 2. XFS (Extended File System)
+
+**XFS** là một hệ thống tệp khác có độ hoàn thiện cao hơn so với **Ext4**, loại hệ thống tệp này được tối ưu hóa để lưu trữ các tệp và phân vùng lớn trên 1 máy chủ duy nhất.
+
+#### Cấu trúc và Cơ chế hoạt động
+
+**Allocation Groups**: XFS chia không gian lưu trữ thành các khu vực có kích thước bằng nhau gọi là *Allocation Groups*. Mỗi nhóm này hoạt động như 1 hệ thống tệp riêng biệt, nó có **Superblock** riêng, tự quản lý cấu trúc và sử dụng không gian của mình.
+
+**Quản lý không gian bằng cây B+**: Sử dụng không gian được kiểm soát nhờ sự hỗ trợ của cấu trúc cây B+, trong đó:
+
+- Một cây ghi lại khối đầu tiên trong vùng không gian trống liên tục.
+
+- Cây còn lại ghi nhận số lượng khối tạo nên vùng trống đó.
+
+**Extents**: Các khối lưu trữ được gán cho tệp bằng phương pháp dựa trên extent, tương tự như Ext4.
+
+**Inode**: Tất cả các tệp và thư mục trong **XFS** đều được đại diện bởi các inode riêng lẻ.
+
+- Việc cấp phát các extent có thể được lưu trực tiếp trong inode, hoặc được theo dõi bởi 1 cây B+ khác liên kết với nó trong trường hợp tệp quá lớn hoặc bị phân nhánh.
+
+- Cũng giống như inode trong hệ thống Ext4, chúng không chứa tên tệp, tên chỉ có sẳn trong các thư mục tương ứng.
+
+**Khả năng phục hồi và độ tin cậy**
+
+**XFS** cũng có cơ chế **Journaling** cho mọi cập nhật liên quan đến metadata. Tất cả các thay đổi được ghi vào nhật ký trước, sau đó các khối dữ liệu thực tế mới được sửa đổi sau.
+
+#### Ưu nhược điểm của XFS
+
+Ưu điểm lớn của XFS là: 
+
+- Có khả năng xử lí các tệp tin lớn như (video 4k, cơ sở dữ liệu) rất tốt do cơ chế Extents và cấu trúc cây B+.
+
+- Hiệu suất xử lí song song tốt nhờ vào các không gian lưu trữ **(Allocation Groups)**, khi nhiều luồng hoặc nhiều proccess muốn ghi dữ liệu vào ổ đĩa -> gây chậm CPU, thay vào đó nó có thể ghi vào các **AG** khác nhau cùng 1 lúc mà không cần chờ đợi lẫn nhau.
+
+- Khả năng mở rộng cực cao
+
+Nhược điểm của XFS:
+
+Một khi mà XFS thực hiện mở rộng kích thước tệp, thì nó không thể shrink tệp lại. Khiến cho việc làm việc với nhiều tệp tin nhỏ sẽ gây ra nhiều rắc rối. 
+
+### 3. Btrfs
+
+**Btrfs (B-tree File System)** là 1 trong những định dạng thế hệ mới phổ biến cho Linux, và rất nhiều nỗ lực đang được thực hiện để đảm bảo tính ổn định của nó. Btrfs được tinh chỉnh để hoạt động được trên nhiều thiết bị. Nó bao hàm các tính năng của 1 *trình quản lý phân vùng logic* (Logical Volume Manager - LVM), có khả năng trải rộng nhiều dữ liệu và thiết bị lưu trữ khác nhau.
+
+
+#### Cấu trúc dựa trên B-tree
+
+Như tên gọi của nó, Btrfs dựa rất nhiều vào cấu trúc B-tree. Mỗi cây được tạo thành từ các nút trong (internal nodes) và các nút lá (leaves). Một nút trong sẽ trỏ đến 1 nút con hoặc nút lá, trong khi nút lá chứa 1 "mục" mang thông tin cụ thể, Bố cục nó sẽ là:
+
+- **Root B-tree**: Vị trí của nó được lưu trong Superblock và nó chứa các tham chiếu đến tất cả cây B-tree còn lại.
+
+- **Chunk B-tree:** Để quản lý việc ánh xạ từ địa chỉ logic sang địa chỉ vật lý.
+
+- **Device B-tree:** Khác với Chunk B-tree, thì nó liên kết các khối vật lý trên thiết bị phần cứng với phần địa chỉ ảo tương ứng.
+
+- **File system B-tree**: Chịu trách nhiệm cấp phát tệp và thư mục.
+  - Tệp nhỏ: Được lưu trữ trực tiếp ngay bên trong các mục `extent` của cây (giúp tiết kiệm không gian và truy xuất nhanh).
+ 
+  - Tệp lớn: Được đặt bên ngoài tại các vùng liên tục gọi là `extent`. Lúc này mục `extent` trong cây sẽ tham chiếu đến tất cả các `extent` đang chứa dữ liệu tệp đó.
+ 
+- Thư mục: Các mục thư mục chứa tên tệp và trỏ đến các "mục inode" tương ứng.
+
+### Cơ chế mới
+
+**1. Tích hợp LVM/RAID**: Nó có thể gộp nhiều ổ cứng lại thành 1 khối lưu trữ mà không cần phần mềm hay phần cứng RAID riêng.
+
+**2. Lưu trữ tệp nhỏ (Inline Data)**: Các tệp rất nhỏ được nhét thẳng vào cấu trúc cây dữ liệu thay vì chiếm 1 khối block riêng biệt trên đĩa, giúp tiết kiệm dung lượng đáng kể.
+
+**3. An toàn dữ liệu (CoW)**: Cơ chế tạo bản sao của 1 khối dữ liệu, thực hiện ghi dữ liệu mới vào chỗ trống khác trên đĩa, sau khi được ghi an toàn thì trỏ bản sao đó đến phần dữ liệu mới được ghi. Giúp loại bỏ nguy cơ hỏng dữ liệu khi bị crash.
+
+### F2FS 
+
+**F2FS** hoạt động dựa trên phương pháp Hệ thống tệp cấu trúc nhập kí (LFS). Nó tính toán đến các đặc thù riêng cho bộ nhớ flash. Thay vì tạo 1 khối dữ liệu lớn nhất để ghi, **F2FS** tập hợp các khối thành các đoạn riêng biệt (tối đa 6 đoạn ) và ghi chúng đồng thời. Giúp tối ưu hóa tốc độ.
+
+#### A. Cấu trúc lưu trữ
+
+F2FS chia không gian lưu trữ theo cấu trúc phân cấp:
+
+- **Segment**: Đơn vị cơ bản có kích thước cố định.
+
+- **Section**: Được tạo thành từ nhiều segment liên tiếp.
+
+- **Zone***: Được tạo thành từ nhiều Sections.
+
+#### B. Quản lý dữ liệu qua các Nodes
+
+- **Inode**: lưu trữ các metadata như tên tệp, kích thước, permission.
+
+- **Direct Node**: Chỉ ra vị trí các khối dữ liệu thực tế.
+
+- **Indirec Node**: Trỏ đến các khối nằm trong các nút khác.
+
+#### C. Các bảng quản lý quan trọng
+
+- **NAT (Node Address Table)**: Bảng chứa địa chỉ vật lý của các nút.
+
+- **SIT (Segment infomation table)**: ghi lại trạng thái sử dụng của tất cả các khối.
+
+- **SSA (Segment Summary Area)**: Xác định khối nào thuộc về nút nào.
+
+- **Main area**: Nơi chứa nội dung dữ liệu thực tế và các nút.
+
+#### Cơ chế tự làm sạch (Garbage Collection)
+
+Khi sắp xếp các phân đoạn trống, F2FS sẽ tự động dọn dẹp trong nền khi hệ thống không hoạt động.
+- Thuật toán dọn dẹp: Chọn các "segment victim" để xử lí và tiêu chí dựa vào số lượng khối đã sử dụng (theo SIT) hoặc dựa vào thời gian tuổi thọ của segment đó.
+
+
+### JFS (Journaled File System) 
+
+#### A. Cấu trúc và tổ chức dữ liệu
+Một phân vùng JFS được cấu thành từ các vùng gọi là Allocation Groups, và mỗi nhóm chứa 1 hoặc nhiều FileSets (tập tệp).
+
+- Quản lý tệp: Tất cả các tệp và thư mục được mô tả bởi các inode riêng biệt.
+
+- Dữ liệu: Nội dung dữ liệu thực tế được đại diện bởi 1 hoặc nhiều extents. Tất cả các extents này được lập chỉ mục bởi 1 cấu trúc **cây B+** chuyên dụng.
+
+- Lưu trữ thư mục:
+  - Thư mục nhỏ: được lưu trữ ngay bên trong các inode (khác với extent).
+ 
+  - Thư mục lớn: Được tổ chức dưới dạng **cây B+**.
+ 
+#### Quản lý không gian và Nhật ký
+
+Cấu trúc cây B+ cũng đóng vai trò kiểm soát việc sử dụng không gian lưu trữ thông qua 2 cây riêng biệt:
+
+- Một cây lưu trữ địa chỉ khối bắt đầu của các dải trống (free extent).
+- Một cây lưu trữ số lượng (kích thước) của các dải trống đó.
+
+**JFS** cũng bao gồm một vùng Nhật ký (Log area) riêng biệt. Bất cứ khi nào có thay đổi về siêu dữ liệu (metadata), hệ thống sẽ ghi vào vùng nhật ký này để đảm bảo tính toàn vẹn.
+
+
+### ZFS (Zettabyte File System)
+
+**ZFS** nó vừa là hệ thống tệp, vừa là trình quản lý phân vùng (volume manager). Nó gộp tất cả các ổ cứng vật lý vào 1 (Storage Pool - zpool). Từ đây, bạn có thể tạo hàng trăm hệ thống tệp con khác mà không cần quan tâm đến kích thước cố định. Các tệp con này dùng chung dung lượng của vùng lưu trữ. Vùng lưu trữ này còn trống bao nhiêu, thì các tệp con được dùng bấy nhiêu.
+
+#### Cấu trúc và cơ chế của ZFS
+
+**A. Cơ chế toàn vẹn dữ liệu** 
+- Khi ghi dữ liệu , ZFS tính toán mã **checksum** cho từng khối dữ liệu và kể cả siêu dữ liệu. Khi đọc lại file, ZFS tính toán lại và so sánh với mã checksum khi dữ liệu được ghi.
+
+- Đặc biệt là khả năng tự sửa lỗi **(Self-healing)**: Nếu ZFS phát hiện checksum không khớp, và bạn đang chay chế độ Mirror hoặc RAID, ZFS sẽ tự động lấy bản sao tốt từ ổ cứng khác đè lên lỗi, và trả về dữ liệu sạch.
+
+**B. RAID-Z**
+
+**ZFS** không dùng RAID phần cứng, nó dùng RAID riêng gọi là RAID-Z.
+- **RAID-Z1,2,3:** tương ứng với RAID 5,6 (có thể tìm hiểu sâu về [RAID](https://www.baeldung.com/linux/raid-intro))  nhưng mạnh hơn. Z3 cho phép hỏng cùng lúc 3 ổ cứng nhưng không mất dữ liệu.
+
+**C. ARC (Adaptive Replcacement Cache)**
+
+ZFS sử dụng RAM cực kì tích cực. Nó biến RAM dư thừa của máy chủ thành bộ nhớ đệm (Cache) đọc dữ liệu nhanh hơn. Điều này khiến cho hệ thống tệp ZFS ngốn rất nhiều RAM.
+
+**D. Copy-on-Write (CoW) và Snapshot**
+
+Giống Btrfs, ZFS không ghi đè dữ liệu cũ, nó cho phép:
+
+- **Snapshot** bạn có thể chụp ảnh hệ thống tệp nhanh chóng, dù dữ liệu nặng cả terabyte.
+
+- **Rollback**: Nếu lỡ tay xóa file hoặc bị virus mã hóa, cơ chế CoW sẽ đưa file đó về ngay trạng thái ban đầu mà không cần mất thời gian để giải mã. Tìm hiểu thêm về cơ chế **Snapshot và CoW** ở đây (https://klarasystems.com/articles/basics-of-zfs-snapshot-management/).
+
