@@ -443,7 +443,7 @@ Như tên gọi của nó, Btrfs dựa rất nhiều vào cấu trúc B-tree. M�
 
 **3. An toàn dữ liệu (CoW)**: Cơ chế tạo bản sao của 1 khối dữ liệu, thực hiện ghi dữ liệu mới vào chỗ trống khác trên đĩa, sau khi được ghi an toàn thì trỏ bản sao đó đến phần dữ liệu mới được ghi. Giúp loại bỏ nguy cơ hỏng dữ liệu khi bị crash.
 
-### F2FS 
+### 4. F2FS 
 
 **F2FS** hoạt động dựa trên phương pháp Hệ thống tệp cấu trúc nhập kí (LFS). Nó tính toán đến các đặc thù riêng cho bộ nhớ flash. Thay vì tạo 1 khối dữ liệu lớn nhất để ghi, **F2FS** tập hợp các khối thành các đoạn riêng biệt (tối đa 6 đoạn ) và ghi chúng đồng thời. Giúp tối ưu hóa tốc độ.
 
@@ -481,7 +481,7 @@ Khi sắp xếp các phân đoạn trống, F2FS sẽ tự động dọn dẹp t
 - Thuật toán dọn dẹp: Chọn các "segment victim" để xử lí và tiêu chí dựa vào số lượng khối đã sử dụng (theo SIT) hoặc dựa vào thời gian tuổi thọ của segment đó.
 
 
-### JFS (Journaled File System) 
+### 5. JFS (Journaled File System) 
 
 #### A. Cấu trúc và tổ chức dữ liệu
 Một phân vùng JFS được cấu thành từ các vùng gọi là Allocation Groups, và mỗi nhóm chứa 1 hoặc nhiều FileSets (tập tệp).
@@ -505,7 +505,7 @@ Cấu trúc cây B+ cũng đóng vai trò kiểm soát việc sử dụng không
 **JFS** cũng bao gồm một vùng Nhật ký (Log area) riêng biệt. Bất cứ khi nào có thay đổi về siêu dữ liệu (metadata), hệ thống sẽ ghi vào vùng nhật ký này để đảm bảo tính toàn vẹn.
 
 
-### ZFS (Zettabyte File System)
+### 6. ZFS (Zettabyte File System)
 
 **ZFS** nó vừa là hệ thống tệp, vừa là trình quản lý phân vùng (volume manager). Nó gộp tất cả các ổ cứng vật lý vào 1 (Storage Pool - zpool). Từ đây, bạn có thể tạo hàng trăm hệ thống tệp con khác mà không cần quan tâm đến kích thước cố định. Các tệp con này dùng chung dung lượng của vùng lưu trữ. Vùng lưu trữ này còn trống bao nhiêu, thì các tệp con được dùng bấy nhiêu.
 
@@ -533,3 +533,178 @@ Giống Btrfs, ZFS không ghi đè dữ liệu cũ, nó cho phép:
 
 - **Rollback**: Nếu lỡ tay xóa file hoặc bị virus mã hóa, cơ chế CoW sẽ đưa file đó về ngay trạng thái ban đầu mà không cần mất thời gian để giải mã. Tìm hiểu thêm về cơ chế **Snapshot và CoW** ở đây (https://klarasystems.com/articles/basics-of-zfs-snapshot-management/).
 
+
+
+
+## Linux File Hierarchy Structure 
+
+Khác với Windows sẽ có cấu trúc file system khác nhiều so với Linux, với Windows sẽ quản lý lưu trữ theo từng phân vùng ổ đĩa riêng biệt và giống như những cái cây độc lập trong 1 khu rừng chúng riêng biệt hoàn toàn với nhau. Đối với Linux, cấu trúc bên trong của file system sẽ theo dạng cấu trúc cây phân cấp, với đỉnh là thư mục gốc duy nhất `/`.
+
+Hầu hết các thư mục dưới đây tồn tại trong tất cả hệ điều hành UNIX và thông thường đều được sử dụng cùng 1 cách, và đây là các thư mục như mặc định bên trong các hệ điều hành Linux.
+
+<img width="708" height="623" alt="image" src="https://github.com/user-attachments/assets/f4d9faeb-4973-440f-b00e-4795aeeb4b55" />
+
+### 1. "/" (Root) 
+
+Nằm ở phần top của mọi bản Linux file system đó chính là thư mục `root`, đại diện bởi dấu gạch `/`. Không có bất kì thư mục nào nằm trên thư mục `root`. Nếu bạn nhìn vào giao diện file system, bạn sẽ có thể thấy được mọi thư mục đều nằm dưới thư mục `root`.
+
+- Mọi file và thư mục đơn lẻ đều bắt đầu từ thư mục root.
+
+- Chỉ có root user mới có quyền modify thư mục root.
+
+- /root là root user's của thư mục home, nó khác hoàn toàn với `/`. Một là `root` của cả hệ thống lưu trữ toàn bộ dữ liệu của hệ điều hành máy tính đó, còn thư mục `/root` chỉ đơn giản là `1 căn phòng ` nhỏ bên trong ngôi nhà lớn `/`, chỉ có user đăng nhập với quyền root `khi terminal thay đổi từ $ -> #`, lúc này người dùng này mới có toàn quyền trong hệ thống, kể cả xóa bỏ hệ thống.
+
+Nếu một user thông thường, muốn tải về 1 file tại thư mục `/`, hoặc muốn tạo or xóa một folder trong đây, đều sẽ bị chặn với thông báo `Permission denied`.
+
+<img width="881" height="637" alt="image" src="https://github.com/user-attachments/assets/f833fed9-650e-4dae-a2f6-bd896515d76d" />
+
+### 2. /bin
+
+Thư mục /bin chứa các command và các file nhị phân cần thiết cho hoạt động của mọi người dùng, bao gồm các lệnh `ls`, `cd`, `ssh`,... Những lệnh này có sẳn đối với mọi người dùng trong hệ thống.
+
+- Chứa các file binary để thực thi các chương trình hay ứng dụng cần thiết cho mỗi người dùng. Nói đơn giản thì những `file binary` bên trong thư mục `/bin` căn bản là giống với file `.exe` trong windows, chỉ có cái khác là nó không có đuôi `.exe` thôi.
+
+- Các lệnh thông dụng của 1 người dùng thường được sử dụng đều lưu trữ trong thư mục này. `/bin` chứa tất cả câu lệnh được sử dụng bởi tất cả người dùng trong hệ thống.
+
+<img width="883" height="619" alt="image" src="https://github.com/user-attachments/assets/263a17ab-8cb4-47bd-9660-6083e0a3aa3a" />
+
+### 3. /boot
+
+Thư mục này là nơi mà chúng ta không nền đi vào nhất, bởi vì nó chứa những file và folder cần thiết cho việc khởi động máy tính lên. Nó bao gồm cấu hình **GRUB** bootloader và những file kernel cần thiết được tải lên trong quá trình khởi động.
+
+<img width="886" height="618" alt="image" src="https://github.com/user-attachments/assets/95724fb9-d6f9-4151-a6df-b0e6ae4d8fc9" />
+
+### 4. /dev
+
+Các file của thiết bị sẽ được lưu trữ bên trong thư mục `/dev`. Những file đặc biệt này hành động giống như giao diện giữa hardware và software. Các file thiết bị có 2 loại: block device (hard drives) và các thiết bị cho người dùng như (bàn phím, tai nghe, chuột, USB,..). Ví dụ trong `/dev` sẽ chứa các phân vùng ổ đĩa như `/dev/sda1`, `/dev/sda2`,...
+
+<img width="883" height="616" alt="image" src="https://github.com/user-attachments/assets/18f1384b-e7d6-4623-8abb-8a112d529dab" />
+
+### 5. /etc
+
+Nó được ghi tắt cho **Editable text configuration**. Thư mục `/etc` chứa các file cấu hình cho system application, users, dịch vụ và các tools hoặc nó chứa các tệp cấu hình cho toàn hệ thống.
+
+- Nó chứa bên trong các shell script để startup và shutdown được sử dụng cho việc bắt đầu/tạm dừng các chương trình cá nhân.
+
+### 6. /home
+
+Đây là thư mục chứa thư mục cá nhân dành riêng dành cho mỗi user, kể cả user thông thường và đây cũng là thư mục cho phép người dùng không có quyền hạn có thể modify bên trong đây. Và mỗi user chỉ thấy được tên thư mục (là tên của user đó) của chính user đó bên trong thư mục home này, đối với những người có quyền cao hơn như là `root`, sẽ có thể thấy được mọi thư mục của những user khác trong thư mục `/home`.
+
+- `/home` là thư mục cho mọi users lưu trữ thư mục riêng của họ bên trong, chứa các files được lưu, cài đặt cá nhân,...
+
+- Example: /home/Nduy, /home/T0b1.
+
+<img width="1302" height="885" alt="image" src="https://github.com/user-attachments/assets/69d369fb-13d7-4343-b3d1-27c807161195" />
+
+<img width="1002" height="863" alt="image" src="https://github.com/user-attachments/assets/f85710c4-ca43-424d-b64c-7e192842c96f" />
+
+
+### 7. /lib
+
+Ứng dụng yêu cầu các thư viện dùng chung để có thể khởi chạy được, tất cả những thư viện đó được lưu trữ bên trong `/lib`. Bao gồm các thư viện liên kết động cần thiết trong quá trình runtime. Ví dụ, Apache server libraries được lưu trữ ở đây. 
+
+<img width="1313" height="843" alt="image" src="https://github.com/user-attachments/assets/dc2355fc-a6a6-40e3-be6c-cb8d0faf66b6" />
+
+Ví dụ như các thư viện có thể dùng để giải nén `7z`, `dpkg`,...
+
+### 8. /media
+
+Các thiết bị như USBs, CDs và các drivers được gắn bên trong `/media`. Khi bạn mount một USB, hay floopy disk vào máy tính, nó sẽ tự động tạo ra 1 thư mục con về thiết bị này bên trong `/media`, mục đích là chứa các file cấu hình của các thiết bị trên. 
+
+- Thư mục mount tạm thời cho các thiết bị rời.
+
+- Example: /media/cdrom dành cho CD-ROM; /media/floppy dành cho floppy drives.
+
+### 9. /mnt
+
+Khác với thư mục `/media` sẽ tự động tạo ra subfolder bên trong khi các thiết bị rời được cắm vào máy tính, nhưng đối với `/mnt` bạn phải tự động mount thủ công 1 ổ đĩa ngoài được kết nối. Và khi 1 ổ đĩa ngoài được kết nối nó sẽ được lưu trữ bên trong `/mnt`.
+
+<img width="996" height="831" alt="image" src="https://github.com/user-attachments/assets/5d10233f-56b1-41b2-bf66-d66406458313" />
+
+<img width="1146" height="851" alt="image" src="https://github.com/user-attachments/assets/a9bd2f5f-8da0-4914-9add-394dbc512bb6" />
+
+### 10. /opt
+
+Phần mềm và gói của bên thứ 3 không thuộc cài đặt hệ thống mặc định được lưu trữ bên trong `/opt`. Nó bao gồm các tập tin cấu hình và dữ liệu của các ứng dụng đó.
+
+<img width="882" height="626" alt="image" src="https://github.com/user-attachments/assets/5e398ea6-5afc-4c46-b03e-1736ad27355c" />
+
+### 11. /sbin
+
+Khác với `/bin` chứa các tệp binary cho người dùng thông thường trong hệ thống, thì `/sbin` sẽ chứa các file binary cho administrative như iptable, firewall, management tools, route, init. Những file binary này chủ yếu chỉ dành cho administrator của hệ thống và thông thường yêu cầu cần có quyền root để thực thi.
+
+<img width="886" height="626" alt="image" src="https://github.com/user-attachments/assets/39067dba-a0a8-4cd6-8006-7d8e40dba977" />
+
+### 12. /srv
+
+Dữ liệu dành riêng cho trang web được dành riêng cho hệ thống, như là data và scripts dành cho web server, FTB. Những user thông thường hoặc kể cả root đều thấy thư mục này trống, bởi vì nó chỉ xuất hiện các thư mục con khi bạn đang là 1 hệ thống web server hoặc FTB server.
+
+Example: /srv/cvs chứa CVS liên quan đến data.
+
+<img width="1203" height="845" alt="image" src="https://github.com/user-attachments/assets/7cb3a670-d52c-40ae-a908-a6c71ba0a751" />
+
+<img width="1189" height="890" alt="image" src="https://github.com/user-attachments/assets/7cbdf349-1fe4-4fc5-b71b-abf9b1c14d38" />
+
+### 13. /tmp
+
+Thư mục này chứa các file hoặc thư mục được tạo tự động bởi chương trình khi file được thực thi. Các files này sẽ được xóa ngay lập tức sau khi các chương trình kết thúc, hoặc sau khi shutdown or restart.
+
+- Thư mục chứa các file tạm thời được tạo bởi hệ thống hoặc người dùng.
+
+- Files trong thư mục này sẽ bị xóa khi hệ thống tắt.
+
+<img width="1653" height="982" alt="image" src="https://github.com/user-attachments/assets/91d78b18-9c8c-44c5-9450-658b01a6d12a" />
+
+### 14. /usr
+
+Hệ thống phân cấp thư cấp cho việc read-only user data. chứa phần lớn các tiện ích người dùng và ứng dụng.
+
+- Chứa file binary, library dynamic, tài liệu và mã nguồn cho các chương trình.
+
+<img width="1057" height="827" alt="image" src="https://github.com/user-attachments/assets/25317db9-c2d3-4c37-9574-b76199b5125f" />
+
+- /usr/bin chứa các file binary cho user programs. Nếu bạn không thể tìm thấy user binary bên trong /bin, bạn có thể tìm kiếm bên trong /usr/bin.
+
+<img width="1063" height="836" alt="image" src="https://github.com/user-attachments/assets/eb0638f3-aaa1-4f45-aceb-76f04fa7a7eb" />
+
+
+- /usr/sbin chứa các file binary cho administrator, và cũng tương tự như trên thì nếu như bạn không tìm thấy file binary cho administrator bên trong /sbin, thì có thể tìm kiếm bên trong /usr/sbin.
+
+<img width="1080" height="870" alt="image" src="https://github.com/user-attachments/assets/82fc4e2f-f522-4173-ac9a-1ed0eac211b9" />
+
+
+- /usr/lib chứa các thư viện động cho /usr/bin và /usr/lib.
+
+<img width="1115" height="846" alt="image" src="https://github.com/user-attachments/assets/fa98d4f8-0386-40da-8e42-8e99a3c2b67a" />
+
+
+- /usr/local chứa chương trình của người dùng mà tải xuống từ source. Vdu: Khi bạn tải xuống apache từ source, nó sẽ được lưu trữ bên trong /usr/local/apache2.
+
+<img width="1128" height="840" alt="image" src="https://github.com/user-attachments/assets/b267d3fd-4507-4b83-b4a1-23c556a4b0d9" />
+
+
+- /usr/src chứa Linux kernel source, header-files và tài liệu.
+
+<img width="1126" height="852" alt="image" src="https://github.com/user-attachments/assets/f37735a6-b776-42a2-93e3-27ea8b58e8b8" />
+
+### 15. /proc
+
+Chứa các thông tin chi tiết cho các tiến trình hệ thống. Mỗi tiến trình sẽ được gán với 1 ID duy nhất và đại diện cho thư mục bên trong `/proc`
+
+- Chứa thông tin cho tiến trình hệ thống.
+
+- Đây là 1 hệ thống tệp tin giả chứa thông tin về các tiến trình đang chạy. Ví dụ /proc/{pid} thư mục này chứa thông tin chi tiết cho tiến trình với pid cụ thể đó.
+
+- Cũng là virtual filesystem với các text infomation về tài nguyên hệ thống.
+
+<img width="885" height="608" alt="image" src="https://github.com/user-attachments/assets/f94afbac-3fee-48be-9cfa-1b664fb08b1e" />
+
+### 16. /sys
+
+Bản chất nó không giống như `/dev` - khi mà chứa các tệp thiết bị, đóng vai trò là giao diện thực thi, bản chất của `/dev` là cung cấp cho các ứng dụng một ` lối đi ` để giao tiếp với phần cứng.
+
+Còn đối với `/sys`, là nơi chứa thông tin và cấu trúc, đóng vai trò là giao diện quản lý, nó trình abyf cấu trúc cây cho toàn bộ phần cứng và driver mà nhân Linux đang quản lý. Cho biết tên thiết bị, thuộc hãng ?, đang tiêu thụ điện thế nào,....
+
+/sys là nơi Linux trình bày toàn bộ "bản đồ" phần cứng của máy tính dưới dạng các file văn bản, để người dùng có thể dễ quản lí hơn.
+
+<img width="1081" height="836" alt="image" src="https://github.com/user-attachments/assets/2f817d41-fdcb-4fdb-bd5f-46626142ac9f" />
