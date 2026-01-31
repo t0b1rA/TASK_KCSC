@@ -249,7 +249,7 @@ Dùng phím mũi tên xuống (- down)
 
 Thông thường chúng ta có thể sử dụng option `-h` hoặc là `--help` để liệt kê ra hướng dẫn cho một command dưới dạng người đọc được.
 
-## Filesystem Interaction Continued
+## Task 4: Filesystem Interaction Continued
 
 Trong task này chúng ta sẽ được học cách làm việc với các file và thư mục trong filesystem bên trong Linux như:
 - Tạo ra 1 file hoặc folder.
@@ -389,3 +389,87 @@ user2@:/home/user2$
 
 #### File Permission in Numeric Format
 
+Chúng ta cũng cần phải tìm hiểu hơn về cách Linux phân quyền của các file và folder cho những user khác, như là quyền viết, đọc, và thực thi được hiển thị dưới dạng:
+
+`rwxrwxrwx`
+
+Format này được chia thành 3 lớp như sau:
+|Section | Applies to | Example |
+| --- | --- | --- |
+| First 3 | Owner | rwx | 
+| Next 3 | Group | rwx |
+| Last 3 | Others | rwx |
+
+Và mỗi chữ cái bên trong `rwx` đại diện cho 1 quyền cụ thể:
+
+- `r`: read 
+- `w`: write
+- `x`: execute
+
+Thông thường khi gán quyền cho 1 file hoặc folder thì chúng ta thường sử dụng những con số như `777`, `766`, thì các con số này đều đại diện cho những quyền mà user đó có với 1 file cụ thể.
+
+| Permissions | Value |
+| --- | --- |
+| Read (r) | 4 |
+| Write (w) | 2 |
+| Execute (x) | 1 |
+
+Khi chúng ta gán quyền cho 1 nhóm thì chúng ta thực hiện tính toán các con số này trong 1 nhóm để tạo nên quyền cho các user với file/folder cụ thể.
+
+
+| Groups | Permissions | Calculation | Value |
+| --- | --- | --- | --- |
+| Owner | rwx | 4 + 2 + 1 | 7 |
+| Groups | rwx | 4 + 2 + 1 | 7 |
+| Others | rwx | 4 + 2 + 1 | 7 |
+
+Với 1 file được cấp full quyền cho mọi người dùng sẽ có giá trị là `rwxrwxrwx = 777`
+
+Ví dụ dễ hình dung hơn:
+
+| Symbolic | Numeric | Meaning |
+| rwxr-xr-x | 755 | Người dùng chủ sở hữu có mọi quyền, còn những user khác chỉ có thể đọc và thực thi |
+| rw-r-r-- | 644 | Chủ sỡ hữu có quyền đọc và ghi, còn những user khác chỉ có quyền đọc |
+| rwx------ | 700 | Chỉ có chủ sỡ hữu | 
+
+### On the deployable machine, who is the owner of "important"?
+
+<img width="828" height="169" alt="image" src="https://github.com/user-attachments/assets/e60fc033-1520-4353-94e2-b396fc8da669" />
+
+Ta dùng lệnh `ls -lh` để kiểm tra quyền của tất cả các file và folder bên trong home, ở đây chúng ta thấy được file important có owner là `user2` ở cột kế bên cột phân quyền.
+
+<img width="782" height="135" alt="image" src="https://github.com/user-attachments/assets/27f79ce7-03bd-4d38-8b9f-fae6dd704699" />
+
+### What would the command be to switch to the user "user2"?
+
+Để chúng ta có thể chuyển đổi tài khoản sang user2, chúng ta có thể sử dụng lệnh `su user2`.
+
+<img width="775" height="125" alt="image" src="https://github.com/user-attachments/assets/165a0245-ff9a-4cd8-b20f-353c29f45831" />
+
+### Output the contents of "important", what is the flag?
+
+Bởi vì file `important` có quyền read cho tất cả các user nên chúng ta có thể đọc được nội dung bên trong file important mà không phải chuyển đổi người dùng:
+
+```
+tryhackme@linux2:~$ cat important 
+THM{SU_USER2}
+tryhackme@linux2:~$ 
+```
+
+Dùng lệnh cat để đọc được nội dung bên trong của file.
+
+## Task 6: Common Directories
+
+Trong task này chúng ta sẽ học thêm về 1 vài thư mục phổ biến và quan trọng bên trong `/` directory:
+
+**/etc**
+
+Thư mục root này là 1 trong những thư mục root quan trọng nhất trong hệ thống, nó lưu trữ những file cấu hình hệ thống máy tính, và các shell script giúp cho hệ thống có thể startup, các file chứa danh sách những quyền được sudo của user và groups trong hệ thống.
+
+Như trong thư mục `/etc` chúng ta có 2 file là `passwd` và `shadow`:
+- `passwd`: Lưu trữ thông tin của tất cả người dùng trong hệ thống, và mọi người đều có khả năng đọc được nội dung của file này.
+- `shadow`: Lưu trữ cách quản lý mật khẩu của người dùng dưới dạng mã hash, và ngày thay đổi mật khẩu của tất cả người dùng, và tên của người dùng đó.
+
+**/var**
+
+Thư mục /var cho lưu trữ những dữ liệu của các ứng dụng và dịch vụ gần đây được truy cập và được modify bởi người dùng
