@@ -9,7 +9,6 @@
 - Tìm kiếm các file và các toán tử của **shell**.
 
 <img width="770" height="197" alt="image" src="https://github.com/user-attachments/assets/0469d1f7-05ea-4bee-8c64-17e966063ad0" />
-<img width="192" height="192" alt="logo-O35E636P" src="https://github.com/user-attachments/assets/37efbed2-ad04-4ba0-9d88-e6fabff5cd6d" />
 
 Và task đầu này chúng ta cũng không cần phải trả lời câu hỏi.
 
@@ -17,8 +16,7 @@ Và task đầu này chúng ta cũng không cần phải trả lời câu hỏi.
 
 **Linux** thực chất là một thuật ngữ chung cho rất nhiều những hệ điều hành dựa trên UNIX(hệ điều hành khác). Bởi vì Linux là một mã nguồn mở nên Linux có đa dạng các phiên bản phù hợp với cấu hình và kích thước phù hợp với những hệ thống được sử dụng.
 
-### Research: What year was the first release of a Linux operating system?<img width="192" height="192" alt="logo-O35E636P" src="https://github.com/user-attachments/assets/3ccd29c2-e0f2-4c1e-854f-0dd0edbda857" />
-
+### Research: What year was the first release of a Linux operating system
 
 Năm 1991 hệ điều hành Linux đầu tiên được phát hành `Linux Kernel 0.01`.
 
@@ -215,4 +213,179 @@ Add thì phải sử dụng `>>` để ghi nối tiếp vào phần cuối của
 
 <img width="1111" height="127" alt="image" src="https://github.com/user-attachments/assets/1d7e4cb1-92c0-45aa-a17d-b78b766d692d" />
 
+
+# Linux Fundamental 2
+
+## Task 1: Introduction to Flags and Switches
+
+Task này thì chúng ta được giới thiệu về các arguments được cung cấp cho các commands, để người dùng có thể sử dụng các lệnh trở nên hiệu quả hơn.
+
+Giả sử với lệnh `ls`, khi chúng ta thông thường chỉ sử dụng `ls` or `l` đơn lẻ để xem bên trong 1 thư mục có những fild hay folder khác nào, nhưng đối với các hidden file - (file với dấu chấm phía trước `.hiddenfile`), đối với file này chúng ta cần sử dụng option `ls -a` để liệt kê tất cả gồm hidden file để có cái nhìn tổng quan nhất.
+
+- Khi chúng ta chỉ dùng `ls`:
+
+<img width="1335" height="150" alt="image" src="https://github.com/user-attachments/assets/c79c63de-4e74-41f6-8288-d74d6e0ef397" />
+
+- Khi chúng ta sử dụng thêm option `-a` cho lệnh `ls`:
+
+<img width="1476" height="218" alt="image" src="https://github.com/user-attachments/assets/7fe77cf2-abed-457b-b737-e45aca3f73a4" />
+
+*Lúc này chúng ta mới thấy được 1 file flag bị ẩn bằng cách tạo hidden file có dấu `.` đằng trước*.
+
+Ngoài ra chúng ta còn có thể dùng lệnh `man` - lệnh này giúp hiển thị một trang dễ nhìn hơn cho các command có các option đi kèm theo như `ls, mv, rm,...` sử dụng lệnh này sẽ liệt kê ra 1 trang hướng dẫn rõ ràng hơn là lệnh `--help / -h`.
+
+<img width="1479" height="745" alt="image" src="https://github.com/user-attachments/assets/8160faee-37a1-4079-9814-4fe4a7ce3941" />
+
+<img width="1478" height="638" alt="image" src="https://github.com/user-attachments/assets/f43e5c7d-5a20-4d82-b149-53c816fa29de" />
+
+
+### What directional arrow key would we use to navigate down the manual page?
+
+Dùng phím mũi tên xuống (- down)
+
+<img width="774" height="129" alt="image" src="https://github.com/user-attachments/assets/1f8a8982-972e-42f3-8738-44714be1d1c2" />
+
+### What flag would we use to display the output in a "human-readable" way?
+
+Thông thường chúng ta có thể sử dụng option `-h` hoặc là `--help` để liệt kê ra hướng dẫn cho một command dưới dạng người đọc được.
+
+## Filesystem Interaction Continued
+
+Trong task này chúng ta sẽ được học cách làm việc với các file và thư mục trong filesystem bên trong Linux như:
+- Tạo ra 1 file hoặc folder.
+
+- Di chuyển file và folder đó.
+
+- Xóa đi file hoặc folder.
+
+| Command | Full name | Purpose |
+| --- | --- | --- |
+| touch | touch | tạo ra 1 file trống không có gì cả |
+| mkdir | make directory | tạo ra 1 thư mục trống |
+| cp | copy | sao chép 1 file hoặc 1 thư mục |
+| mv | move | giúp đổi tên file hoặc thư mục, hoặc có thể dùng để thay đổi vị trí của file hoặc thư mục trong filesystem |
+| rm | remove | xóa đi 1 file hoặc thư mục |
+| file | file | xác định được file đó là file gì |
+
+
+
+**Tạo ra các file và thư mục (touch, mkdir)**
+
+Lệnh `touch` giúp người dùng tạo ra một file trống bên trong, chúng ta nên sử dụng thêm lệnh `echo` hoặc `nano` để có thể điền thêm dữ liệu vào cho file đó. Và lệnh `mkdir` giúp cho người dùng tạo ra thư mục bên trong:
+
+<img width="1448" height="191" alt="image" src="https://github.com/user-attachments/assets/57d4c35b-bdd5-4269-9ab9-e6e218759c71" />
+
+```
+t0b1ra@tobiraNduy:~/file1$ touch file.txt
+t0b1ra@tobiraNduy:~/file1$ ls
+file.txt
+```
+<img width="1493" height="760" alt="image" src="https://github.com/user-attachments/assets/a65085e7-9e98-42cf-9399-b8bddbc792de" />
+
+Và 1 file được tạo ra luôn là 1 file trống.
+
+```
+t0b1ra@tobiraNduy:~/file1$ nano file.txt
+t0b1ra@tobiraNduy:~/file1$ cat file.txt
+flag in side file
+```
+Và cũng có thể sử dụng lệnh `nano` hoặc lệnh `echo` để có thể viết thêm thông tin cho file trống.
+
+**Lệnh remove files và folders (rm)**
+
+Dùng lệnh `rm <ten_file>` để có thể xóa đi 1 file và lệnh `rm -R <ten_folder>` để thực hiện xóa đệ quy một folder 
+
+`rm <ten_file>`
+
+```
+t0b1ra@tobiraNduy:~/file1$ ls
+1.4  file.txt  file1.1  file1.2  file1.3
+t0b1ra@tobiraNduy:~/file1$ rm file.txt
+t0b1ra@tobiraNduy:~/file1$ ls
+1.4  file1.1  file1.2  file1.3
+```
+
+`rm -R <folder>`
+
+<img width="1369" height="175" alt="image" src="https://github.com/user-attachments/assets/395747af-30a3-4985-a5d7-5be0eae9b2a4" />
+
+**Copying và Moving file / folder**
+
+- Lệnh `cp`:
+
+Chúng ta có thể sử dụng lệnh `cp` để copy toàn bộ nội dung của 1 file và tạo thành 1 file khác:
+**syntax** : `cp <file_duoc_copy> <file_da_copy>`
+```
+t0b1ra@tobiraNduy:~$ cp file.txt file2.txt
+t0b1ra@tobiraNduy:~$ cat file.txt
+flag{copy_file}
+t0b1ra@tobiraNduy:~$ cat file2.txt
+flag{copy_file}
+```
+- Lệnh `mv`, chúng ta có thể sử dụng cho việc đổi tên 1 file or di chuyển 1 file sang thư mục khác.
+
+```
+t0b1ra@tobiraNduy:~$ mv file2.txt file2_sau_khi_doi_ten.txt
+t0b1ra@tobiraNduy:~$ cat file2_sau_khi_doi_ten.txt
+flag{copy_file}
+```
+
+Nội dung file sẽ được giữ nguyên, chỉ thay đổi tên của file.
+
+Hoặc chúng ta cũng có thể thay đổi vị trí của toàn bộ file đó đi sang thư mục khác.
+<img width="1482" height="481" alt="image" src="https://github.com/user-attachments/assets/6f5ab21e-a3c1-42d7-8578-30650916da4c" />
+
+
+**Determine File type**
+
+Lệnh `file` giúp cho chúng ta có thể xác định một file đó là loại file gì, bằng cách dùng lệnh `file <ten_file>`.
+
+```
+t0b1ra@tobiraNduy:~/folder_new/folder_new_2$ file file2_sau_khi_doi_ten.txt
+file2_sau_khi_doi_ten.txt: ASCII text
+t0b1ra@tobiraNduy:~/folder_new/folder_new_2$
+```
+
+### Task 5 Permissions 101
+
+Trong task này mình sẽ học về một số người dùng chỉ được thực hiện 1 vài hành động cho 1 vài file hoặc folder nhất định trong hệ thống. Chính là các quyền của các user.
+
+Trong filesystem Linux một file hoặc 1 thư mục có thể có 1 số những đặc trưng xác định cả hành động được cho phép của file và những user hay group có khả năng thực hiện những hành động, như:
+
+- Đọc
+
+- Viết
+
+- Thực thi
+
+#### Phân quyền trong Linux
+
+Trong Linux, thì một người dùng sở hữu 1 file đó, nhưng khi các quyền được thiết lập cho các user khác nữa, thì sẽ có 1 group user khác cũng sở hữu 1 bộ quyền lên tập tin đó giống hoặc khác nhau, Nhưng không liên quan đến chủ sở hữu. 
+
+Ví dụ: 1 chủ sở hữu 1 file quan trọng trong cho các khách hàng, user này có khả năng chỉnh sửa, xem, xóa file này.  Nhưng khi 1 khách hàng muốn đăng tải hoặc chỉnh sửa lại dùng chung 1 bộ quyền với chủ sở hữu, thì sẽ có thể gây ảnh hưởng đến khách hàng khác. 
+
+- Thông qua đó mới có 1 bộ quyền cho những user nhất định, để không nắm toàn quyền như chủ sở hữu.
+
+**Switching Between Users**
+
+Người dùng có thể sử dụng lệnh `su` cho việc thay đổi tài khoản, nếu họ có `passwd`, hoặc nếu không có bạn bắt buộc cần là 1 root user or 1 sử dụng quyền root thông qua `sudo` - Cần phải được root user thêm vào 1 groups có quyền `sudo`.
+
+**Syntax switch user:** `su -l (--login) <ten_user>`
+
+```
+tryhackme@linux2:~$ su user2
+Password:
+user2@linux2:/home/tryhackme$
+```
+
+Sau khi chuyển đổi tài khoản, thì phiên làm việc sẽ có sự thay đổi từ người dùng `tryhackme` qua người dùng `user2`:
+
+```
+tryhackme@linux2:~$ su -l user2
+Password:
+user2@linux2:~$ pwd
+user2@:/home/user2$
+```
+
+#### File Permission in Numeric Format
 
