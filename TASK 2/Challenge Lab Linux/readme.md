@@ -472,4 +472,62 @@ Như trong thư mục `/etc` chúng ta có 2 file là `passwd` và `shadow`:
 
 **/var**
 
-Thư mục /var cho lưu trữ những dữ liệu của các ứng dụng và dịch vụ gần đây được truy cập và được modify bởi người dùng
+Thư mục /var cho lưu trữ những dữ liệu của các ứng dụng và dịch vụ gần đây được truy cập và được modify bởi người dùng. Ví dụ, 1 file log được chạy trong service hoặc application thì sẽ được viết bên trong `/var/log`, hoặc dữ liệu khác không liên quand dến 1 người dùng cụ thể.
+
+**/root**
+
+Thư mục /root này giống như một thư mục `/home` của người dùng `root`. Những người dùng không có quyền root thì sẽ không thể truy cập vào được thư mục này, thư mục này chỉ cho phép mỗi người dùng `root` lưu trữ các file và folder của họ.
+
+**/tmp**
+
+File temp này được sử dụng để lưu trữ những file mà người dùng gần đây sử dụng nó sẽ tạo ra 1 file temp để backup nằm trong đây, và khi nào người dùng ngưng sử dụng ứng dụng hoặc dịch vụ đó, or người dùng shutdown máy thì các file này sẽ bị xóa. Bởi vì đây là 1 file được lưu trên RAM nên nó sẽ biến mất khi máy được tắt đi.
+
+### What is the directory path that would we expect logs to be stored in?
+
+Ở đây em biết được rằng là thư mục log của hệ thống Linux, sẽ được lưu trữ bên trong thư mục `/var` của Linux đây là thư mục lưu trữ dữ liệu của những file hoặc folder được sử dụng thường xuyên gần đây và cũng đồng thời có file log bên trong.
+
+<img width="679" height="563" alt="image" src="https://github.com/user-attachments/assets/fc58322c-473b-45e0-8522-2d729e737ac9" />
+
+<img width="811" height="137" alt="image" src="https://github.com/user-attachments/assets/4b3e16eb-d968-402a-abb0-db550036a0a1" />
+
+### What root directory is similar to how RAM on a computer works?
+
+Trong Linux có chúng ta có thư mục `/tmp` dùng lưu các file liên quan đến các ứng dụng hoặc dịch vụ hiện tại đang chạy trong máy tính, nói nó giống RAM là bởi vì khi là nó chỉ lưu các file này tạm thời, khi máy tính tắt nguồn, hoặc bị sập thì những file bên trong thư mục `/tmp` sẽ biến mất, như những dữ liệu được lưu trong RAM sẽ biến mất.
+
+### Name the home directory of the root user 
+
+Trong Linux thì thư mục `/home` của root user chính là thư mục `/root` chỉ có user với đặc quyền root mới có thể truy cập vào được hoặc là root user.
+
+<img width="826" height="123" alt="image" src="https://github.com/user-attachments/assets/ea234308-32de-4032-9188-41a4032eef44" />
+
+
+# Linux Fundamentals 3
+
+Ở đây 2 task đầu vẫn là introduction về những gì chúng ta học hôm nay về các kĩ năng quản lí các gói, tự động hóa và nhật ký của dịch vụ và ứng dụng ở task 1 và task 2 là hướng dẫn cách dùng ssh truy cập vào Linux machine.
+
+### Task 3: Terminal Text Editors
+
+Task này, mình sẽ được giới thiệu về các công cụ chỉnh sửa văn bản bên trong Linux khá phổ biến, là:
+
+- `nano`: công cụ được tích hợp sẳn trong hầu hết mọi phiên bản của Linux, dùng để chỉnh sửa văn bản cực kì phổ biến. Với **syntax**: `nano <file_name>`. Sau khi mà chúng ta nhấn enter, thì nó sẽ đưa chúng ta sang giao diện 1 trang trống, và cho phép chúng ta thực hiện chỉnh sửa nó.
+
+<img width="926" height="596" alt="image" src="https://github.com/user-attachments/assets/52a0e64b-9392-46cc-b510-1ddd6be33ae7" />
+
+- Bên cạnh đó `nano` còn có 1 số tính năng như:  
+  - Tìm kiếm văn bản.
+  
+  - Dán và sao chép.
+  
+  - Nhảy đến số dòng nhất định trong văn bản.
+  
+  - Tìm kiếm dòng hiện tại mà bạn đang đứng.
+
+Sau khi thao tác xong, có thể nhấn tổ hợp phím `Ctrl + O` để lưu lại file và `Ctrl + X` để thoát ra.
+
+- `VIM`: là một công cụ chỉnh sử văn bản nâng cao hơn so với `nano` và cũng phức tạp hơn rất nhiều, khi chúng ta phải tập làm quen với việc sử dụng dòng lệnh để trong chính trình soạn thảo văn bản trên
+
+- Để tạo/mở một file văn bản:
+
+`vi <FILE_NAME>`
+
+Đặc biệt bên trong `vim` có 3 chế độ rất quan trọng mà chúng ta cần tìm hiểu 
