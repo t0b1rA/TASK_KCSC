@@ -788,3 +788,147 @@ Như đã đề cập từ trước, để chuyển 1 tiến trình từ `backgr
 <img width="769" height="121" alt="image" src="https://github.com/user-attachments/assets/8713bdc7-2833-404c-8ce9-3bd4a8814e57" />
 
 ### Task 6: Maintaining Your System: Automation
+
+Users có thể cần những hành động hoặc tác vụ theo lịch trình (schedule) trong Linux diễn ra sau khi hệ thống đã được boot thành công. Task này qua đó giới thiệu cho chúng ta về `cron` process, và cách chúng ta tương tác với `crontabs`. Nói qua 1 chút về `crontabs` là một tiến trình luôn bắt đầu được khởi chạy trong quá trình boot của hệ thống, nó có trách nhiệm với việc tạo điều kiện và quản lý các tác vụ `cron`.
+
+
+Dịch vụ cron thường xuyên check những file bên trong `/var/spool/cron` và thư mục `/etc/cron.d` và `/etc/anacrontab` file. Những nội dung của file này định nghĩa các công việc của cron mà nó cần phải chạy tại nhiều khoảng thời gian khác nhau. Mỗi file và thư mục có nội dung bên trong khác nhau như :
+
+- `/var/spool/cron` chứa file cron cho cá nhân từng người dùng.
+
+- `/etc/cron.d` bao gồm những dịch vụ hệ thống và ứng dụng thường thêm vào các files cron job.
+
+- `/etc/anacrontab` : bên trong file này sẽ cho chúng ta biết về cách sử dụng các phím tắt cho các khoảng thời gian cụ thể và phổ biến nhất, những shortcut này đại diện cho 5 trường thời gian thông thường để set thời gian chạy tác vụ và tiến trình bên trong cron. Các phím tắt này thường được kí hiệu có `@` ở đầu. :
+  -  **@reboot**: chạy mỗi lần khởi động lại.
+ 
+  -  **@yearly**: chạy 1 lần mỗi năm, tương đương với `0 0 1 1 *`.
+ 
+  -  **@annually**: chạy 1 lần mỗi năm, tương ứng với `0 0 1 1 *`, giống ở trên chỉ thay đổi cách đọc.
+ 
+  - **@monthly:** chạy 1 lần mỗi tháng `0 0 1 * *`.
+ 
+  -  **@weekly:** chạy 1 lần mỗi tuần `0 0 * * 0`.
+ 
+  -  **@daily:** chạy 1 lần mỗi ngày `0 0 * * *`.
+ 
+  -  **@hourly:** chạy 1 lần mỗi tiếng `0 * * * *`.
+ 
+```
+# For details see man 4 crontabs
+
+# Example of job definition:
+# .---------------- minute (0 - 59)
+# |  .------------- hour (0 - 23)
+# |  |  .---------- day of month (1 - 31)
+# |  |  |  .------- month (1 - 12) OR jan,feb,mar,apr ...
+# |  |  |  |  .---- day of week (0 - 6) (Sunday=0 or 7) OR sun,mon,tue,wed,thu,fri,sat
+# |  |  |  |  |
+# *  *  *  *  * user-name  command to be executed
+```
+
+Cấu trúc chung của lệnh `cron`. Điều đặc biệt hơn là bên trong lệnh thực thi chúng ta sẽ thấy các dấu `*`, nó đại diện cho các trường chúng ta không nhập gì cả. Để thực hiện edit chúng ta sử dụng lệnh `crontab -e`.
+
+<img width="902" height="618" alt="image" src="https://github.com/user-attachments/assets/c78f1595-4ad2-4141-bfdb-0af98a166f3e" />
+
+### Ensure you are connected to the deployed instance and look at the running crontabs.
+
+Thực hiện kết nối ssh đến với máy remote machine của tryhackme.
+
+<img width="1232" height="669" alt="image" src="https://github.com/user-attachments/assets/2e4ddd9a-be5f-46ea-8303-c91c6d210559" />
+
+### When will the crontab on the deployed instance (10.82.190.42) run?
+
+Chúng ta sử dụng lệnh `crontab -e` để quản lý và quan sát các schedule task được cài đặt trước đó:
+
+<img width="1108" height="638" alt="image" src="https://github.com/user-attachments/assets/d07a237f-c1ff-49ea-8a6e-28ad919d7047" />
+
+Đây chúng ta thấy được 1 cron được set với shortcut thời gian là `@reboot`, chạy với mỗi lần máy được khởi động. Ở đây mình muốn xem thử tác vụ nó chạy là gì, ban đầu mình thực hiện lệnh `cat /var/log/processes.sh` thì không có file hay thư mục nào như thế, mình thử vào folder đó để kiểm tra thêm, thì ở đây thư mục này chứa 1 script `tryhackme.sh`, script này chỉ đơn giản là chạy i từ trong khoảng từ 1 - 5 rồi in ra flag thôi.
+
+<img width="1170" height="706" alt="image" src="https://github.com/user-attachments/assets/b48bcbed-9564-46f4-8af0-6f1141d53ede" />
+
+<img width="1177" height="143" alt="image" src="https://github.com/user-attachments/assets/f510ed57-ae0c-45aa-8909-d455c1f49790" />
+
+### Task 7: Maintaining Your System: Package Management
+
+#### Introducing Packages & Software Repos
+
+Khi các nhà phát triển muốn đóng gói phần mềm cho cộng đồng, họ sẽ gửi nó đến 1 kho lưu trữ "apt". Nếu được phê duyệt, các chương trình và công cụ của họ sẽ được phát hành rộng rãi. Hai đặc điểm quan trọng nổi bật của Linux là: Khả năng tiếp cận của người dùng và giá trị của các công cụ mã nguồn mở.
+
+Mặc dù các nhà cung cấp hệ điều hành duy trì kho lưu trữ riêng của họ, chúng ta vẫn có thể thêm các kho lưu trữ cộng đồng vào danh sách của mình! Điều này cho phép chúng ta mở rộng khả năng của hệ điều hành. Để thêm chúng ta sử dụng lệnh `add-apt-repository`.
+
+#### Managing Your Repositories (Adding and Removing)
+
+Thông thường, chúng ta sử dụng lệnh `apt` để cài đặc phần mềm. `apt` là 1 phần của bộ công cụ quản lý gói cho phép chúng ta quản lý các gói, nguồn phần mềm, đồng thời cài đặt hoặc gỡ bỏ chúng. 
+
+
+Ở task này chúng ta chỉ được học cách quản lý các gói phần mềm bên trong Linux thông qua `apt` thôi, không có câu hỏi.
+<img width="1149" height="189" alt="image" src="https://github.com/user-attachments/assets/e745c832-fa7f-46d7-b727-ad0b26f0a3cb" />
+
+### Task 8: Maintaining Your System: Logs
+
+Các file `.log` được lưu bên trong thư mục `/var/log`, những file và folder này chứa thông tin nhật kí cho những ứng dụng và dịch vụ chạy trong hệ thống. Hệ điều hành Linux đã quản lý các hoạt động của nhật ký rất hiệu quả, theo 1 quy trình gọi là `rotate-xoay vòng`.
+
+Ở đây tryhackme có highlight cho chúng ta dễ nhìn hơn về các log được lưu trữ bên trong thư mục này của Ubuntu Machine:
+
+- Apache2 web server log.
+
+- Logs dành cho dịch vụ `fail2ban`, ví dụ: cái được dùng để giám sát các nổ lực brute forces.
+
+- Dịch vụ UFW được sử dụng như firewall.
+
+<img width="730" height="528" alt="image" src="https://github.com/user-attachments/assets/1cc302b6-6746-48fc-94ce-1c5cc45b936c" />
+
+Nhữn dịch vụ và logs là một cách rất tuyệt vời để chúng ta có thể theo dõi tình trạng hệ thống và bảo vệ nó. Không chỉ vậy, logs cho những dịch vụ như web server còn chứa 2 loại file logs khác, giúp cho nhà phát triển có thể chẩn đoán các vấn đề về hiệu suất và hoạt động trái phép nếu nó có xảy ra, 2 logs:
+
+- access log
+- error log
+
+<img width="843" height="217" alt="image" src="https://github.com/user-attachments/assets/b7a220e3-b838-4375-b953-5579759228bc" />
+
+
+### Look for the apache2 logs on the deployable Linux machine
+
+<img width="1277" height="904" alt="image" src="https://github.com/user-attachments/assets/f8d7e2a5-d533-42f0-ba8b-250d566c1158" />
+
+Ở bên trong thư mục `apache` chúng ta có thể lấy có 3 file log chính là `access.log`, `error.log` và `other_vhost_access.log`:
+
+- `access.log`: Là tất cả mọi request mà máy chủ nhận được từ client, bên trong có thể chứa những thông tin như:
+  - Địa chỉ ip của người truy cập.
+  - Thời gian truy cập.
+  - Phương thức HTTP (GET,POST,..).
+  - Tài nguyên được yêu cầu.
+  - Mã trạng thái phản hồi.
+
+- `error.log`: Ghi lại các thông tin chẩn đoán và bất kỳ lỗi nào mà máy chủ gặp phải trong quá trình xử lí request, và chauws thông tin như:
+ - Thông báo khởi động hoặc tắt máy chủ.
+ - Lỗi cấu hình
+ - Lỗi từ mã nguồn website.
+ - Lý do một request bị từ chối.
+
+- `other_vhost_access.log`: File này thường xuất hiện trên các hệ thống Ubuntu/Debian. Nó ghi lại nhật ký truy cập cho các Virtual Host (các trang web khác nhau chạy trên cùng 1 máy chủ) mà chưa được cấu hình file log riêng biệt.
+
+Các file có đuôi `.log.1` và `.log.2.gz` là cơ chế (log rotate), giúp cho người kiểm tra có thể coi được các file log cũ hơn đồng thời cũng tiết kiệm dung lượng cho phàn cứng:
+
+- File hiện tại, ví dụ `access.log` là file đang được ghi dữ liệu ngay tại lúc đó.
+
+- File `.log.1` là flle log của chu kì trước đó (thường là vài ngày hoặc vài tuần), nó là bản sao lưu cũ chưa bị nén.
+
+- File `.log.2.gz` là các file log cũ hơn đã được nén để tiết kiệm dung lượng.
+
+### What is the IP address of the user who visited the site?
+
+Chúng ta sẽ coi log của file log gần nhất được ghi lại trong hệ thống, chứ sẽ không có quyền coi được file logs đang ghi hiện tại, ta thực hiện `cat access.log.1`:
+
+<img width="1328" height="903" alt="image" src="https://github.com/user-attachments/assets/ad2f362c-65b7-4de5-8711-8999dc7cd88b" />
+
+Ta thấy được địa chỉ ip `10.9.232.111` thực hiện 1 request GET về 1 tấm hình `.jpg` và đã được web server trả về thành công.
+
+<img width="1752" height="171" alt="image" src="https://github.com/user-attachments/assets/cced912d-cfd7-42bd-89da-b1f1bc64d08b" />
+
+### What file did they access?
+
+File mà người dùng đó thực hiện GET về là file `catsanddogs.jpg`.
+
+<img width="1757" height="176" alt="image" src="https://github.com/user-attachments/assets/40174894-fd64-4a37-a40e-914fc8b4dcf8" />
+
+Vậy là chúng ta đã hoàn thành qua được 3 room Linux fundamental và được học về các lệnh cơ bản trong Linux, File system trong Linux, cách quản lí tiến trình, quản lý các gói trong hệ thống, quản lý và giám sát logs hệ thống. Để có thể tập làm quen hơn với hệ điều hành Linux này.
