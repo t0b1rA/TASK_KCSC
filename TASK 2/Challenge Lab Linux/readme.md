@@ -530,4 +530,261 @@ Sau khi thao tác xong, có thể nhấn tổ hợp phím `Ctrl + O` để lưu 
 
 `vi <FILE_NAME>`
 
-Đặc biệt bên trong `vim` có 3 chế độ rất quan trọng mà chúng ta cần tìm hiểu 
+Đặc biệt bên trong `vim` có 3 chế độ rất quan trọng mà chúng ta cần tìm hiểu:
+
+| Mode | Description |
+| --- | --- |
+| Normal | Mặc định, để điều hướng và chỉnh sửa đơn giản |
+| Insert | Để chèn và sửa đổi văn bản rõ ràng |
+| Command Line | Đối vưới các hoạt dộng saving, created, exiting,... |
+
+Để tải ứng dụng `vim` chúng ta dùng lệnh 
+```
+sudo apt update
+sudo apt-get install vim
+```
+
+Để tìm hiểu thêm về trình soạn thảo văn bản `vim`, mọi người có thể tham khảo qua [vim_tutorial](https://viblo.asia/p/co-ban-ve-vim-cho-nguoi-moi-bat-dau-GrLZDavnlk0).
+
+### Create a file using Nano
+Chúng ta sử dụng lệnh `nano text.txt`, để tạo ra 1 file văn bản:
+```
+tryhackme@linux3:~$ nano text.txt
+tryhackme@linux3:~$ cat text.txt 
+test 
+tryhackme@linux3:~$ 
+```
+
+### Edit "task3" located in "tryhackme"'s home directory using Nano. What is the flag?
+
+Đầu tiên mình cũng bắt đầu với việc kết nối ssh tới Linux machine từ attackbox trong tryhackme, chúng ta sử dụng lệnh `ssh tryhackme@<ip_machine>`, tryhackme là tên user và cũng là passwd của user này, còn địa chỉ ip chúng ta có thể lấy được khi chúng ta nhấn vào nút `start machine` từ task 2.
+
+
+<img width="1071" height="690" alt="image" src="https://github.com/user-attachments/assets/cd2a85a6-a229-4b81-a3a2-752380d768e0" />
+
+Sau khi chúng ta đăng nhập remote vào được Linux machine mà `rooms` này cung cấp, dùng lệnh `ls` để liệt kê ra file mà đề yêu cầu `task3`, dùng lệnh `cat task3` để đọc nội dung của file.
+
+<img width="1136" height="684" alt="image" src="https://github.com/user-attachments/assets/b5b202c9-d4ad-43b0-85e8-de208eee0fa9" />
+
+<img width="782" height="154" alt="image" src="https://github.com/user-attachments/assets/487adeeb-a123-4c10-96af-5965a8bda289" />
+
+
+## Task 4: General/Useful Utilities
+
+Task này chúng ta được làm quen với những câu lệnh liên quan đến web browser, tải file, host server, share file giữa 2 máy khác nhau thông qua ssh. Giờ chúng ta sẽ đi vào chi tiết của task này:
+
+### Downloading Files (Wget)
+
+Command này cho phép chúng ta có thể tải về 1 file từ web qua HTTP. Chúng ta chỉ cần cung cấp địa chỉ đường dẫn url chính xác đến files mà chúng ta cần tải xuống là được:
+
+**syntax**: `wget https://mywebsource.com/source/challenge.zip`
+
+### Transferring Files From Your Host - SCP (SSH)
+
+Secure copy hay viết tắt là (scp), là 1 lệnh để thực hiện hành động sao chép 1 file từ máy local sang một máy remote thông qua giao thức `ssh`, để cung cấp cả việc xác minh và mã hóa.
+
+Nó hoạt động dựa trên mô hình **source** và **destination**, SCP cho phép bạn:
+
+- Copy files/folder từ hệ thống hiện tại sang hệ thống remote.
+- Copy files/folder từ hệ thống remote sang hệ thống hiện tại.
+
+Điều quan trọng là để có thể thực hiện việc sao chép 1 file qua giao thức `ssh` thì chúng ta cần phải biết được username và password của cả máy current và máy remote, thì mới có thể thực hiện được hành động share:
+
+Chúng ta hãy xem 1 ví dụ để có thể dễ hình dung ra được cách mà chúng ta thực hiện hành động copy trên:
+
+| Variable | Value |
+| --- | --- |
+| Ip address của máy remote | 192.168.1.100 |
+| Username của máy remote | t0b1 |
+| Tên của file trên máy local hiện tại | challenge.txt |
+| Tên của file mong muốn trên máy remote | challenge_w.txt |
+
+Để thực hiện hành động sao chép 1 file từ máy local sang máy remote chúng ta sử dụng lệnh sau:
+
+`scp challenge.txt t0b1@192.168.1.100:/home/t0b1/challenge_w.txt`
+
+|Variable | Value |
+| --- | --- |
+| Địa chỉ ip của hệ thống remote | 192.168.1.100 |
+| Tên của thiết bị remote | t0b1 |
+| Tên của file trên máy remote | documents.txt |
+| Tên của file mà chúng ta muốn có trên máy local | notes.txt |
+
+Và để thực thi ngược lại hành động này, sao chép 1 file từ máy remote sang máy local hiện tại:
+
+`scp t0b1@192.168.1.100:/home/t0b1/documents.txt notes.txt`
+
+### Serving Files From Your Host - WEB
+
+Python có một option khá là hay đó chính là biến máy local trở thành 1 web server nhẹ rất đơn giản với module gọi là `HTTPServer`. Module này biến máy tính của chúng ta trở thành 1 web server đơn giản để có thể dùng cho phục vụ cho các file của chủ sở hữu, và cũng có thể giúp cho máy khác có thể file thông qua lệnh `curl` và lệnh `wget`.
+
+Thông thường chúng ta sẽ sử dụng lệnh `python3 -m http.server` để thực hiện tạo một web server nhẹ với những file bên trong thư mục hiện tại thực thi lệnh `python3` đó. Chúng ta có thể mở rộng thư mục ra thông qua một số cách khấc có thể tìm hiểu tại: [ExtentFolderInWebServer](https://www.google.com/search?q=how+to+extent+folder%2Ffile+when+using+python3+-m+http.server&ie=UTF-8).
+
+Ví dụ thực tế:
+
+Chúng ta thực hiện tạo một web server trên terminal đang kết nối tới máy Linux Machine, lúc này terminal đang là host của server đó, mọi request `GET` và `POST` đều sẽ được ghi lại ở đây.
+
+Lưu ý là chúng ta phải dùng 1 terminal mới để có thể thực hiện tải file từ server trên.
+
+<img width="1131" height="723" alt="image" src="https://github.com/user-attachments/assets/07e79a06-3491-467d-8b80-a91c7699f52f" />
+
+### Ensure you are connected to the deployed instance (10.80.188.57)
+Thực hiện kết nối ssh đến máy tryhackme thông qua địa chỉ ip đã được cung cấp bằng lệnh `ssh tryhackme@10.80.188.57`
+
+<img width="1151" height="630" alt="image" src="https://github.com/user-attachments/assets/e368231a-4a20-4e16-b6cf-fc5c99535b8e" />
+
+### Now, use Python 3's "HTTPServer" module to start a web server in the home directory of the "tryhackme" user on the deployed instance.
+
+Thực hiện lệnh `python3 -m http.server` tại thư mục `/home/tryhackme`
+
+<img width="1355" height="866" alt="image" src="https://github.com/user-attachments/assets/56d515f3-1927-4ff3-aa34-49280276f719" />
+
+Giờ chúng ta mở một terminal khác, và thực hiện request GET về file `.flag.txt`:
+
+<img width="1237" height="764" alt="image" src="https://github.com/user-attachments/assets/0c770622-43b1-40bf-88aa-7511d7db0872" />
+
+Chúng ta thấy được là việc thực hiện request GET về đã thành công với thông báo từ server là `200`. Giờ chúng ta chỉ cần đọc xem nội dung file là gì bằng lệnh `cat .flag.txt`, và đặc biệt nếu chúng ta không chú ý thì khi sử dụng lệnh `ls` sẽ không thấy file vừa tải về đâu, vì format tên file trên là 1 `hidden file`, nên muốn coi thì phải sử dụng lệnh `ls -a` để liệt kê cả hidden file.
+
+<img width="1220" height="760" alt="image" src="https://github.com/user-attachments/assets/35d1db3f-aa73-4862-a35f-706dc90bf28c" />
+
+<img width="770" height="200" alt="image" src="https://github.com/user-attachments/assets/dbc5812b-c984-4b9e-bbb6-caf6743e796a" />
+
+### Use Ctrl + C to stop the Python3 HTTPServer module once you are finished.
+
+Dùng tổ hợp phím Ctrl C để stop đi tiến trình web server. Lúc này khi ta sử dụng lệnh `lsof -i :8000` - lệnh kiểm tra xem có tiến trình nào đang chạy trên cổng 8000 không.
+
+<img width="1117" height="746" alt="image" src="https://github.com/user-attachments/assets/b73f3693-21e0-442c-84a9-741546125bbc" />
+
+Chúng ta thấy được kết quả là trống, bởi vì web server chạy trên cổng 8000 đã ngắt kết nối.
+
+### Task 5: Processes 101
+
+Ở task này chúng ta sẽ được học về những tiến trình bên trong Linux, cách tiến trình tạo ra như nào, cách quan sát và quản lý tiến trình, cách để kết thúc một tiến trình, cách để cho 1 tiến trình chạy trong nền,...
+
+### How do Processes Start?
+
+Đầu tiên chúng ta sẽ tìm hiểu về **NameSpace**, hệ điều hành sử dụng namespaces để chia nhỏ các tài nguyên có sẳn trên máy tính cho các tiến trình. Thay vì để 1 cục tài nguyên lớn, và cho các tiến trình tự phân chia phần tài nguyên nó sử dụng, thì sẽ dẫn đến việc cạn tài nguyên phân bổ cho các tiến trình, làm chậm hệ thống, hoặc có thể làm sập hệ thống, thì thay vào đó hệ điều hành Linux dùng cách:
+
+- **Phân bổ tài nguyên**: Mỗi tiến trình trong 1 cục tài nguyên lớn (namespace) sẽ có quyền truy cập vào 1 lượng tài nguyên nhất định. Tuy nhiên, nó chỉ là 1 phần nhỏ trong tài nguyên hệ thống, để có thể phân chia cho nhiều tiến trình hệ thống khác nữa.
+
+- **Tính bảo mật**: Namespace cực kì hữu ích cho bảo mật vì chúng cô lập các tiến trình với nhau. Chỉ những tiến trình nằm trong cùng 1 namespace mới có thể nhìn thấy nhau.
+
+Tiếp theo chúng ta sẽ nói về các tiến trình với ID = 0, đây là tiến trình bắt đầu khi hệ thống khởi động lên. Những tiến trình này là `init` của hệ thống như trên Ubuntu, ví dụ như **systemd**, tiến trình thường được sử dụng cung cấp các cách để quản lý các tiến trình của users và ngồi ở giữa hệ điều hành và users.
+
+### Getting Processes/Services to Start on Boot
+
+Một số ứng dụng có thể được bắt đầu trong quá trình khởi động hệ thống. Những phần mềm này thường thì rất quan trọng và thường được gọi bắt đầu trong quá trình khởi động của hệ thống bởi quản trị viên.
+
+Để thực hiện việc gọi 1 tiến trình khởi chạy trong quá trình `boot`, chúng ta có thể sử dụng lệnh `systemctl` -- *Lệnh này cho phép chúng ta tương tác với tiến trình **systemd***. 
+
+**syntax**: `systemctl [option] [service]`. Có 5 option khá quan trọng với `systemctl` :
+
+- Start
+
+- Stop
+
+- Enable
+
+- Disable
+
+- Status
+
+### Viewing Processes
+
+Bây giờ chúng ta sẽ học tới cách để làm việc với các process, thì ban đầu chúng ta cần phải biết cách quản lí và quan sát tiến trình nào đang chạy, để thực hiện hành động này chúng ta có thể sử dụng lệnh `ps`.
+
+<img width="885" height="620" alt="image" src="https://github.com/user-attachments/assets/e81320a9-7c33-476d-9d29-d962bdf48be0" />
+
+Để xem các tiến trình đang chạy với các user khác, thì chúng ta có thể sử dụng lệnh `ps aux`.
+
+<img width="852" height="773" alt="image" src="https://github.com/user-attachments/assets/4de6a092-908c-4d3e-9bd6-bcb403d33fe5" />
+
+Ở đây chúng ta có thể các tiến trình mà người dùng `root` chạy, ngoài ra còn các tiến trình hệ thống như `systemd+`, `syslog`,....
+
+### Managing Processes
+
+Ở đây chúng ta sẽ học cách để terminate 1 tiến trình, chúng ta sẽ sử dụng lệnh `kill`. Ngoài ra chúng ta còn có được 1 số signals mà có thể gửi tới các tiến trình khi nó bị `killed`:
+
+- **SIGTERM** - kill the process, nhưng cho phép nó thực hiện thao tác dọn dẹp dữ liệu trước khi tắt hẳn. `kill <PID>`.
+
+- **SIGKILL** - kill the process, nhưng thực hiện dừng ngay lập tức, có thể dẫn đến làm mất dữ liệu trong file, nhưng nên sử dụng cho các suspicios process. `kill -9 <PID>`.
+
+- **SIGSTOP** - tạm dừng hoạt động hiện tại của tiến trình chứ không dừng hẳn nó, nó vẫn xuất hiện trên RAM, nhưng nó đã ngưng tiêu thụ tài nguyên CPU.
+
+### An Introduction to Backgrounding and Foregrounding in Linux
+
+Process có thể chạy trong 2 trạng thái là: Trong background và foreground. Một ví dụ khả phổ biến với quá trình chạy foreground và background là lệnh `echo`, lệnh `echo` sẽ trả về 1 output trong foreground ngay lập tức, và chính vì nó quá nhanh như vậy, nên để thực hiện lệnh `echo` trong background nó sẽ tạo ra một chuỗi làm việc khá rối như sau:
+
+<img width="486" height="176" alt="image" src="https://github.com/user-attachments/assets/4707af18-1403-4838-99a1-d10fd4af1c24" />
+
+khi sử dụng `echo` ở foreground mặc định, thì rất dễ nhìn: thực thi lệnh -> output bên dưới.
+
+Nhưng đối với thực thi lệnh trong background với kí tự (&): thì chúng ta sẽ thấy nó in ra PID của tiến trình, sau đó là output đè lênh dòng nhập prompt của người dùng. Lý do là vì lệnh `echo` trả về output rất nhanh, nên nó đã vô tình đè lên prompt của người dùng sau khi chạy xong ở background.
+
+
+Ngoài ra chúng ta cũng có thể đưa 1 tiến trình đang chạy trong background, quay trở lại với foreground process bằng lệnh `fg`:
+
+<img width="1160" height="114" alt="image" src="https://github.com/user-attachments/assets/4afb4571-16dd-4492-8d98-216609969540" />
+
+Ban đầu thì script `./background.sh` vẫn đang thực hiện chạy trong background. Sau đó chúng ta thực hiện lệnh `fg` ngay tại thư mục đó, để điều hướng tiến trình đó từ background -> foreground.
+
+<img width="333" height="106" alt="image" src="https://github.com/user-attachments/assets/1ef670c3-79dc-4b4b-8df2-48f6e12a13e8" />
+
+<img width="505" height="303" alt="image" src="https://github.com/user-attachments/assets/2dc291f5-0ca9-4443-ba2e-21235b4ad256" />
+
+#### If we were to launch a process where the previous ID was "300", what would the ID of this new process be?
+
+Với mỗi lần chạy tiến trình từng chạy, thì sau khi chúng ta thực hiện chạy nó trở lại, số PID của nó sẽ tăng lên 1 số ví dụ:
+
+<img width="308" height="193" alt="image" src="https://github.com/user-attachments/assets/05b7dce9-d9fd-41d1-b747-5a640ebccf96" />
+
+<img width="771" height="149" alt="image" src="https://github.com/user-attachments/assets/4365780d-8531-46cc-a24e-68291dcbdfe1" />
+
+
+#### If we wanted to cleanly kill a process, what signal would we send it?
+
+Chúng ta muốn dừng 1 tiến trình, nhưng cho phép nó thực thi dọn dẹp các dữ liệu hiện tại, để tránh mất dữ liệu thì sử dụng **signals**: `SIGTERM`
+
+<img width="763" height="129" alt="image" src="https://github.com/user-attachments/assets/162a7433-0bd5-4a68-b94f-1950f1aa08ed" />
+
+### Locate the process that is running on the deployed instance (10.81.151.99). What flag is given?
+
+<img width="833" height="636" alt="image" src="https://github.com/user-attachments/assets/3a7230d4-1054-407e-9006-bf77a58e5837" />
+
+Trước tiên chúng ta cần thực hiện kết nối ssh đến Machine Linux mà task cho chúng ta ip sẳn.
+
+Sau đó em thực hiện kiểm tra bằng `ls` thì không có gì, em mới thử sử dụng lệnh `ps -aux` để liệt kê tất cả tiến trình của các user khác, thì:
+
+<img width="1509" height="591" alt="image" src="https://github.com/user-attachments/assets/81b4d1d5-98e7-4d79-b2fd-a8143a364169" />
+
+Tìm thấy tiến trình tên là **THM{PROCESSES}**, dược thực thi bởi root users. Cách để tạo ra 1 tiến trình với tên đặc biệt như này cũng có khá nhiều cách, ví dụ như là chạy 1 script với tên đặc biệt chứa flag, hoặc là sử dụng lệnh `exec -a "Flag{your_flag_here}" sleep 100000` -- lệnh `exec` trong Bash có 1 option là `-a`, giúp bạn chạy 1 chương trình với tên tùy ý muốn, kèm với `sleep` để cho chúng ta có 1 khoảng thời gian lâu hơn để quan sát.
+
+<img width="1460" height="746" alt="image" src="https://github.com/user-attachments/assets/d05e5679-267a-480a-90d3-62908cda71f0" />
+
+### What command would we use to stop the service "myservice"?
+
+Để tạm dừng 1 tiến trình, chúng ta có thể sử dụng lệnh `systemctl` điều khiển nhiều tiến trình trong hệ thống, trong đó là khả năng tạm dừng `stop` 1 process bằng lệnh `systemctl stop myservice`.
+
+<img width="776" height="121" alt="image" src="https://github.com/user-attachments/assets/8381b203-fae9-497c-9fa1-cf4a67e0ba8a" />
+
+#### What command would we use to start the same service on the boot-up of the system?
+
+Ở đây chúng ta làm được câu này cần hiểu rõ sự khác biệt giữa option `start` và `enable`:
+
+- `start`: tức là hệ thống sẽ thực thi tiến trình này ngay lập tức trong phiên làm việc hiện tại, và nó sẽ không thực hiện việc chạy cùng lúc khi hệ thống được `boot-up` trừ khi nó được enable từ trước.
+
+- `enable`: thì khác, nó sẽ không thực thi tiến trình ngay lập tức, mà nó sẽ cho phép tiến trình này chạy mỗi khi máy được `boot-up` lên, để tiến trình chạy lần đầu tiên sau khi `enable` chúng ta cần `reboot` lại máy.
+
+Trả lại cho câu hỏi lệnh nào dùng để bắt đầu 1 tiến trình khi `boot-up` trên hệ thống là:
+
+`systemctl enable myservice`.
+
+<img width="757" height="122" alt="image" src="https://github.com/user-attachments/assets/ce759409-910f-4f73-80ee-58e321b15c8f" />
+
+#### What command would we use to bring a previously backgrounded process back to the foreground?
+
+Như đã đề cập từ trước, để chuyển 1 tiến trình từ `background` sang `foreground` ta sử dụng lệnh `fg`.
+
+<img width="769" height="121" alt="image" src="https://github.com/user-attachments/assets/8713bdc7-2833-404c-8ce9-3bd4a8814e57" />
+
+### Task 6: Maintaining Your System: Automation
