@@ -931,4 +931,4 @@ File mà người dùng đó thực hiện GET về là file `catsanddogs.jpg`.
 
 <img width="1757" height="176" alt="image" src="https://github.com/user-attachments/assets/40174894-fd64-4a37-a40e-914fc8b4dcf8" />
 
-Vậy là chúng ta đã hoàn thành qua được 3 room Linux fundamental và được học về các lệnh cơ bản trong Linux, File system trong Linux, cách quản lí tiến trình, quản lý các gói trong hệ thống, quản lý và giám sát logs hệ thống. Để có thể tập làm quen hơn với hệ điều hành Linux này.
+Vậy là chúng ta đã hoàn thành qua được 3 room Linux fundamental và được học về các lệnh cơ bản trong Linux, File system trong Linux, cách quản lí tiến trình, quản lý các gói trong hệ thống, quản lý và giám sát logs hệ thống,.... Để có thể tập làm quen hơn với hệ điều hành Linux này.
