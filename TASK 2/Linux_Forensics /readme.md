@@ -332,7 +332,7 @@ Lệnh này sẽ in ra đường dẫn đầy đủ từ (root) cho đến vị 
 
 # File System in Linux 
 
-## Every file system in Linux
+## I. Every file system in Linux
 
 ### 1. Ext4 (Extended file system)
 
@@ -536,7 +536,7 @@ Giống Btrfs, ZFS không ghi đè dữ liệu cũ, nó cho phép:
 
 
 
-## Linux File Hierarchy Structure 
+## II. Linux File Hierarchy Structure 
 
 Khác với Windows sẽ có cấu trúc file system khác nhiều so với Linux, với Windows sẽ quản lý lưu trữ theo từng phân vùng ổ đĩa riêng biệt và giống như những cái cây độc lập trong 1 khu rừng chúng riêng biệt hoàn toàn với nhau. Đối với Linux, cấu trúc bên trong của file system sẽ theo dạng cấu trúc cây phân cấp, với đỉnh là thư mục gốc duy nhất `/`.
 
@@ -708,3 +708,334 @@ Còn đối với `/sys`, là nơi chứa thông tin và cấu trúc, đóng vai
 /sys là nơi Linux trình bày toàn bộ "bản đồ" phần cứng của máy tính dưới dạng các file văn bản, để người dùng có thể dễ quản lí hơn.
 
 <img width="1081" height="836" alt="image" src="https://github.com/user-attachments/assets/2f817d41-fdcb-4fdb-bd5f-46626142ac9f" />
+
+
+# Log file in Linux
+
+## File log trong Linux là gì ?
+
+File log là một tập hợp các bản ghi mà Linux duy trì để các quản trị viên theo dõi các sự kiện quan trọng. Các file log này sẽ chứa các thông báo về máy chủ, bao gồm kernel, dịch vụ và ứng dụng đang chạy trên hệ thống. File log cung cấp thời gian chi tiết cho từng sự kiện của hệ điều hành, ứng dụng và hệ thóng Linux, giúp cho người dùng hoặc quản trị viên có thể chẩn đoán và khắc phục sự cố.
+
+Hệ điều hành Linux sẽ lưu tất cả các log file quan trọng bên trong 1 thư mục `/var/log`. Hầu hết các file log bên trong đây sẽ được chia thành 4 loại chính;
+
+- Application log: Nhật kí ứng dụng
+- Event logs: Nhật kí sự kiện
+- Service logs: Nhật kí dịch vụ
+- System logs: Nhật kí hệ thống
+
+
+## Các file log quan trọng trong hệ thống và Hành vi 
+
+### 1. File log /var/log/kern.log
+
+Đây là file log rất quan trọng và nó ghi lại tất cả các thông tin về những hành vi liên quan đến kernel, thông qua file log này chúng ta có thể khắc phục các lỗi và cảnh báo liên quan đến kernel. Những thông tin được ghi lại trong log này được Linux tạo ra trong suốt quá trình vận hành hệ thống, không chỉ giới hạn trong lúc khởi động. Các lỗi về phần cứng, sự cố driver, hoặc cảnh báo về filesystem sẽ được ghi lại ở đây.
+
+**path**: `/var/log/kern.log`
+
+***Mô phỏng 1 hành vi ví dụ có thể sẽ tìm thấy trong file `kern.log`:***
+
+Giả sử chúng ta có 1 thiết bị USB được cắm vào hệ thống, lúc này kernel sẽ nhận diện được rằng có 1 thiết bị bên ngoài vừa được kết nối vào hệ thống, thực hiện các hành động kiểm tra thông tin thiết bị, và tìm-tải 1 driver phù hợp cho thiết bị đó, log mô phỏng;
+
+```
+[20236.607122] usb 1-1.2: new high-speed USB device number 28 using ehci-pci
+[20236.720003] usb 1-1.2: New USB device found, idVendor=0951, idProduct=1665
+[20236.720007] usb 1-1.2: New USB device strings: Mfr=1, Product=2, SerialNumber=3
+[20236.720009] usb 1-1.2: Product: DataTraveler 2.0
+[20236.720012] usb 1-1.2: Manufacturer: Kingston
+[20236.720014] usb 1-1.2: SerialNumber: 08606E6D402EFD91D7025267
+[20236.720694] usb-storage 1-1.2:1.0: USB Mass Storage device detected
+[20236.721212] scsi host6: usb-storage 1-1.2:1.0
+[20237.766610] scsi 6:0:0:0: Direct-Access     Kingston DataTraveler 2.0 1.00 PQ: 0 ANSI: 4
+[20237.767789] sd 6:0:0:0: Attached scsi generic sg2 type 0
+[20237.768454] sd 6:0:0:0: [sdc] 15131636 512-byte logical blocks: (7.75 GB/7.21 GiB)
+[20237.769158] sd 6:0:0:0: [sdc] Write Protect is off
+[20237.774661] sdc: sdc1 sdc2
+[20237.777526] sd 6:0:0:0: [sdc] Attached SCSI removable disk
+```
+
+Phân tích hành vi:
+**1. Phát hiện 1 thiết bị external được cắm vào hệ thống**: `usb 1-1.2: new high-speed USB device number 28`
+
+**2. Định danh (Identification)**: hệ thống thực hiện kiểm tra `idVendoc` và `idProduct`, tức là mã nhà sản xuất và mã sản phẩm. `Manufacturer: Kingston`, `SerialNumber` cung cấp các thông tin chi tiết hơn để có thể quản lí thiết bị, và nhận dạng được loại USB này là gì.
+
+**3. Tải driver**: `usb-storage 1-1.2:1.0: USB Mass Storage device detected` - Kernel nhận diện được đây là thiết bi lưu trữ và tải module `usb-storage`.
+
+**4. Giả lập SCSI**: `scsi host6` - Linux xử lý hàu hết các thiết bị lưu trữ thông qua lớp SCSI.
+
+**5 Gán tên thiết bị khối**: Thiết bị được gán tên `/dev/sdc` và được lưu trữ bên trong 1 thư mục chứa các thiết bị USB, block device,... `/dev`, những dòng `sdc: sdc1 sdc2` cho thấy Kernel đã đọc bảng phân vùng và tìm được 2 phân vùng bên trong.
+
+### 2. File log /var/log/messages 
+
+File log này sẽ chứa nhật ký hoạt động hệ thống (Systen log). Nó chủ yếu được sử dụng để lưu trữ các thông tin liên quan đến hệ thống. Về cơ bản, file log này lưu trữ tất cả dữ liệu hoạt động trong hệ thống như mail, cron, daemon, kern, auth,...
+
+Khi chúng ta xm file log này chúng ta có thể theo dõi các lỗi khởi động (trừ kernel), lỗi dịch vụ liên quan đến ứng dụng, những thông tin được ghi trong này thường mang tính chất thông tin và có thể dùng để xem đầu tiên khi quản trị viên muốn xem sự cố hệ thống.
+
+**path:** `/var/log/messages or /var/log/syslog`
+
+Lý do mà nó có tận 2 đường dẫn bởi vì nó phụ thuộc vào các bản phân phối của Linux.
+
+***Mô phỏng hành vi trong `/var/log/messages` log - Out of memory (OOM) killer***
+
+Đây là 1 kịch bản khá phổ biến trong hệ thống Linux, khi mà 1 tiến trình sử dụng quá nhiều tài nguyên CPU trong hệ thống thì Linux sẽ kích hoạt cơ chế (OOM) để kill 1 tiến trình tiêu tốn nhiều tài nguyên nhất trong hệ thống.
+
+Log mô phỏng: 
+
+```
+Mar 24 18:41:04 PLEDXDBOR0G kernel: Out of memory: Killed process 2475067 (postgres) total-vm:2484556kB, anon-rss:143224kB, file-rss:0kB, shmem-rss:452kB, UID:1011 pgtables:588kB oom_score_adj:900
+```
+Phân tích chi tiết các trường bên trong:
+
+- ` Out of memory: Killed process 2475067 (postgres)` Kernel đã thực hiện cơ chế (OOM) để kill đi tiến trình `2475067 (postgres)`.
+
+- `total-vm:2484556kB`: Đây là tổng bộ nhớ ảo mà tiến trình này register với hệ thống (2.4gb). Nhưng đây chưa phải là dung lượng RAM thực tế đang sử dụng.
+
+- `anon-rss:143224kB`: Đây là con số quan trọng khiến cho Kernel quyết định dừng tiến trình này lại. `Anonymous RSS` là lượng RAM thực tế đang chứa dữ liệu động như (heap, stack) của tiến trình. OOM dựa vào tiến trình có RSS cao để dừng.
+
+- `oom_score_adj:900`: Đây là điểm điều chỉnh OOM, tiến trình có thang điểm càng cao trong thang từ `-1000 - +1000` thì sẽ có khả năng bị Kernel dừng cao hơn.
+
+### 3. File log /var/log/auth.log - /var/log/secure
+
+Chứa thông tin xác thực trên hệ thống trong máy chủ phân phối bởi Linux (Debian hoặc Ubuntu,..) được ghi lại Khi chúng ta tìm kiếm vấn đề liên quan đến cơ chế ủy quyền của người dùng thì hãy tìm kiếm trong file log này. Đây là 1 file quan trọng để kiểm tra bảo mật. Trong các bản phân phối như RedHat và CentOS thì chúng ta sẽ có sự thay thế của `secure` log cho `auth.log`
+
+Thông qua file log này giúp cho chúng ta xác định được:
+
+- Các lần thử đăng nhập thành công/thất bại từ các phương thức (nhập mật khẩu, remote,..).
+  
+- Những lần user root sử dụng lệnh `sudo`.
+
+- Những lần thay đổi người dùng bằng lệnh `su`.
+
+**path:** `/var/log/auth.log`
+
+***Mô phỏng hành vi trong file `/var/log/auth.log` - Login SSH Successfully***
+
+Đây là mô tả lại 1 bản ghi cho lần phiên đăng nhập ssh thành công, với log mô phỏng:
+
+```
+May 1 16:17:43 owl sshd: Accepted publickey for root from 192.168.0.101 port 37384 ssh2
+May 1 16:17:43 owl sshd: pam_unix(sshd:session): session opened for user root by (uid=0)
+May 1 16:17:43 owl systemd-logind: New session 123 of user root.
+```
+
+Phân tích qua luồng được ghi:
+
+**1. Xác thực SSH**: Dòng đầu tiên xác nhận phương thức là `publickey` đã được chấp nhận cho root users. Và nó cũng ghi lại địa chỉ ip/port `192.168.0.101:37384`.
+
+**2. Thiết lập môi trường (PAM)**: cho thấy PAm đã tiếp nhận yêu cầu, tải các biến môi trường và thiết ljapa phiên làm việc cho root users.
+
+**3. Tích hợp thêm `systemd`**: `systemd-logind` cho thấy nó đã đăng kí phiên làm việc với root users và được quản lý phiên đăng nhập này.
+
+
+### 4. File log /var/log/boot.log
+
+File `boot.log` chứa những thông tin liên quan đến quá trình khởi động của các tập lệnh khởi tạo hệ thống. Nếu hệ thống gặp các liên quan đến tắt máy không đúng cách, khởi động lại hoặc lỗi khởi động. Đây là file hữu ích để chúng ta có thể vào chẩn đoán sự cố, ngoài ra nó còn cung cấp rõ khung thời gian xảy ra sự cố.
+
+**path**: `/var/log/boot.log`
+
+***Mô phỏng lại hành vi trong file `/var/log/boot.log` - Startup - OK/Failed***
+
+Ghi lại trạng thái của các dịch vụ trong quá trình hệ thống nạp. Log mô phỏng lại hành vi trên được ghi lại:
+
+```
+[ OK ] Started Show Plymouth Boot Screen.
+[ OK ] Reached target Multi-User System.
+ Failed to start Bluetooth service.
+```
+- [OK]: Dịch vụ khởi động thành công và systemd đã nhận được tín hiệu phản hồi.
+- "": Một dịch vụ đẫ gặp lỗi trong quá trình khởi động lên.
+
+### 5. File log /var/log/dmesg
+
+Khi hệ thống khởi động các thông tin liên quan đến các thiết bị phần cứng và trình điều khiển của chúng được ghi lại ở đây. Vì kernel phát hiện các thiết bị phần cứng vật lý được liên kết trong quá trình khởi động, nó sẽ ghi lại trạng thái thiết bị, lỗi phần cứng và các thông báo khác. 
+
+File log này giúp cho chúng ta phát hiện 1 thiết bị phần cứng nào đó không hoạt động thì sẽ bị ghi lại ở đây.
+
+**path**: `/var/log/dmesg`
+
+***Mô phỏng hành vi trong file `/var/log/dmesg` - Hardware error***
+
+Ngoài việc thay dõi các thiết bị mới, thì `dmesg` còn là nơi quan trọng để xem các lỗi liên quan đến phần cứng, drivers hoặc 1 kết nối kém, log mô phỏng:
+
+```
+[101100.860034] usb 6-2: new full-speed USB device number 18 using uhci_hcd
+[101100.980060] usb 6-2: device descriptor read/64, error -71
+[101102.912093] usb usb6-port2: unable to enumerate USB device
+```
+
+- Phát hiện được 1 kết nối USB mới vừa được ghi nhận lại với mã số 18 `usb 6-2`.
+
+- `error-71`: Thường chỉ ra lỗi giao thức phần cứng nghiêm trọng, có thể do thiết bị hỏng hoặc có thể cổng USB bị chập chờn về điện áp bên trong.
+
+- `unable to enumerate`: Nhân Linux đã từ bỏ nỗ lực nhận diện sau nhiều lần thử thất bại khi cố gắng đọc thông tin của `usb` để thực hiện các hành động tải driver, đặt tên,...
+
+### 6. File log /var/log/faillog
+
+Trong file này sẽ chứa các thông tin người dùng dã đăng nhạp thất bại. Chúng ta có thể sử dụng lệnh `faillog` để hiển thị nội dung của file. Nó là 1 file log vô cùng hữu ích để chúng ta có thể dò cùng với file log `auth.log` xem những user nào đang cố gắng thực hiện đăng nhập trái phép vào hệ thống.
+
+**path**: `/var/log/faillog`
+
+***Mô phỏng hành vi được ghi lại trong file log `/var/log/faillog` - List of failed login***
+
+Thay vì chúng ta phải xem file log(dạng nhị phân), thì chúng ta có thể dùng lệnh `faillog -a` để liệt kê tất cả các lần đăng nhập vào hệ thống bởi các users:
+
+```
+t0b1ra@tobiraNduy:~$ faillog -a
+Login       Failures Maximum Latest                   On
+
+root            0        0   01/01/70 08:00:00 +0800
+daemon          0        0   01/01/70 08:00:00 +0800
+bin             0        0   01/01/70 08:00:00 +0800
+sys             0        0   01/01/70 08:00:00 +0800
+sync            0        0   01/01/70 08:00:00 +0800
+games           0        0   01/01/70 08:00:00 +0800
+man             0        0   01/01/70 08:00:00 +0800
+lp              0        0   01/01/70 08:00:00 +0800
+mail            0        0   01/01/70 08:00:00 +0800
+news            0        0   01/01/70 08:00:00 +0800
+uucp            0        0   01/01/70 08:00:00 +0800
+proxy           0        0   01/01/70 08:00:00 +0800
+www-data        0        0   01/01/70 08:00:00 +0800
+backup          0        0   01/01/70 08:00:00 +0800
+list            0        0   01/01/70 08:00:00 +0800
+irc             0        0   01/01/70 08:00:00 +0800
+gnats           0        0   01/01/70 08:00:00 +0800
+nobody          0        0   01/01/70 08:00:00 +0800
+systemd-network       0        0   01/01/70 08:00:00 +0800
+systemd-resolve       0        0   01/01/70 08:00:00 +0800
+messagebus       0        0   01/01/70 08:00:00 +0800
+systemd-timesync       0        0   01/01/70 08:00:00 +0800
+syslog          0        0   01/01/70 08:00:00 +0800
+_apt            0        0   01/01/70 08:00:00 +0800
+uuidd           0        0   01/01/70 08:00:00 +0800
+tcpdump         0        0   01/01/70 08:00:00 +0800
+t0b1ra          0        0   01/01/70 08:00:00 +0800
+landscape       0        0   01/01/70 08:00:00 +0800
+dnsmasq         0        0   01/01/70 08:00:00 +0800
+t0b1ra@tobiraNduy:~$
+```
+```
+Login    Failures Maximum Latest                   On
+root          0      0   01/01/70 05:30:00 +0530
+admin         5      0   02/01/26 14:10:00 +0700
+```
+
+Ở đây mình lấy 2 ví dụ, ví dụ 1 là dùng trên chính hệ thống Linux của máy mình, để xem các hành vi được ghi lại bởi hệ thống nhưng không có lần đăng nhập thất bại nào, ví dụ 2 là để mô phỏng 1 tình huống thực tế khi mà:
+
+- User `admin` đã thực hiện 5 lần đăng nhập thất bại vào hệ thống liên tiếp vào ngày 2/1/26 lúc `14:10:00`. Điều này có thể báo hiệu người này có thể đang cố gắng 1 phiên đăng nhập bất hợp pháp.
+
+### 7. File log /var/log/cron
+
+Nơi lưu trữ tất cả các thông tin liên quan đến Crond,(trình làm việc schedule dựa vào thời gian), ví dụ như khi tiến trình nền `cron` khởi tạo 1 công việc, các thông báo lỗi liên quan,.. Bất cứ khi nào cron thực hiện 1 task or proccess bên trong `crontab` đã thiết lập, thì hệ thóng sẽ ghi lại các log trên và lưu bên trong `/var/log/cron`.
+
+**path:** `/var/log/cron`
+
+***Mô phỏng hành vi được ghi lại bên trong file log `/var/log/cron` - Execute Cmd***
+
+```
+Mar 29 16:15:01 data-processing CRON[12624]: (dataproc) CMD (/home/data-pipeline.py)
+```
+
+Đây là 1 log mô phỏng lại hành vi, thực thi 1 tiến trình `schedule task` đã được thiết lập bên trong `crontab`, phân tích chi tiết hơn về tiến trình đã được ghi lại trong file log `/cron`:
+
+- **Thời gian nó được ghi lại**: Ngày 29/3 vào lúc 16:15:01 job trên bắt đầu thực thi.
+
+- **data-processing**: tên của máy chủ, nơi mà task này được thực hiện.
+
+- `CRON[12624]`: Tên dịch vụ (CRON) và PID(Process ID - 12624). Mỗi lần chạy, cron sẽ tạo ra một PID khác.
+
+- `(dataproc)`: Tên user sở hữu tác vụ này. Lệnh này được chạy dưới quyền của người dùng `dataproc`.
+
+- `CMD(/home/data-pipeline.py)`: Mở cmd và thực thi 1 script đã được chuẩn bị sẳn.
+
+### 8. File log /var/log/yum.log
+
+Chứa thông tin được ghi lại khi gói được cài đặt bằng [yum](https://vietnix.vn/lenh-yum-trong-linux/). Thông qua file log này giúp cho chúng ta có thể theo dõi việc cài đặt các thành phần hệ thống và gói phần mềm. Kiểm tra các thông tin được ghi lại ở đây để xem một gói đã được cài đặt chính xác hay chưa. Từ đó có thể khắc phục các sự cố về các package chưa được cài đặt hoặc sự cố về phần mềm.
+
+**path:** `/var/log/yum.log`
+
+***Mô phỏng hành vi được ghi lại bên trong `/var/log/yum.log` - Log Management Package***
+
+Bên trong file chứa lịch sử cài đặt, cập nhật hoặc gỡ bỏ phần mềm trên các hệ thống dùm YUM để thực hiện các tác vụ trên, log mô phỏng:
+
+```
+Feb 06 10:38:35 Erased: nfs-utils
+Feb 06 10:39:36 Installed: tree-1.6.0-10.el7.x86_64
+Feb 06 10:45:12 Updated: kernel-3.10.0-1160.el7.x86_64
+```
+
+Phân tích qua về log:
+
+- Bên trong log sẽ chứa thời gian cụ thể về những hành động trong hệ thống được thực thi bởi `YUM`.
+
+- Thực hiện tải xuống `Installed: tree-1.6.0-10.el7.x86_64` gói `tree` là 1 công cụ nhỏ để dễ dàng quan sát cấu trúc thư mục khi làm việc với terminal
+
+- Xóa đi `Erased: nfs-utils`.
+
+- Thực hiện nâng cấp hệ thống `kernel`.
+
+### 9. File log /var/log/maillog hoặc /var/log/mail.log
+
+File log này lưu trữ các thông tin từ máy chủ mail đang chạy trên hệ thống bao gồm các thông tin về `postfix`, `smtpd`, `MailScanner`, `SpamAssassain` hoặc bất kì dịch vụ liên quan đến email nào khác. Nếu chúng ta cần các thông tin về cài đặt thiết lập cho `mail server` hoặc thông tin ghi lại tất cả các email đã được gửi hoặc nhận trong 1 khoảng thời gian cụ thể, kiểm tra xem lần gửi thành công/thất bại,...
+
+**path**: `/var/log/mail.log`
+
+***Mô phỏng hành vi trong log `/var/log/mail.log` - Log Mail Server***
+
+Ghi lại quá trình chuyển phát thư của các daemon như `Postfix`.Log mô phỏng:
+
+```
+Aug 2 17:36:16 mail-srv postfix/smtp: 12A95860867: to=<user@example.com>, relay=mail.isp.com[1.2.3.4]:25, delay=0.5, dsn=2.0.0, status=sent (250 2.0.0 OK)
+```
+
+- **status=sent**: Thư đã được mail server nhận diện dạng mail được gửi đi, và thư dã được máy chủ tiếp theo (relay) chấp nhận thành công.
+
+- `dsn=2.0.0 && (250 2.0.0 OK)` cho thấy rằng trạng thái gửi đi mail đã thành công.
+
+### 10. File log /var/log/httpd/
+
+Trong log này sẽ lưu trữ những thông tin rất hữu ích vì những thông tin nó lưu trữ liên quan đến các file `error.log` và `access.log` của Apache. Các file `error.log` chứa tất cả các lỗi gặp phải `httpd`. Những lỗi này bao gồm các vấn đề về bộ nhớ các lỗi liên quan đến hệ thống, truy cập trái phép vào tài nguyên mà clinet không được phép truy cập. `access.log` chứa 1 bản ghi của tất cả các yêu cầu nhận được qua HTTP. Giúp chúng ta theo dõi các địa chỉ IP và ID của người dùng với hành vi hợp pháp or không hợp pháp đang hành động với server.
+
+**path:** `/var/log/httpd/`
+
+***Mô phỏng hành vi trong log `/var/log/httpd/error.log` -- Unauthorized access to resource web server***
+
+Khác với access log, error log ghi lại các sự cố cấu hình hoặc từ chối truy cập.Log mô phỏng:
+
+```
+[authz_core:error][pid 6587][client 127.0.0.1:38873] AH01630: client denied by server configuration: /var/www/html/admin
+```
+
+Ở đây chúng ta sẽ thấy được ip/port của client `127.0.0.1:38873` đã thực hiện 1 truy cập trái phép vào cấu hình của server, cụ thể hơn client đã cố gắng truy cập vào trang `/var/www/html/admin` nhưng vốn dĩ họ không có quyền truy cập vào, hệ thống đã thấy người dùng cố gắng truy cập trái phép và đã ghi lại ip của người dùng thực hiện hành động trên và lưu vào file `error.log`.
+
+### 10. File log /var/log/mysqld.log or /var/log/mysql.log
+
+File log `/mysql.log` chứa tất cả các thông tin liên quan đến cơ sở dữ liệu MySQL của người dùng. Như việc bắt đầu, dừng, khởi động lại MySQL daemon `mysqld`.  Sử dụng file log này để ấc định các vấn đề trong khi MySQL bắt đầu, tạm dừng, và trong quá trình hoạt động. Và có 1 điều quan trọng là tùy thuộc vào bản phân phối của Linux mà người dùng chạy, thì file log này sẽ có tên khác nhau:
+
+- Với bản phân phối Debian/Ubuntu thì sẽ là `/var/log/mysql.log`.
+- Đối với hệ thống RedHat, CentOS, Fedora và các hệ thống dựa trên RedHat khác sử dụng : `/var/log/mysqld.log`.
+
+***Mô phỏng hành vi trong log `/var/log/mysql.log` - kết nối lạ từ ip vào database***
+
+```
+2026-02-02T10:15:01.123456Z   45 Connect   root@localhost on  using Socket
+2026-02-02T10:15:05.654321Z   45 Query     SELECT @@version, @@version_comment
+2026-02-02T10:15:10.223344Z   45 Query     SHOW DATABASES
+2026-02-02T10:15:15.887766Z   45 Query     USE customer_db
+2026-02-02T10:15:20.112233Z   45 Query     SHOW TABLES
+2026-02-02T10:15:30.445566Z   45 Query     SELECT * FROM users WHERE admin = 1
+2026-02-02T10:16:00.998877Z   45 Quit
+```
+
+Phân tích hành vi này:
+
+**1. (Connect vào MySQL)**: Người dùng root đăng nhập thành công qua Socket với mã kết nối là 45, vào lúc `10:15:01`.
+
+**2. (Thăm do hệ thống)**: Ngay sau đó, ghi nhận người dùng này thực hiện lệnh `SELECT @@version`.Đây là hành vi điển hình để kiểm tra phiên bản MySQL nhằm tìm kiếm các lỗ hổng (vulnerability) đã biết cho phiên bản đó.
+
+**3. (Liệt kê ra các tài nguyên trên hệ thống):** Lệnh `SHOW DATABASE` cho thấy họ đang tìm kiếm xem trong server này có những thông tin giá trị hay thông tin credential của người dùng không.
+
+**4. (Xâm nhập vào mục tiêu đã được lựa chọn):** Họ chọn database `customer_db` và liệt kê các bảng (SHOW TABLES).
+
+**5. (Khai thác dữ liệu):** Hành vi nguy hiểm nhất xuất hiện lúc 10:15:30: Họ truy vấn toàn bộ thông tin từ bảng users nhưng lọc những người có quyền admin. Đây là dấu hiệu của việc đánh cắp thông tin tài khoản quản trị.
+
+**6. (Quit)**: Sau khi có được thông tin cần tìm thì họ đã thoát khỏi phiên đăng nhập hiện tại.
