@@ -331,6 +331,8 @@ Shellbags được đề cập đến là một tập hợp những registry key
 
 `ShellBags` có thể chứa đựng rất nhiều những thông tin trong những folders mà người đã truy cập vào. Tuy nhiên, bởi vì những thông tin chi tiết chính xác về cách mà `shellbags` hoạt động không được công bố rộng rãi, nó có thể sẽ khó trong việc hiểu tường tận về dữ liệu. Chúng ta nên sử dụng những cái artifacts khác để xác minh lại những dữ liệu đã tìm được và kiểm tra với những kịch bản cụ thể để đảm bảo mình hiểu được nó và làm sao nó nằm ở đó.
 
+`NTUSER.DAT\Software\Microsoft\Windows\Shell\BagMRU`
+`UsrClass.DAT`
 Những keys information từ ShellBags:
 | Info | Notes |
 |--- | --- |
