@@ -1,8 +1,3 @@
----
-title: RomCom
-
----
-
 # RomCom
 
 ![image](https://hackmd.io/_uploads/BJJn6EnOZl.png)
